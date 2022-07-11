@@ -1,11 +1,14 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './main.css';
-import App from './App';
+import ReactDOM from 'react-dom';
+import { HashRouter } from 'react-router-dom';
+import './styles.scss';
+import App from './app';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
+ReactDOM.render(
   <React.StrictMode>
-    <App />
-  </React.StrictMode>
+    <HashRouter>
+      <App />
+    </HashRouter>
+  </React.StrictMode>,
+  document.getElementById('root'),
 );

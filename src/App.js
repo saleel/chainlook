@@ -1,10 +1,18 @@
+import React from 'react';
+import { Route, Routes } from 'react-router-dom';
+import HomePage from './pages/home.js';
+import DashboardPage from './pages/dashboard';
+
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        Graph Analytics
-      </header>
-    </div>
+    <Routes>
+      <Route path="/">
+        <Route index element={<HomePage />} />
+      </Route>
+      <Route path="/dashboard/:dashboardId">
+        <Route index element={<DashboardPage />} />
+      </Route>
+    </Routes>
   );
 }
 
