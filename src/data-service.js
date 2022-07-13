@@ -31,9 +31,20 @@ export function getWidget(widgetId) {
     return {
       title: 'Last 10 days liquidity',
       type: 'line-chart',
-      config: {
-        xAxisKey: "date",
-        yAxisKeys: ['dailyVolumeETH']
+      chart: {
+        xAxis: {
+          key: "date",
+          transform: "unixDate"
+        },
+        yAxis: {
+          transform: "roundedNumber"
+        },
+        dataKeys: {
+          dailyVolumeETH: {
+            label: "Daily Volume",
+            transform: "unixDate",
+          }
+        }
       },
       data: {
         source: 'the-graph',
@@ -50,8 +61,17 @@ export function getWidget(widgetId) {
     return {
       title: 'Last 10 days liquidity',
       type: 'table',
-      config: {
-        columns: ['date', 'dailyVolumeETH']
+      table: {
+        columns: {
+          date: {
+            label: 'Date',
+            transform: 'unixDate'
+          },
+          dailyVolumeETH: {
+            label: 'Daily Volume',
+            transform: 'roundedNumber'
+          }
+        }
       },
       data: {
         source: 'the-graph',
@@ -98,16 +118,14 @@ export async function getGraphData({
 export async function getWidgetData(widget) {
   let data = [];
 
-  console.log(widget)
-
   if (widget.data.source === 'the-graph') {
     let fields = [];
     if (widget.type === 'line-chart') {
-      fields = [widget.config.xAxisKey, ...widget.config.yAxisKeys];
+      fields = [widget.chart.xAxis?.key, ...Object.keys(widget.chart.dataKeys)];
     }
 
     if (widget.type === 'table') {
-      fields = [...widget.config.columns];
+      fields = [...Object.keys(widget.table.columns)];
     }
 
     if (!fields.length) {

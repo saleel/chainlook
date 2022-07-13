@@ -36,10 +36,7 @@ function Widget(props) {
       <div className="widget widget-chart">
         <Chart
           data={widgetData}
-          xAxisKey={widget.config.xAxisKey}
-          yAxisKeys={widget.config.yAxisKeys}
-          xAxisFormatter={(d) => new Date(d * 1000)}
-          yAxisFormatter={(d) => Number(d).toFixed(1)}
+          config={widget.chart}
         />
       </div>
     );
@@ -50,7 +47,7 @@ function Widget(props) {
       <div className="widget widget-table">
         <Table
           data={widgetData}
-          columns={widget.config.columns}
+          config={widget.table}
         />
       </div>
     );

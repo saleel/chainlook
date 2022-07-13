@@ -1,12 +1,13 @@
 import {
   Line, ComposedChart, XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from 'recharts';
+import { formatters } from '../helpers/formatters';
 
 const COLORS = ['var(--blue-500)', 'var(--green-300)', 'var(--yellow-500)'];
 
 function Chart(props) {
   const {
-    data, xAxisKey, yAxisKeys, xAxisFormatter, yAxisFormatter, yAxisLabels = [],
+    data = [], config: { xAxis, yAxis, dataKeys }
   } = props;
 
 
@@ -19,28 +20,28 @@ function Chart(props) {
         }}
       >
         <XAxis
-          dataKey={xAxisKey}
-          {...xAxisFormatter && { tickFormatter: xAxisFormatter }}
+          dataKey={xAxis.key}
+          {...xAxis.transform && { tickFormatter: formatters[xAxis.transform] }}
         />
 
         <YAxis
-          {...yAxisFormatter && { tickFormatter: yAxisFormatter }}
+          {...yAxis.transform && { tickFormatter: formatters[yAxis.transform] }}
           domain={['auto', 'auto']}
         />
 
         <Tooltip
-          {...xAxisFormatter && { labelFormatter: xAxisFormatter }}
-          {...yAxisFormatter && { formatter: yAxisFormatter }}
+          {...xAxis.transform && { labelFormatter: formatters[xAxis.transform] }}
+          {...yAxis.transform && { formatter: formatters[yAxis.transform] }}
         />
 
-        {yAxisKeys.map((yAxisKey, i) => (
+        {Object.entries(dataKeys).map(([key, params], i) => (
           <Line
-            key={yAxisKey}
-            name={yAxisLabels?.[i] ?? yAxisKey}
+            key={key}
+            name={params.label || key}
             type="monotone"
             strokeLinecap="round"
             strokeWidth={2}
-            dataKey={yAxisKey}
+            dataKey={key}
             stroke={COLORS[i]}
             dot={false}
             legendType="none"

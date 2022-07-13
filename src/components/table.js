@@ -1,20 +1,16 @@
+import { formatters } from "../helpers/formatters";
+
 function Table(props) {
   const {
-    data = [], columns = [], labels = {},
+    data = [], config: { columns } = { columns: {} }
   } = props;
-
-  console.log(
-    {
-      data, columns
-    }
-  )
 
   return (
     <table className="table price-table">
       <thead>
         <tr className="">
-          {columns.map((f) => (
-            <th key={f}>{labels[f] || f}</th>
+          {Object.entries(columns).map(([key, params]) => (
+            <th key={key}>{params.label || key}</th>
           ))}
         </tr>
       </thead>
@@ -22,10 +18,18 @@ function Table(props) {
       <tbody>
         {data.map((d, i) => (
           // eslint-disable-next-line react/no-array-index-key
-          <tr>
-            {columns.map((fieldName) => (
-              <td key={fieldName}>{d[fieldName]}</td>
-            ))}
+          <tr key={i}>
+            {Object.entries(columns).map(([colName, params]) => {
+
+              let value = d[colName];
+              if (params.transform) {
+                value = formatters[params.transform](value);
+              }
+
+              return (
+                <td key={colName}>{value}</td>
+              )
+            })}
           </tr>
         ))}
       </tbody>
