@@ -29,9 +29,13 @@ body {
   color: var(--text-color);
 }
 
-.container {
-  max-width: 900px !important;
-  padding: 1rem !important;
+.page {
+  padding: 0 2rem !important;
+  min-height: calc(100vh - 5rem);
+}
+
+.header {
+  height: 2rem;
 }
 
 .w-100 {
@@ -39,13 +43,12 @@ body {
 }
 
 .widget {
-  min-height: 400px;
+  height: 350px;
   min-width: 500px;
+  border: 1px solid var(--blue-400)
 }
 
 .widget-chart {
-  background-color: var(--gray-200);
-  border-radius: 5px;
   width: 100%;
   height: 320px;
   padding: 1rem;
@@ -56,4 +59,8 @@ body {
     font-weight: 600;
     opacity: 0.8;
   }
+}
+
+.widget-table {
+  overflow-y: scroll;
 }

@@ -18,14 +18,25 @@ function Chart(props) {
           top: 5, right: 5, left: -15, bottom: 0,
         }}
       >
-        <XAxis dataKey={xAxisKey} tickFormatter={xAxisFormatter} />
-        <YAxis tickFormatter={yAxisFormatter} domain={['auto', 'auto']} />
-        <Tooltip labelFormatter={xAxisFormatter} formatter={yAxisFormatter} />
+        <XAxis
+          dataKey={xAxisKey}
+          {...xAxisFormatter && { tickFormatter: xAxisFormatter }}
+        />
+
+        <YAxis
+          {...yAxisFormatter && { tickFormatter: yAxisFormatter }}
+          domain={['auto', 'auto']}
+        />
+
+        <Tooltip
+          {...xAxisFormatter && { labelFormatter: xAxisFormatter }}
+          {...yAxisFormatter && { formatter: yAxisFormatter }}
+        />
 
         {yAxisKeys.map((yAxisKey, i) => (
           <Line
             key={yAxisKey}
-            name={yAxisLabels[i] || yAxisKey}
+            name={yAxisLabels?.[i] ?? yAxisKey}
             type="monotone"
             strokeLinecap="round"
             strokeWidth={2}

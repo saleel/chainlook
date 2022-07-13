@@ -8,7 +8,7 @@ export default function Layout() {
         <h1>Graph Analytics</h1>
       </div>
 
-      <div className="container main">
+      <div className="main">
         <Outlet />
       </div>
 

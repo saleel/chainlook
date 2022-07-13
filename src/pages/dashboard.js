@@ -19,28 +19,28 @@ function Dashboard() {
   if (error) {
     return (<div>{error.message}</div>);
   }
-  
+
   return (
-    <div className="dashboard-page">
-      This is dashboard page {dashboard.title}
+    <div className="page dashboard-page">
+      <h2>
+        This is dashboard page {dashboard.title}
+      </h2>
 
-      <div className="columns">
+      {dashboard.rows.map(row => (
+        <div className="columns">
+          {row.elements.map(element => {
+            const widthClass = `is-${element.width}`
 
-        {dashboard.elements.map(element => {
-
-          const widthClass = `is-${element.width}`
-
-          if (element.type === 'widget') {
-            return (
-              <div className={`column ${widthClass}`}>
-                <Widget id={element.widgetId} />
-              </div>
-            );
-          }
-
-        })}
-
-      </div>
+            if (element.type === 'widget') {
+              return (
+                <div key={element.id} className={`column ${widthClass}`}>
+                  <Widget id={element.widgetId} />
+                </div>
+              );
+            }
+          })}
+        </div>
+      ))}
 
     </div>
   )

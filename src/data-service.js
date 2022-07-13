@@ -4,23 +4,25 @@ import axios from 'axios'
 export function getDashboard(dashboardId) {
   return {
     title: 'Uniswap V2',
-    elements: [{
-      type: 'widget',
-      widgetId: 'chart',
-      width: 6,
-      row: 1,
-    }, {
-      type: 'widget',
-      widgetId: 'table',
-      width: 6,
-      row: 1,
-    },
-    {
-      type: 'text',
-      text: 'Hello',
-      width: 3,
-      row: 2,
-    }]
+    rows: [
+      {
+        elements: [{
+          type: 'widget',
+          widgetId: 'chart',
+          width: 6,
+        }, {
+          type: 'widget',
+          widgetId: 'table',
+          width: 6,
+        }],
+      }, {
+        elements: [{
+          type: 'text',
+          text: 'Hello',
+          width: 3,
+        }],
+      },
+    ],
   }
 }
 
@@ -32,6 +34,24 @@ export function getWidget(widgetId) {
       config: {
         xAxisKey: "date",
         yAxisKeys: ['dailyVolumeETH']
+      },
+      data: {
+        source: 'the-graph',
+        subGraphId: 'uniswap/uniswap-v2',
+        entity: 'uniswapDayDatas',
+        filters: {
+          orderDirection: 'desc', orderBy: 'date', skip: 1, first: 20,
+        },
+      }
+    }
+  }
+
+  if (widgetId === 'table') {
+    return {
+      title: 'Last 10 days liquidity',
+      type: 'table',
+      config: {
+        columns: ['date', 'dailyVolumeETH']
       },
       data: {
         source: 'the-graph',
@@ -73,4 +93,34 @@ export async function getGraphData({
   });
 
   return response.data?.[entity];
+}
+
+export async function getWidgetData(widget) {
+  let data = [];
+
+  console.log(widget)
+
+  if (widget.data.source === 'the-graph') {
+    let fields = [];
+    if (widget.type === 'line-chart') {
+      fields = [widget.config.xAxisKey, ...widget.config.yAxisKeys];
+    }
+
+    if (widget.type === 'table') {
+      fields = [...widget.config.columns];
+    }
+
+    if (!fields.length) {
+      throw new Error("Invalid widget type or no fields to fetch");
+    }
+
+    data = await getGraphData({
+      subGraphId: widget.data.subGraphId,
+      entity: widget.data.entity,
+      fields: fields,
+      filters: widget.data.filters,
+    });
+  }
+
+  return data;
 }
