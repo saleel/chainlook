@@ -1,5 +1,5 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
+import React from 'react';
+import { Outlet } from 'react-router-dom';
 
 export default function Layout() {
   return (
@@ -16,5 +16,5 @@ export default function Layout() {
         Copyright &copy;2022 Graph Analytics
       </div>
     </>
-  )
+  );
 }

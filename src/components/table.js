@@ -1,8 +1,8 @@
-import { formatters } from "../helpers/formatters";
+import formatters from '../helpers/formatters';
 
 function Table(props) {
   const {
-    data = [], config: { columns } = { columns: {} }
+    data = [], config: { columns } = { columns: {} },
   } = props;
 
   return (
@@ -20,7 +20,6 @@ function Table(props) {
           // eslint-disable-next-line react/no-array-index-key
           <tr key={i}>
             {Object.entries(columns).map(([colName, params]) => {
-
               let value = d[colName];
               if (params.transform) {
                 value = formatters[params.transform](value);
@@ -28,7 +27,7 @@ function Table(props) {
 
               return (
                 <td key={colName}>{value}</td>
-              )
+              );
             })}
           </tr>
         ))}

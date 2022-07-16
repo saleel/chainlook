@@ -1,15 +1,16 @@
 import {
   Line, ComposedChart, XAxis, YAxis, Tooltip, ResponsiveContainer, Bar, Area,
 } from 'recharts';
-import { formatters } from '../helpers/formatters';
+import formatters from '../helpers/formatters';
 
 const COLORS = ['var(--blue-500)', 'var(--green-300)', 'var(--yellow-500)'];
 
 function Chart(props) {
   const {
-    data = [], config: { xAxis, yAxis, lines = {}, areas = {}, bars = {} }
+    data = [], config: {
+      xAxis, yAxis, lines = {}, areas = {}, bars = {},
+    },
   } = props;
-
 
   return (
     <ResponsiveContainer>

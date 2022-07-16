@@ -1,7 +1,7 @@
 import {
   ResponsiveContainer, PieChart as RechartPieChart, Pie,
 } from 'recharts';
-import { formatters } from '../helpers/formatters';
+import formatters from '../helpers/formatters';
 
 const COLORS = ['var(--blue-500)', 'var(--green-300)', 'var(--yellow-500)'];
 

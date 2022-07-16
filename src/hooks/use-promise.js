@@ -126,7 +126,6 @@ function usePromise(promise, options = {}) {
 
     // eslint-disable-next-line consistent-return
     return () => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
       didCancel = true;
     };
   }, [...dependencies, ...conditions]);

@@ -1,6 +1,6 @@
 function Text(props) {
   const {
-    config
+    config,
   } = props;
 
   return (

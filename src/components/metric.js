@@ -1,11 +1,11 @@
-import { formatters } from "../helpers/formatters";
+import formatters from '../helpers/formatters';
 
 function Metric(props) {
   const {
-    data, config
+    data, config,
   } = props;
 
-  const { key, unit,transform } = config;
+  const { key, unit, transform } = config;
 
   let value = Array.isArray(data) ? data[0]?.[key] : data[key];
   if (transform) {
