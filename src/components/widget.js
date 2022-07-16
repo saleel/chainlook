@@ -31,7 +31,7 @@ function Widget(props) {
   }
 
   function renderWidget() {
-  if (widget.type === 'line-chart') {
+  if (widget.type === 'chart') {
       return (
         <Chart
           data={widgetData}

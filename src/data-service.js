@@ -42,7 +42,7 @@ export function getWidget(widgetId) {
   if (widgetId === 'chart') {
     return {
       title: 'Last 10 days liquidity',
-      type: 'line-chart',
+      type: 'chart',
       chart: {
         xAxis: {
           key: "date",
@@ -51,7 +51,7 @@ export function getWidget(widgetId) {
         yAxis: {
           transform: "roundedNumber"
         },
-        dataKeys: {
+        lines: {
           dailyVolumeETH: {
             label: "Daily Volume",
             transform: "roundedNumber",
@@ -176,10 +176,12 @@ export async function getWidgetData(widget) {
 
   if (widget.data.source === 'the-graph') {
     let fields = [];
-    if (widget.type === 'line-chart') {
+    if (widget.type === 'chart') {
       fields = [
         widget.chart.xAxis?.key,
-        ...Object.keys(widget.chart.dataKeys || {})
+        ...Object.keys(widget.chart.lines || {}),
+        ...Object.keys(widget.chart.bars || {}),
+        ...Object.keys(widget.chart.areas || {})
       ];
     }
 

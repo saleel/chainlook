@@ -71,6 +71,7 @@ body {
 .widget-title, .text-title {
   font-weight: 600;
   padding-left: 0.75rem;
+  margin-bottom: 0.5rem;
   line-height: 2.5rem;
   display: flex;
   align-items: center;
@@ -82,8 +83,6 @@ body {
 
 .widget-chart {
   width: 100%;
-  padding: 1rem 0.5rem;
-  padding-left: 2rem;
 
   text {
     fill: var(--text-color) !important;
