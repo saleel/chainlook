@@ -1,8 +1,9 @@
 import React from 'react';
-import { getGraphData, getWidget, getWidgetData } from '../data-service';
+import { getWidget, getWidgetData } from '../data-service';
 import usePromise from '../hooks/use-promise';
 import Chart from './chart';
 import Table from './table';
+import Metric from './metric';
 
 function Widget(props) {
   const { id } = props;
@@ -17,8 +18,6 @@ function Widget(props) {
     conditions: [widget],
   });
 
-  // console.log({ widget, widgetData, isFetchingWidget, isFetchingData })
-
   if (!widgetData) {
     return null;
   }
@@ -31,28 +30,48 @@ function Widget(props) {
     return <div>Loading</div>;
   }
 
+  function renderWidget() {
   if (widget.type === 'line-chart') {
-    return (
-      <div className="widget widget-chart">
+      return (
         <Chart
           data={widgetData}
           config={widget.chart}
         />
-      </div>
-    );
-  }
+      );
+    }
 
-  if (widget.type === 'table') {
-    return (
-      <div className="widget widget-table">
+    if (widget.type === 'table') {
+      return (
         <Table
           data={widgetData}
           config={widget.table}
         />
-      </div>
-    );
+      );
+    }
+
+    if (widget.type === 'metric') {
+      return (
+        <Metric
+          data={widgetData}
+          config={widget.metric}
+        />
+      );
+    }
   }
- 
+
+
+  return (
+    <div className={`widget widget-${widget.type}`}>
+      <h4 className='widget-title'>
+        {widget.title}
+      </h4>
+
+      <div className='widget-body'>
+        {renderWidget()}
+      </div>
+    </div>
+  );
+
 }
 
 export default React.memo(Widget);

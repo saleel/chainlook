@@ -6,7 +6,7 @@ function Table(props) {
   } = props;
 
   return (
-    <table className="table price-table">
+    <table className="table">
       <thead>
         <tr className="">
           {Object.entries(columns).map(([key, params]) => (

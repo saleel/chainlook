@@ -12,7 +12,7 @@ export default function Layout() {
         <Outlet />
       </div>
 
-      <div className="copyright">
+      <div className="footer">
         Copyright &copy;2022 Graph Analytics
       </div>
     </>

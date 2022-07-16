@@ -7,6 +7,24 @@ export function getDashboard(dashboardId) {
     rows: [
       {
         elements: [{
+          type: 'text',
+          text: {
+            title: 'Hello',
+            message: 'This is an awesome dashboard',
+          },
+          width: 4,
+        }, {
+          type: 'widget',
+          widgetId: 'metric1',
+          width: 4,
+        }, {
+          type: 'widget',
+          widgetId: 'metric2',
+          width: 4,
+        }],
+      },
+      {
+        elements: [{
           type: 'widget',
           widgetId: 'chart',
           width: 6,
@@ -15,13 +33,7 @@ export function getDashboard(dashboardId) {
           widgetId: 'table',
           width: 6,
         }],
-      }, {
-        elements: [{
-          type: 'text',
-          text: 'Hello',
-          width: 3,
-        }],
-      },
+      }
     ],
   }
 }
@@ -42,7 +54,11 @@ export function getWidget(widgetId) {
         dataKeys: {
           dailyVolumeETH: {
             label: "Daily Volume",
-            transform: "unixDate",
+            transform: "roundedNumber",
+          },
+          totalVolumeETH: {
+            label: "Daily Volume",
+            transform: "roundedNumber",
           }
         }
       },
@@ -79,6 +95,46 @@ export function getWidget(widgetId) {
         entity: 'uniswapDayDatas',
         filters: {
           orderDirection: 'desc', orderBy: 'date', skip: 1, first: 20,
+        },
+      }
+    }
+  }
+
+  if (widgetId === 'metric1') {
+    return {
+      title: 'ETH Daily Volume',
+      type: 'metric',
+      metric: {
+        key: 'dailyVolumeETH',
+        unit: 'USD',
+        transform: 'roundedNumber'
+      },
+      data: {
+        source: 'the-graph',
+        subGraphId: 'uniswap/uniswap-v2',
+        entity: 'uniswapDayDatas',
+        filters: {
+          orderDirection: 'desc', orderBy: 'date', first: 1,
+        },
+      }
+    }
+  }
+
+  if (widgetId === 'metric2') {
+    return {
+      title: 'USD Daily Volume',
+      type: 'metric',
+      metric: {
+        key: 'dailyVolumeUSD',
+        unit: 'USD',
+        transform: 'roundedNumber'
+      },
+      data: {
+        source: 'the-graph',
+        subGraphId: 'uniswap/uniswap-v2',
+        entity: 'uniswapDayDatas',
+        filters: {
+          orderDirection: 'desc', orderBy: 'date', first: 1,
         },
       }
     }
@@ -121,15 +177,22 @@ export async function getWidgetData(widget) {
   if (widget.data.source === 'the-graph') {
     let fields = [];
     if (widget.type === 'line-chart') {
-      fields = [widget.chart.xAxis?.key, ...Object.keys(widget.chart.dataKeys)];
+      fields = [
+        widget.chart.xAxis?.key,
+        ...Object.keys(widget.chart.dataKeys || {})
+      ];
     }
 
     if (widget.type === 'table') {
       fields = [...Object.keys(widget.table.columns)];
     }
 
+    if (widget.type === 'metric') {
+      fields = [widget.metric.key];
+    }
+
     if (!fields.length) {
-      throw new Error("Invalid widget type or no fields to fetch");
+      throw new Error(`Invalid widget type ${widget.type} or no fields to fetch`);
     }
 
     data = await getGraphData({
