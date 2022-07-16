@@ -1,5 +1,4 @@
-import axios from 'axios'
-
+import axios from 'axios';
 
 export function getDashboard(dashboardId) {
   return {
@@ -33,9 +32,16 @@ export function getDashboard(dashboardId) {
           widgetId: 'table',
           width: 6,
         }],
-      }
+      },
+      {
+        elements: [{
+          type: 'widget',
+          widgetId: 'pieChart',
+          width: 6,
+        }],
+      },
     ],
-  }
+  };
 }
 
 export function getWidget(widgetId) {
@@ -45,22 +51,22 @@ export function getWidget(widgetId) {
       type: 'chart',
       chart: {
         xAxis: {
-          key: "date",
-          transform: "unixDate"
+          key: 'date',
+          transform: 'unixDate',
         },
         yAxis: {
-          transform: "roundedNumber"
+          transform: 'roundedNumber',
         },
         lines: {
           dailyVolumeETH: {
-            label: "Daily Volume",
-            transform: "roundedNumber",
+            label: 'Daily Volume',
+            transform: 'roundedNumber',
           },
           totalVolumeETH: {
-            label: "Daily Volume",
-            transform: "roundedNumber",
-          }
-        }
+            label: 'Daily Volume',
+            transform: 'roundedNumber',
+          },
+        },
       },
       data: {
         source: 'the-graph',
@@ -69,8 +75,27 @@ export function getWidget(widgetId) {
         filters: {
           orderDirection: 'desc', orderBy: 'date', skip: 1, first: 20,
         },
-      }
-    }
+      },
+    };
+  }
+
+  if (widgetId === 'pieChart') {
+    return {
+      title: 'Last 10 days liquidity',
+      type: 'pieChart',
+      pieChart: {
+        dataKey: 'dailyVolumeETH',
+        nameKey: 'date',
+      },
+      data: {
+        source: 'the-graph',
+        subGraphId: 'uniswap/uniswap-v2',
+        entity: 'uniswapDayDatas',
+        filters: {
+          orderDirection: 'desc', orderBy: 'date', skip: 1, first: 4,
+        },
+      },
+    };
   }
 
   if (widgetId === 'table') {
@@ -81,13 +106,13 @@ export function getWidget(widgetId) {
         columns: {
           date: {
             label: 'Date',
-            transform: 'unixDate'
+            transform: 'unixDate',
           },
           dailyVolumeETH: {
             label: 'Daily Volume',
-            transform: 'roundedNumber'
-          }
-        }
+            transform: 'roundedNumber',
+          },
+        },
       },
       data: {
         source: 'the-graph',
@@ -96,8 +121,8 @@ export function getWidget(widgetId) {
         filters: {
           orderDirection: 'desc', orderBy: 'date', skip: 1, first: 20,
         },
-      }
-    }
+      },
+    };
   }
 
   if (widgetId === 'metric1') {
@@ -107,7 +132,7 @@ export function getWidget(widgetId) {
       metric: {
         key: 'dailyVolumeETH',
         unit: 'USD',
-        transform: 'roundedNumber'
+        transform: 'roundedNumber',
       },
       data: {
         source: 'the-graph',
@@ -116,8 +141,8 @@ export function getWidget(widgetId) {
         filters: {
           orderDirection: 'desc', orderBy: 'date', first: 1,
         },
-      }
-    }
+      },
+    };
   }
 
   if (widgetId === 'metric2') {
@@ -127,7 +152,7 @@ export function getWidget(widgetId) {
       metric: {
         key: 'dailyVolumeUSD',
         unit: 'USD',
-        transform: 'roundedNumber'
+        transform: 'roundedNumber',
       },
       data: {
         source: 'the-graph',
@@ -136,8 +161,8 @@ export function getWidget(widgetId) {
         filters: {
           orderDirection: 'desc', orderBy: 'date', first: 1,
         },
-      }
-    }
+      },
+    };
   }
 }
 
@@ -181,8 +206,12 @@ export async function getWidgetData(widget) {
         widget.chart.xAxis?.key,
         ...Object.keys(widget.chart.lines || {}),
         ...Object.keys(widget.chart.bars || {}),
-        ...Object.keys(widget.chart.areas || {})
+        ...Object.keys(widget.chart.areas || {}),
       ];
+    }
+
+    if (widget.type === 'pieChart') {
+      fields = [widget.pieChart.dataKey, widget.pieChart.nameKey];
     }
 
     if (widget.type === 'table') {
@@ -200,7 +229,7 @@ export async function getWidgetData(widget) {
     data = await getGraphData({
       subGraphId: widget.data.subGraphId,
       entity: widget.data.entity,
-      fields: fields,
+      fields,
       filters: widget.data.filters,
     });
   }

@@ -4,6 +4,7 @@ import usePromise from '../hooks/use-promise';
 import Chart from './chart';
 import Table from './table';
 import Metric from './metric';
+import PieChart from './pie-chart';
 
 function Widget(props) {
   const { id } = props;
@@ -31,11 +32,20 @@ function Widget(props) {
   }
 
   function renderWidget() {
-  if (widget.type === 'chart') {
+    if (widget.type === 'chart') {
       return (
         <Chart
           data={widgetData}
           config={widget.chart}
+        />
+      );
+    }
+
+    if (widget.type === 'pieChart') {
+      return (
+        <PieChart
+          data={widgetData}
+          config={widget.pieChart}
         />
       );
     }
@@ -57,21 +67,21 @@ function Widget(props) {
         />
       );
     }
-  }
 
+    return null;
+  }
 
   return (
     <div className={`widget widget-${widget.type}`}>
-      <h4 className='widget-title'>
+      <h4 className="widget-title">
         {widget.title}
       </h4>
 
-      <div className='widget-body'>
+      <div className="widget-body">
         {renderWidget()}
       </div>
     </div>
   );
-
 }
 
 export default React.memo(Widget);
