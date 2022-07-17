@@ -191,10 +191,13 @@ export async function getGraphData({
   return response.data?.[entity];
 }
 
-export async function getWidgetData(widget) {
-  let data = [];
-
+export function getDataFieldsForWidget(widget) {
   let fields = [];
+
+  if (!widget?.type) {
+    return fields;
+  }
+
   if (widget.type === 'chart') {
     fields = [
       widget.chart.xAxis?.dataKey,
@@ -215,6 +218,14 @@ export async function getWidgetData(widget) {
   if (widget.type === 'metric') {
     fields = [widget.metric.dataKey];
   }
+
+  return fields;
+}
+
+export async function getWidgetData(widget) {
+  let data = [];
+
+  const fields = getDataFieldsForWidget(widget);
 
   if (!fields.length) {
     throw new Error(`Invalid widget type ${widget.type} or no fields to fetch`);

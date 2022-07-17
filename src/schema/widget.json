@@ -92,7 +92,7 @@
               "xAxis": {
                 "type": "object",
                 "properties": {
-                  "key": {
+                  "dataKey": {
                     "type": "string"
                   },
                   "transform": {
@@ -100,8 +100,7 @@
                   }
                 },
                 "required": [
-                  "key",
-                  "transform"
+                  "dataKey"
                 ]
               },
               "yAxis": {

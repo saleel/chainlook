@@ -8,9 +8,14 @@ function Table(props) {
   return (
     <table className="table">
       <thead>
-        <tr className="">
+        <tr>
           {columns.map((column) => (
-            <th key={column.dataKey}>{column.label || column.key}</th>
+            <th
+              style={{ width: `${100 / columns.length}%` }}
+              key={column.dataKey}
+            >
+              {column.label || column.key}
+            </th>
           ))}
         </tr>
       </thead>

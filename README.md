@@ -10,3 +10,4 @@ TODOs
 - Sign in with Ethereum
 - Optimize querying to TheGraph
 - Use IPNS in URLs
+- Improve styling

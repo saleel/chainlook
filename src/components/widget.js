@@ -1,5 +1,5 @@
 import React from 'react';
-import { getWidget, getWidgetData } from '../data-service';
+import { getDataFieldsForWidget, getWidget, getWidgetData } from '../data-service';
 import usePromise from '../hooks/use-promise';
 import Chart from './chart';
 import Table from './table';
@@ -7,81 +7,91 @@ import Metric from './metric';
 import PieChart from './pie-chart';
 
 function Widget(props) {
-  const { id } = props;
+  try {
+    const { config } = props;
 
-  const [widget, { isFetching: isFetchingWidget, error: errorWidget }] = usePromise(() => getWidget(id), {
-    dependencies: [id],
-    conditions: [id],
-  });
+    let cacheKey = `${config.data.subGraphId}_${config.data.entity}_`;
+    cacheKey += getDataFieldsForWidget(config).join('_');
+    cacheKey += Object.entries(config.data.filters).join('_');
 
-  const [widgetData, { isFetching: isFetchingData, error: errorData }] = usePromise(() => getWidgetData(widget), {
-    dependencies: [widget],
-    conditions: [widget],
-  });
+    console.log(cacheKey, config);
 
-  if (!widgetData) {
-    return null;
-  }
+    const [widgetData, { isFetching: isFetchingData, error: errorData }] = usePromise(() => getWidgetData(config), {
+      dependencies: [config.data],
+      conditions: [config.type],
+      cacheKey,
+    });
 
-  if (errorData || errorWidget) {
-    return <div>Error</div>;
-  }
-
-  if (isFetchingWidget || isFetchingData) {
-    return <div>Loading</div>;
-  }
-
-  function renderWidget() {
-    if (widget.type === 'chart') {
-      return (
-        <Chart
-          data={widgetData}
-          config={widget.chart}
-        />
-      );
+    if (!widgetData) {
+      return null;
     }
 
-    if (widget.type === 'pieChart') {
-      return (
-        <PieChart
-          data={widgetData}
-          config={widget.pieChart}
-        />
-      );
+    if (errorData) {
+      throw errorData;
     }
 
-    if (widget.type === 'table') {
-      return (
-        <Table
-          data={widgetData}
-          config={widget.table}
-        />
-      );
+    if (isFetchingData) {
+      return <div>Loading</div>;
     }
 
-    if (widget.type === 'metric') {
-      return (
-        <Metric
-          data={widgetData}
-          config={widget.metric}
-        />
-      );
+    function renderWidget() {
+      if (config.type === 'chart') {
+        return (
+          <Chart
+            data={widgetData}
+            config={config.chart}
+          />
+        );
+      }
+
+      if (config.type === 'pieChart') {
+        return (
+          <PieChart
+            data={widgetData}
+            config={config.pieChart}
+          />
+        );
+      }
+
+      if (config.type === 'table') {
+        return (
+          <Table
+            data={widgetData}
+            config={config.table}
+          />
+        );
+      }
+
+      if (config.type === 'metric') {
+        return (
+          <Metric
+            data={widgetData}
+            config={config.metric}
+          />
+        );
+      }
+
+      return null;
     }
 
-    return null;
-  }
+    return (
+      <div className={`widget widget-${config.type}`}>
+        <h4 className="widget-title">
+          {config.title}
+        </h4>
 
-  return (
-    <div className={`widget widget-${widget.type}`}>
-      <h4 className="widget-title">
-        {widget.title}
-      </h4>
-
-      <div className="widget-body">
-        {renderWidget()}
+        <div className="widget-body">
+          {renderWidget()}
+        </div>
       </div>
-    </div>
-  );
+    );
+  } catch (error) {
+    return (
+      <div className="widget-error">
+        {error.message}
+      </div>
+    );
+  }
 }
 
-export default React.memo(Widget);
+export default Widget;
