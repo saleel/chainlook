@@ -1,0 +1,317 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "chainlook://widget/0.1",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "table",
+        "chart",
+        "pieChart",
+        "metric"
+      ]
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "subGraphId": {
+          "type": "string"
+        },
+        "entity": {
+          "type": "string"
+        },
+        "filters": {
+          "type": "object",
+          "additionalItems": true,
+          "properties": {
+            "orderDirection": {
+              "type": "string"
+            },
+            "orderBy": {
+              "type": "string"
+            },
+            "skip": {
+              "type": "integer"
+            },
+            "first": {
+              "type": "integer"
+            },
+            "where": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "required": [
+        "source",
+        "subGraphId",
+        "entity"
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "chart"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "chart": {
+            "type": "object",
+            "required": [
+              "xAxis",
+              "yAxis"
+            ],
+            "oneOf": [
+              {
+                "required": [
+                  "lines"
+                ]
+              },
+              {
+                "required": [
+                  "bars"
+                ]
+              },
+              {
+                "required": [
+                  "areas"
+                ]
+              }
+            ],
+            "properties": {
+              "xAxis": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  },
+                  "transform": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "key",
+                  "transform"
+                ]
+              },
+              "yAxis": {
+                "type": "object",
+                "properties": {
+                  "transform": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "transform"
+                ]
+              },
+              "lines": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "dataKey": {
+                      "type": "string"
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "transform": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "dataKey",
+                    "label",
+                    "transform"
+                  ]
+                }
+              },
+              "bars": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "dataKey": {
+                      "type": "string"
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "transform": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "dataKey",
+                    "label",
+                    "transform"
+                  ]
+                }
+              },
+              "area": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "dataKey": {
+                      "type": "string"
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "transform": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "dataKey",
+                    "label",
+                    "transform"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "table"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "table": {
+            "type": "object",
+            "required": [
+              "columns"
+            ],
+            "properties": {
+              "columnes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "dataKey": {
+                      "type": "string"
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "transform": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "dataKey",
+                    "label",
+                    "transform"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "pieChart"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "pieChart": {
+            "type": "object",
+            "required": [
+              "dataKey"
+            ],
+            "properties": {
+              "dataKey": {
+                "type": "string"
+              },
+              "nameKey": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "metric"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "pieChart": {
+            "type": "object",
+            "required": [
+              "dataKey"
+            ],
+            "properties": {
+              "dataKey": {
+                "type": "string"
+              },
+              "unit": {
+                "type": "string"
+              },
+              "transform": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "required": [
+    "title",
+    "type",
+    "data"
+  ],
+  "anyOf": [
+    {
+      "required": [
+        "chart"
+      ]
+    },
+    {
+      "required": [
+        "pieChart"
+      ]
+    },
+    {
+      "required": [
+        "metric"
+      ]
+    },
+    {
+      "required": [
+        "table"
+      ]
+    }
+  ]
+}

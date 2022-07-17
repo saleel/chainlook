@@ -8,7 +8,7 @@ const COLORS = ['var(--blue-500)', 'var(--green-300)', 'var(--yellow-500)'];
 function Chart(props) {
   const {
     data = [], config: {
-      xAxis, yAxis, lines = {}, areas = {}, bars = {},
+      xAxis, yAxis, lines = [], areas = [], bars = [],
     },
   } = props;
 
@@ -18,7 +18,7 @@ function Chart(props) {
         data={data}
       >
         <XAxis
-          dataKey={xAxis.key}
+          dataKey={xAxis.dataKey}
           {...xAxis.transform && { tickFormatter: formatters[xAxis.transform] }}
         />
 
@@ -32,37 +32,37 @@ function Chart(props) {
           {...yAxis.transform && { formatter: formatters[yAxis.transform] }}
         />
 
-        {Object.entries(areas).map(([key, params], i) => (
+        {areas.map((area, i) => (
           <Area
-            key={key}
-            name={params.label || key}
+            key={area.dataKey}
+            name={area.label || area.dataKey}
             type="monotone"
-            dataKey={key}
+            dataKey={area.dataKey}
             fill={COLORS[i]}
             legendType="none"
           />
         ))}
 
-        {Object.entries(lines).map(([key, params], i) => (
+        {lines.map((line, i) => (
           <Line
-            key={key}
-            name={params.label || key}
+            key={line.dataKey}
+            name={line.label || line.dataKey}
             type="monotone"
             strokeLinecap="round"
             strokeWidth={2}
-            dataKey={key}
+            dataKey={line.dataKey}
             stroke={COLORS[i]}
             dot={false}
             legendType="none"
           />
         ))}
 
-        {Object.entries(bars).map(([key, params], i) => (
+        {bars.map((bar, i) => (
           <Bar
-            key={key}
-            name={params.label || key}
+            key={bar.dataKey}
+            name={bar.label || bar.dataKey}
             type="monotone"
-            dataKey={key}
+            dataKey={bar.dataKey}
             legendType="none"
             fill={COLORS[i]}
           />

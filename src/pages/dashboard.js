@@ -6,7 +6,7 @@ import Text from '../components/text';
 import { getDashboard } from '../data-service';
 import usePromise from '../hooks/use-promise';
 
-function Dashboard() {
+function DashboardPage() {
   const { dashboardId } = useParams();
 
   const [dashboard, { isFetching, error }] = usePromise(() => getDashboard(dashboardId), {
@@ -60,4 +60,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default DashboardPage;

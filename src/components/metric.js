@@ -5,9 +5,9 @@ function Metric(props) {
     data, config,
   } = props;
 
-  const { key, unit, transform } = config;
+  const { dataKey, unit, transform } = config;
 
-  let value = Array.isArray(data) ? data[0]?.[key] : data[key];
+  let value = Array.isArray(data) ? data[0]?.[dataKey] : data[dataKey];
   if (transform) {
     value = formatters[transform](value);
   }

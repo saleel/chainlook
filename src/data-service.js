@@ -51,25 +51,24 @@ export function getWidget(widgetId) {
       type: 'chart',
       chart: {
         xAxis: {
-          key: 'date',
+          dataKey: 'date',
           transform: 'unixDate',
         },
         yAxis: {
           transform: 'roundedNumber',
         },
-        lines: {
-          dailyVolumeETH: {
-            label: 'Daily Volume',
-            transform: 'roundedNumber',
-          },
-          totalVolumeETH: {
-            label: 'Daily Volume',
-            transform: 'roundedNumber',
-          },
+        lines: [{
+          dataKey: 'dailyVolumeETH',
+          label: 'Daily Volume',
+          transform: 'roundedNumber',
+        }, {
+          dataKey: 'totalVolumeETH',
+          label: 'Total Volume',
+          transform: 'roundedNumber',
         },
+        ],
       },
       data: {
-        source: 'the-graph',
         subGraphId: 'uniswap/uniswap-v2',
         entity: 'uniswapDayDatas',
         filters: {
@@ -88,7 +87,6 @@ export function getWidget(widgetId) {
         nameKey: 'date',
       },
       data: {
-        source: 'the-graph',
         subGraphId: 'uniswap/uniswap-v2',
         entity: 'uniswapDayDatas',
         filters: {
@@ -103,19 +101,18 @@ export function getWidget(widgetId) {
       title: 'Last 10 days liquidity',
       type: 'table',
       table: {
-        columns: {
-          date: {
-            label: 'Date',
-            transform: 'unixDate',
-          },
-          dailyVolumeETH: {
-            label: 'Daily Volume',
-            transform: 'roundedNumber',
-          },
+        columns: [{
+          dataKey: 'dailyVolumeETH',
+          label: 'Daily Volume',
+          transform: 'roundedNumber',
+        }, {
+          dataKey: 'totalVolumeETH',
+          label: 'Total Volume',
+          transform: 'roundedNumber',
         },
+        ],
       },
       data: {
-        source: 'the-graph',
         subGraphId: 'uniswap/uniswap-v2',
         entity: 'uniswapDayDatas',
         filters: {
@@ -130,12 +127,11 @@ export function getWidget(widgetId) {
       title: 'ETH Daily Volume',
       type: 'metric',
       metric: {
-        key: 'dailyVolumeETH',
+        dataKey: 'dailyVolumeETH',
         unit: 'USD',
         transform: 'roundedNumber',
       },
       data: {
-        source: 'the-graph',
         subGraphId: 'uniswap/uniswap-v2',
         entity: 'uniswapDayDatas',
         filters: {
@@ -150,12 +146,11 @@ export function getWidget(widgetId) {
       title: 'USD Daily Volume',
       type: 'metric',
       metric: {
-        key: 'dailyVolumeUSD',
+        dataKey: 'dailyVolumeUSD',
         unit: 'USD',
         transform: 'roundedNumber',
       },
       data: {
-        source: 'the-graph',
         subGraphId: 'uniswap/uniswap-v2',
         entity: 'uniswapDayDatas',
         filters: {
@@ -199,40 +194,38 @@ export async function getGraphData({
 export async function getWidgetData(widget) {
   let data = [];
 
-  if (widget.data.source === 'the-graph') {
-    let fields = [];
-    if (widget.type === 'chart') {
-      fields = [
-        widget.chart.xAxis?.key,
-        ...Object.keys(widget.chart.lines || {}),
-        ...Object.keys(widget.chart.bars || {}),
-        ...Object.keys(widget.chart.areas || {}),
-      ];
-    }
-
-    if (widget.type === 'pieChart') {
-      fields = [widget.pieChart.dataKey, widget.pieChart.nameKey];
-    }
-
-    if (widget.type === 'table') {
-      fields = [...Object.keys(widget.table.columns)];
-    }
-
-    if (widget.type === 'metric') {
-      fields = [widget.metric.key];
-    }
-
-    if (!fields.length) {
-      throw new Error(`Invalid widget type ${widget.type} or no fields to fetch`);
-    }
-
-    data = await getGraphData({
-      subGraphId: widget.data.subGraphId,
-      entity: widget.data.entity,
-      fields,
-      filters: widget.data.filters,
-    });
+  let fields = [];
+  if (widget.type === 'chart') {
+    fields = [
+      widget.chart.xAxis?.dataKey,
+      ...(widget.chart.lines || []).map((d) => d.dataKey),
+      ...(widget.chart.bars || []).map((d) => d.dataKey),
+      ...(widget.chart.areas || []).map((d) => d.dataKey),
+    ].filter(Boolean);
   }
+
+  if (widget.type === 'pieChart') {
+    fields = [widget.pieChart.dataKey, widget.pieChart.nameKey];
+  }
+
+  if (widget.type === 'table') {
+    fields = widget.table.columns.map((d) => d.dataKey);
+  }
+
+  if (widget.type === 'metric') {
+    fields = [widget.metric.dataKey];
+  }
+
+  if (!fields.length) {
+    throw new Error(`Invalid widget type ${widget.type} or no fields to fetch`);
+  }
+
+  data = await getGraphData({
+    subGraphId: widget.data.subGraphId,
+    entity: widget.data.entity,
+    fields,
+    filters: widget.data.filters,
+  });
 
   return data;
 }
