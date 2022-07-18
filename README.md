@@ -1,4 +1,4 @@
-# Graph Analytics
+# ChainLook
 
 
 TODOs
@@ -11,3 +11,8 @@ TODOs
 - Optimize querying to TheGraph
 - Use IPNS in URLs
 - Improve styling
+
+
+Tech:
+- Replace monaco editor
+- Use lazy loading for routes
