@@ -9,22 +9,17 @@ import PieChart from './pie-chart';
 function Widget(props) {
   const { id, config: defaultConfig } = props;
 
-  console.log(id, defaultConfig)
   try {
     const [
       { widgetConfig: config, widgetData: data } = {},
       { isFetching: isFetchingData, error: errorData },
     ] = usePromise(
       async () => {
-        console.log('widget');
-
         let widgetConfig = defaultConfig;
 
         if (!widgetConfig) {
           widgetConfig = await getWidget(id);
         }
-
-        console.log('widget', widgetConfig);
 
         const widgetData = await getWidgetData(widgetConfig);
 
