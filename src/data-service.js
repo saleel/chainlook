@@ -1,146 +1,17 @@
 import axios from 'axios';
+import { jsonToGraphQLQuery } from 'json-to-graphql-query';
+import get from 'lodash/get';
+import set from 'lodash/set';
+import aggregations from './helpers/aggregations';
+import sampleDashboard from './examples/dashboard.json';
 
 export function getDashboard(dashboardId) {
-  return {
-    title: 'Uniswap V2',
-    rows: [
-      {
-        elements: [{
-          type: 'text',
-          text: {
-            title: 'Hello',
-            message: 'This is an awesome dashboard',
-          },
-          width: 4,
-        }, {
-          type: 'widget',
-          widgetId: 'metric1',
-          width: 4,
-        }, {
-          type: 'widget',
-          widgetId: 'metric2',
-          width: 4,
-        }],
-      },
-      {
-        elements: [{
-          type: 'widget',
-          widgetId: 'chart',
-          width: 6,
-        }, {
-          type: 'widget',
-          widgetId: 'table',
-          width: 6,
-        }],
-      },
-      {
-        elements: [{
-          type: 'widget',
-          widgetId: 'pieChart',
-          width: 6,
-        }],
-      },
-    ],
-  };
+  if (dashboardId === 'sample') {
+    return sampleDashboard;
+  }
 }
 
 export function getWidget(widgetId) {
-  if (widgetId === 'chart') {
-    return {
-      title: 'Last 10 days liquidity',
-      type: 'chart',
-      chart: {
-        xAxis: {
-          dataKey: 'date',
-          transform: 'unixDate',
-        },
-        yAxis: {
-          transform: 'roundedNumber',
-        },
-        lines: [{
-          dataKey: 'dailyVolumeETH',
-          label: 'Daily Volume',
-          transform: 'roundedNumber',
-        }, {
-          dataKey: 'totalVolumeETH',
-          label: 'Total Volume',
-          transform: 'roundedNumber',
-        },
-        ],
-      },
-      data: {
-        subGraphId: 'uniswap/uniswap-v2',
-        entity: 'uniswapDayDatas',
-        filters: {
-          orderDirection: 'desc', orderBy: 'date', skip: 1, first: 20,
-        },
-      },
-    };
-  }
-
-  if (widgetId === 'pieChart') {
-    return {
-      title: 'Last 10 days liquidity',
-      type: 'pieChart',
-      pieChart: {
-        dataKey: 'dailyVolumeETH',
-        nameKey: 'date',
-      },
-      data: {
-        subGraphId: 'uniswap/uniswap-v2',
-        entity: 'uniswapDayDatas',
-        filters: {
-          orderDirection: 'desc', orderBy: 'date', skip: 1, first: 4,
-        },
-      },
-    };
-  }
-
-  if (widgetId === 'table') {
-    return {
-      title: 'Last 10 days liquidity',
-      type: 'table',
-      table: {
-        columns: [{
-          dataKey: 'dailyVolumeETH',
-          label: 'Daily Volume',
-          transform: 'roundedNumber',
-        }, {
-          dataKey: 'totalVolumeETH',
-          label: 'Total Volume',
-          transform: 'roundedNumber',
-        },
-        ],
-      },
-      data: {
-        subGraphId: 'uniswap/uniswap-v2',
-        entity: 'uniswapDayDatas',
-        filters: {
-          orderDirection: 'desc', orderBy: 'date', skip: 1, first: 20,
-        },
-      },
-    };
-  }
-
-  if (widgetId === 'metric1') {
-    return {
-      title: 'ETH Daily Volume',
-      type: 'metric',
-      metric: {
-        dataKey: 'dailyVolumeETH',
-        unit: 'USD',
-        transform: 'roundedNumber',
-      },
-      data: {
-        subGraphId: 'uniswap/uniswap-v2',
-        entity: 'uniswapDayDatas',
-        filters: {
-          orderDirection: 'desc', orderBy: 'date', first: 1,
-        },
-      },
-    };
-  }
-
   if (widgetId === 'metric2') {
     return {
       title: 'USD Daily Volume',
@@ -162,23 +33,23 @@ export function getWidget(widgetId) {
 }
 
 export async function getGraphData({
-  subGraphId, entity, fields, filters,
+  subGraphId, entity, fields, filters, group,
 }) {
-  let filtersQuery = '';
-  if (filters) {
-    filtersQuery = Object.keys(filters).map((k) => `${k}: ${filters[k]}`).join(', ');
-    filtersQuery = `(${filtersQuery})`;
-  }
+  const fieldsObject = {};
+  fields.forEach((field) => set(fieldsObject, field, true));
 
-  const query = `
-    {
-      ${entity} ${filtersQuery} {
-        ${fields.join('\n')}
-      }
-    }
-  `;
+  const queryObj = {
+    query: {
+      [entity]: {
+        __args: filters,
+        ...fieldsObject,
+      },
+    },
+  };
 
-  // console.log({ query });
+  const query = jsonToGraphQLQuery(queryObj, { pretty: true });
+
+  // console.log(query);
 
   const { data: response } = await axios({
     url: `https://api.thegraph.com/subgraphs/name/${subGraphId}`,
@@ -188,7 +59,38 @@ export async function getGraphData({
     },
   });
 
-  return response.data?.[entity];
+  let result = response.data?.[entity];
+
+  if (group && group.key) {
+    const uniqueMap = {};
+
+    result.forEach((item) => {
+      const uniqueKey = get(item, group.key);
+      if (!uniqueMap[uniqueKey]) {
+        uniqueMap[uniqueKey] = [];
+      }
+      uniqueMap[uniqueKey].push(item);
+    });
+
+    result = Object.entries(uniqueMap).reduce((acc, [_, items]) => {
+      const aggregated = { ...items[0] }; // Start with first item and update all values
+
+      // No need to aggregate if len = 1
+      if (items.length > 1) {
+        Object.keys(group.aggregations).forEach((fieldToAggregate) => {
+          const aggregationFunction = aggregations[group.aggregations[fieldToAggregate]];
+          const aggregatedValue = aggregationFunction(items, fieldToAggregate);
+          set(aggregated, fieldToAggregate, aggregatedValue);
+        });
+      }
+
+      acc.push(aggregated);
+
+      return acc;
+    }, []);
+  }
+
+  return result;
 }
 
 export function getDataFieldsForWidget(widget) {
@@ -236,6 +138,7 @@ export async function getWidgetData(widget) {
     entity: widget.data.entity,
     fields,
     filters: widget.data.filters,
+    group: widget.data.group,
   });
 
   return data;

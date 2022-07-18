@@ -23,13 +23,12 @@ function Chart(props) {
         />
 
         <YAxis
-          {...yAxis.transform && { tickFormatter: formatters[yAxis.transform] }}
-          domain={['auto', 'auto']}
+          {...yAxis?.transform && { tickFormatter: formatters[yAxis.transform] }}
         />
 
         <Tooltip
           {...xAxis.transform && { labelFormatter: formatters[xAxis.transform] }}
-          {...yAxis.transform && { formatter: formatters[yAxis.transform] }}
+          {...yAxis?.transform && { formatter: formatters[yAxis.transform] }}
         />
 
         {areas.map((area, i) => (

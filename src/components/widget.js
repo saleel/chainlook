@@ -1,5 +1,5 @@
 import React from 'react';
-import { getDataFieldsForWidget, getWidget, getWidgetData } from '../data-service';
+import { getWidget, getWidgetData } from '../data-service';
 import usePromise from '../hooks/use-promise';
 import Chart from './chart';
 import Table from './table';
@@ -7,24 +7,35 @@ import Metric from './metric';
 import PieChart from './pie-chart';
 
 function Widget(props) {
+  const { id, config: defaultConfig } = props;
+
+  console.log(id, defaultConfig)
   try {
-    const { config } = props;
+    const [
+      { widgetConfig: config, widgetData: data } = {},
+      { isFetching: isFetchingData, error: errorData },
+    ] = usePromise(
+      async () => {
+        console.log('widget');
 
-    let cacheKey = `${config.data.subGraphId}_${config.data.entity}_`;
-    cacheKey += getDataFieldsForWidget(config).join('_');
-    cacheKey += Object.entries(config.data.filters).join('_');
+        let widgetConfig = defaultConfig;
 
-    console.log(cacheKey, config);
+        if (!widgetConfig) {
+          widgetConfig = await getWidget(id);
+        }
 
-    const [widgetData, { isFetching: isFetchingData, error: errorData }] = usePromise(() => getWidgetData(config), {
-      dependencies: [config.data],
-      conditions: [config.type],
-      cacheKey,
-    });
+        console.log('widget', widgetConfig);
 
-    if (!widgetData) {
-      return null;
-    }
+        const widgetData = await getWidgetData(widgetConfig);
+
+        return { widgetConfig, widgetData };
+      },
+      {
+        dependencies: [id, defaultConfig],
+        conditions: [id || defaultConfig],
+      // cacheKey: JSON.stringify(config.data),
+      },
+    );
 
     if (errorData) {
       throw errorData;
@@ -34,11 +45,16 @@ function Widget(props) {
       return <div>Loading</div>;
     }
 
+    if (!data) {
+      return <div>No data</div>;
+    }
+
+    // eslint-disable-next-line no-inner-declarations
     function renderWidget() {
       if (config.type === 'chart') {
         return (
           <Chart
-            data={widgetData}
+            data={data}
             config={config.chart}
           />
         );
@@ -47,7 +63,7 @@ function Widget(props) {
       if (config.type === 'pieChart') {
         return (
           <PieChart
-            data={widgetData}
+            data={data}
             config={config.pieChart}
           />
         );
@@ -56,7 +72,7 @@ function Widget(props) {
       if (config.type === 'table') {
         return (
           <Table
-            data={widgetData}
+            data={data}
             config={config.table}
           />
         );
@@ -65,7 +81,7 @@ function Widget(props) {
       if (config.type === 'metric') {
         return (
           <Metric
-            data={widgetData}
+            data={data}
             config={config.metric}
           />
         );
@@ -86,9 +102,18 @@ function Widget(props) {
       </div>
     );
   } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(error);
+
     return (
-      <div className="widget-error">
-        {error.message}
+      <div className="widget widget-error">
+        <h4 className="widget-title">
+          {defaultConfig?.title ?? id}
+        </h4>
+        <div className="widget-body">
+          <div>Error rendering Widget</div>
+          {error.message}
+        </div>
       </div>
     );
   }

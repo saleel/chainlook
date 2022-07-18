@@ -63,11 +63,6 @@ body {
   height: 100%;
 }
 
-.widget {
-  height: 350px;
-  min-width: 500px;
-}
-
 .widget-title, .text-title {
   font-weight: 600;
   padding-left: 0.75rem;
@@ -82,6 +77,7 @@ body {
 
 .widget-chart {
   width: 100%;
+  min-height: 300px;
 
   .widget-title {
     margin-bottom: 0.5rem;
@@ -95,6 +91,8 @@ body {
 }
 
 .widget-table {
+  min-height: 300px;
+
   table {
     width: 100%;
     height: calc(100% - 3rem);
@@ -135,8 +133,12 @@ body {
   }
 }
 
+.widget-pieChart {
+  min-height: 300px;
+}
+
 .widget-metric {
-  height: 100px;
+  min-height: 100px;
   min-width: 100px;
 }
 

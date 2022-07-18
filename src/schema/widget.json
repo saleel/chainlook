@@ -48,7 +48,6 @@
         }
       },
       "required": [
-        "source",
         "subGraphId",
         "entity"
       ]
@@ -68,8 +67,7 @@
           "chart": {
             "type": "object",
             "required": [
-              "xAxis",
-              "yAxis"
+              "xAxis"
             ],
             "oneOf": [
               {

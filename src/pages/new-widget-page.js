@@ -1,45 +1,14 @@
 /* eslint-disable react/no-array-index-key */
 import React from 'react';
 import MonacoEditor from 'react-monaco-editor';
-import { useDebounce, useDebouncedCallback } from 'use-debounce';
-import { useParams } from 'react-router-dom';
+import { useDebouncedCallback } from 'use-debounce';
 import widgetSchema from '../schema/widget.json';
 import Widget from '../components/widget';
-import Text from '../components/text';
-import { getDashboard } from '../data-service';
-import usePromise from '../hooks/use-promise';
+import defaultJson from '../examples/widget.json';
 
-const defaultJson = JSON.stringify(
-  {
-    title: 'Last 10 days liquidity',
-    type: 'table',
-    table: {
-      columns: [{
-        dataKey: 'dailyVolumeETH',
-        label: 'Daily Volume',
-        transform: 'roundedNumber',
-      }, {
-        dataKey: 'totalVolumeETH',
-        label: 'Total Volume',
-        transform: 'roundedNumber',
-      },
-      ],
-    },
-    data: {
-      subGraphId: 'uniswap/uniswap-v2',
-      entity: 'uniswapDayDatas',
-      filters: {
-        orderDirection: 'desc', orderBy: 'date', skip: 1, first: 20,
-      },
-    },
-  },
-  null,
-  2,
-);
-
-function CreateWidgetPage() {
-  const [widgetJson, setWidgetJson] = React.useState(defaultJson);
-  const [validWidgetConfig, setValidWidgetConfig] = React.useState(JSON.parse(defaultJson));
+function NewWidgetPage() {
+  const [widgetJson, setWidgetJson] = React.useState(JSON.stringify(defaultJson, null, 2));
+  const [validWidgetConfig, setValidWidgetConfig] = React.useState(defaultJson);
 
   const debounced = useDebouncedCallback(
     (newJson) => {
@@ -72,7 +41,6 @@ function CreateWidgetPage() {
             theme="vs-light"
             value={widgetJson}
             onChange={(newValue) => {
-              console.log(newValue);
               setWidgetJson(newValue);
               debounced(newValue);
             }}
@@ -94,4 +62,4 @@ function CreateWidgetPage() {
   );
 }
 
-export default CreateWidgetPage;
+export default NewWidgetPage;

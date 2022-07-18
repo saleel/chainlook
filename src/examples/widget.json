@@ -1,0 +1,36 @@
+{
+  "title": "Top pools of the day",
+  "type": "table",
+  "data": {
+    "subGraphId": "messari/uniswap-v3-ethereum",
+    "entity": "liquidityPoolDailySnapshots",
+    "filters": {
+      "orderDirection": "desc",
+      "orderBy": "dailyVolumeUSD",
+      "skip": 1,
+      "first": 20,
+      "where": {
+        "timestamp_gte": 1658016000
+      }
+    },
+    "group": {
+      "key": "pool.symbol",
+      "aggregations": {
+        "dailyVolumeUSD": "sum"
+      }
+    }
+  },
+  "table": {
+    "columns": [
+      {
+        "dataKey": "pool.symbol",
+        "label": "Pool"
+      },
+      {
+        "dataKey": "dailyVolumeUSD",
+        "label": "Daily Volume (USD)",
+        "transform": "currency"
+      }
+    ]
+  }
+}
