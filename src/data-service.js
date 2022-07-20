@@ -1,9 +1,12 @@
 import axios from 'axios';
+import { Web3Storage } from 'web3.storage';
 import { jsonToGraphQLQuery } from 'json-to-graphql-query';
 import get from 'lodash/get';
 import set from 'lodash/set';
 import aggregations from './helpers/aggregations';
 import sampleDashboard from './examples/dashboard.json';
+
+const web3Storage = new Web3Storage({ token: process.env.REACT_APP_WEB3_STORAGE_API_KEY });
 
 export function getDashboard(dashboardId) {
   if (dashboardId === 'sample') {
@@ -12,23 +15,15 @@ export function getDashboard(dashboardId) {
 }
 
 export function getWidget(widgetId) {
-  if (widgetId === 'metric2') {
-    return {
-      title: 'USD Daily Volume',
-      type: 'metric',
-      metric: {
-        dataKey: 'dailyVolumeUSD',
-        unit: 'USD',
-      },
-      data: {
-        subGraphId: 'uniswap/uniswap-v2',
-        entity: 'uniswapDayDatas',
-        filters: {
-          orderDirection: 'desc', orderBy: 'date', first: 1,
-        },
-      },
-    };
-  }
+  const response = axios({
+    method: 'get',
+    baseURL: 'https://ipfs.io/ipfs/',
+    url: widgetId,
+  });
+
+  console.log(response);
+
+  return JSON.parse(response.data);
 }
 
 export async function getGraphData({
@@ -141,4 +136,25 @@ export async function getWidgetData(widget) {
   });
 
   return data;
+}
+
+export async function publishWidgetToIPFS(widgetConfig) {
+  const rootCid = await web3Storage.put([{
+    name: `ChainLook: ${widgetConfig.type} - ${widgetConfig.title}`,
+    stream: () => new ReadableStream({
+      start(controller) {
+        controller.enqueue(JSON.stringify(widgetConfig, null, 2));
+        controller.close();
+      },
+    }),
+  }]);
+
+  const res = await web3Storage.get(rootCid);
+  const files = await res.files();
+
+  return files[0]?.cid;
+}
+
+export async function saveWidgetLocally() {
+  alert();
 }

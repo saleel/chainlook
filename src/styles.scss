@@ -41,16 +41,48 @@ body {
 .header {
   height: 3rem;
   margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.menu {
+  height: 3rem;
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+}
+
+.menu-item {
+  margin: 1rem 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-color);
+
+  &:last-child {
+    margin-right: 0;
+  }
+
+  &:hover {
+    color: var(--text-color);
+    text-decoration: underline;
+  }
 }
 
 .logo {
   font-size: 1.5rem;
   font-weight: 600;
   padding: 1rem 0;
+  color: var(--text-color);
+
+  &:hover {
+    color: var(--text-color);
+    text-decoration: underline;
+  }
 }
 
 .footer {
-  height: 6rem;
+  height: 5rem;
+  margin-top: 3rem;
   text-align: center;
   width: 100%;
   background-color: auto;
@@ -60,11 +92,17 @@ body {
 }
 
 .page {
-  min-height: calc(100vh - 6rem); // Subtract header + footer
+  min-height: calc(100vh - 3rem - 2rem - 8rem); // Subtract header + footer
 }
 
 .w-100 {
   width: 100%;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
 }
 
 .dashboard-title {
@@ -82,7 +120,7 @@ body {
   z-index: 1;
 }
 
-.widget, 
+.widget,
 .recharts-surface {
   &:hover {
     overflow: visible;
@@ -178,7 +216,9 @@ body {
   }
 }
 
-.widget-table, .widget-chart,.widget-pieChart {
+.widget-table,
+.widget-chart,
+.widget-pieChart {
   min-height: 300px;
 }
 
@@ -226,6 +266,37 @@ body {
   flex-direction: column;
 }
 
+.create-widget-section {
+  display: flex;
+  flex-direction: row;
+}
+
+.create-widget-helper {
+  padding: 0 2rem;
+
+  .button {
+    display: block;
+    margin-bottom: 1rem;
+    border-radius: 0;
+    color: var(--text-color);
+    border: 1px solid var(--text-color);
+    font-weight: 500;
+    font-size: 1.1rem;
+
+    &:hover {
+      background-color: var(--text-color);
+      color: #fff;
+    }
+  }
+}
+
+.create-widget-editor {
+  height: 40vh;
+  width: 75%;
+  border: 1px solid var(--text-color);
+  padding: 1rem;
+}
+
 .create-widget-preview {
   width: 100%;
   margin-bottom: 2rem;
@@ -234,11 +305,12 @@ body {
   .widget {
     height: 100%;
   }
+
+  .widget-metric {
+    height: auto;
+  }
 }
 
-.create-widget-editor {
-  height: 45vh;
-  width: 100%;
-  border: 1px solid var(--text-color);
+.message {
   padding: 1rem;
 }

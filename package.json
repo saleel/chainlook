@@ -15,7 +15,8 @@
     "react-monaco-editor": "^0.49.0",
     "react-router-dom": "^6.3.0",
     "recharts": "^2.1.12",
-    "use-debounce": "^8.0.2"
+    "use-debounce": "^8.0.2",
+    "web3.storage": "^4.3.0"
   },
   "scripts": {
     "start": "react-app-rewired start",

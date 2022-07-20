@@ -1,5 +1,5 @@
 {
-  "title": "Uniswap V2",
+  "title": "Uniswap V3",
   "elements": [
     {
       "id": "text-main",
@@ -209,7 +209,6 @@
         "minW": 4
       }
     },
-    
     {
       "type": "widget",
       "layout": {
@@ -229,7 +228,7 @@
             "orderDirection": "desc",
             "orderBy": "dailyVolumeUSD",
             "skip": 1,
-            "first": 50,
+            "first": 100,
             "where": {
               "timestamp_gte": 1658016000
             }
@@ -237,7 +236,8 @@
           "group": {
             "key": "pool.symbol",
             "aggregations": {
-              "dailyVolumeUSD": "sum"
+              "dailyVolumeUSD": "sum",
+              "dailySupplySideRevenueUSD": "sum"
             }
           }
         },
@@ -258,7 +258,7 @@
               "transform": "number"
             },
              {
-              "dataKey": "dailySupplySideRevenueUSD",
+              "dataKey": "dailyTotalRevenueUSD",
               "label": "Revenue (USD)",
               "transform": "number"
             }

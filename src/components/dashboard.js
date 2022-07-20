@@ -18,8 +18,8 @@ export default function Dashboard(props) {
         className="layout"
         rowHeight={100}
         width={1400}
-        margin={[16, 16]}
-        style={{ margin: '-16px' }}
+        margin={[20, 20]}
+        style={{ margin: '-20px', marginBottom: '1rem' }}
         breakpoints={{
           lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0,
         }}
