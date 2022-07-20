@@ -128,9 +128,7 @@
                     }
                   },
                   "required": [
-                    "dataKey",
-                    "label",
-                    "transform"
+                    "dataKey"
                   ]
                 }
               },
@@ -150,9 +148,7 @@
                     }
                   },
                   "required": [
-                    "dataKey",
-                    "label",
-                    "transform"
+                    "dataKey"
                   ]
                 }
               },
@@ -172,9 +168,7 @@
                     }
                   },
                   "required": [
-                    "dataKey",
-                    "label",
-                    "transform"
+                    "dataKey"
                   ]
                 }
               }
@@ -215,9 +209,7 @@
                     }
                   },
                   "required": [
-                    "dataKey",
-                    "label",
-                    "transform"
+                    "dataKey"
                   ]
                 }
               }

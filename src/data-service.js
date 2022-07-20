@@ -19,7 +19,6 @@ export function getWidget(widgetId) {
       metric: {
         dataKey: 'dailyVolumeUSD',
         unit: 'USD',
-        transform: 'roundedNumber',
       },
       data: {
         subGraphId: 'uniswap/uniswap-v2',

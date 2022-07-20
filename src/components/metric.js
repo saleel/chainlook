@@ -8,7 +8,7 @@ function Metric(props) {
   const { dataKey, unit, transform } = config;
 
   let value = Array.isArray(data) ? data[0]?.[dataKey] : data[dataKey];
-  if (transform) {
+  if (transform && typeof formatters[transform] === 'function') {
     value = formatters[transform](value);
   }
 

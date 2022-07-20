@@ -27,32 +27,40 @@
 
 body {
   font-family: "Fira Code", monospace;
-  // font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
-  //   "Helvetica Neue", sans-serif;
   color: var(--text-color);
-  // background-color: #eef2f6;
   margin: 0;
   padding: 0;
 }
 
+.wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
 .header {
-  height: 2rem;
+  height: 3rem;
+  margin-bottom: 2rem;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 600;
+  padding: 1rem 0;
 }
 
 .footer {
-  height: 4rem;
+  height: 6rem;
   text-align: center;
   width: 100%;
   background-color: auto;
-  margin: 0;
-  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .page {
-  padding: 0 2rem !important;
   min-height: calc(100vh - 6rem); // Subtract header + footer
-  max-width: 1400px;
-  margin: 0 auto;
 }
 
 .w-100 {
@@ -71,13 +79,22 @@ body {
   overflow: hidden;
   height: 100%;
   border: 1px solid var(--text-color);
+  z-index: 1;
+}
+
+.widget, 
+.recharts-surface {
+  &:hover {
+    overflow: visible;
+    z-index: 2 !important;
+  }
 }
 
 .widget-title,
 .text-title {
   font-weight: 600;
   padding-left: 1rem;
-  line-height: 2.5rem;
+  height: 2.5rem;
   display: flex;
   align-items: center;
 }
@@ -87,7 +104,7 @@ body {
 }
 
 .widget-body {
-  height: calc(100% - 3rem); // Subtract widget title
+  height: calc(100% - 2.5rem); // Subtract widget title
 }
 
 .widget-chart {
@@ -212,7 +229,7 @@ body {
 .create-widget-preview {
   width: 100%;
   margin-bottom: 2rem;
-  height: 45vh;
+  height: 40vh;
 
   .widget {
     height: 100%;
@@ -220,5 +237,8 @@ body {
 }
 
 .create-widget-editor {
+  height: 45vh;
   width: 100%;
+  border: 1px solid var(--text-color);
+  padding: 1rem;
 }

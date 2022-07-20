@@ -77,6 +77,9 @@ function usePromise(promise, options = {}) {
 
   async function fetch() {
     didCancel = false;
+    if (error) {
+      setError(undefined);
+    }
 
     if (cachedData) {
       if (cachedData.storedAt

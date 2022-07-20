@@ -4,16 +4,16 @@ import { Outlet } from 'react-router-dom';
 export default function Layout() {
   return (
     <>
-      <div className="header">
-        <h1>Graph Analytics</h1>
+      <div className="header wrapper">
+        <h1 className="logo">ChainLook</h1>
       </div>
 
-      <div className="main">
+      <div className="main wrapper">
         <Outlet />
       </div>
 
-      <div className="footer">
-        Copyright &copy;2022 Graph Analytics
+      <div className="footer wrapper">
+        Copyright &copy;2022 ChainLook
       </div>
     </>
   );

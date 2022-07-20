@@ -14,5 +14,7 @@ TODOs
 
 
 Tech:
+- Fix data loaders
 - Replace monaco editor
 - Use lazy loading for routes
+- Add globals

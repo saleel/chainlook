@@ -22,6 +22,7 @@
         "react/react-in-jsx-scope": [0],
         "react/prop-types": [0],
         "react/jsx-props-no-spreading": [0],
-        "max-len": [1, { "code": 200 }]
+        "max-len": [1, { "code": 200 }],
+        "no-restricted-syntax": [0]
     }
 }

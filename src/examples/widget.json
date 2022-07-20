@@ -29,7 +29,7 @@
       {
         "dataKey": "dailyVolumeUSD",
         "label": "Daily Volume (USD)",
-        "transform": "currency"
+        "transform": "number"
       }
     ]
   }

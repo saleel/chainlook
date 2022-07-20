@@ -5,8 +5,8 @@
       "id": "text-main",
       "type": "text",
       "text": {
-        "title": "Hello",
-        "message": "This is an awesome dashboard"
+        "title": "Data Source",
+        "message": "This is a Uniswap v3 dashboard based on subgraph messari/uniswap-v3-ethereum."
       },
       "layout": {
         "x": 0,
@@ -18,19 +18,19 @@
     {
       "type": "widget",
       "widget": {
-        "title": "ETH Daily Volume",
+        "title": "Total Value Locked",
         "type": "metric",
         "metric": {
-          "dataKey": "dailyVolumeETH",
+          "dataKey": "totalValueLockedUSD",
           "unit": "USD",
-          "transform": "roundedNumber"
+          "transform": "bigDecimal"
         },
         "data": {
-          "subGraphId": "uniswap/uniswap-v2",
-          "entity": "uniswapDayDatas",
+          "subGraphId": "messari/uniswap-v3-ethereum",
+          "entity": "financialsDailySnapshots",
           "filters": {
             "orderDirection": "desc",
-            "orderBy": "date",
+            "orderBy": "timestamp",
             "first": 1
           }
         }
@@ -44,7 +44,24 @@
     },
     {
       "type": "widget",
-      "widgetId": "metric2",
+      "widget": {
+        "title": "Total Revenue",
+        "type": "metric",
+        "metric": {
+          "dataKey": "cumulativeTotalRevenueUSD",
+          "unit": "USD",
+          "transform": "compactNumber"
+        },
+        "data": {
+          "subGraphId": "messari/uniswap-v3-ethereum",
+          "entity": "financialsDailySnapshots",
+          "filters": {
+            "orderDirection": "desc",
+            "orderBy": "timestamp",
+            "first": 1
+          }
+        }
+      },
       "layout": {
         "x": 4,
         "y": 0,
@@ -54,15 +71,156 @@
     },
     {
       "type": "widget",
+      "widget": {
+        "title": "Total Pool Count",
+        "type": "metric",
+        "metric": {
+          "dataKey": "totalPoolCount",
+          "transform": "number"
+        },
+        "data": {
+          "subGraphId": "messari/uniswap-v3-ethereum",
+          "entity": "usageMetricsDailySnapshots",
+          "filters": {
+            "orderDirection": "desc",
+            "orderBy": "timestamp",
+            "first": 1
+          }
+        }
+      },
+      "layout": {
+        "x": 6,
+        "y": 0,
+        "w": 2,
+        "h": 1
+      }
+    },
+    {
+      "type": "widget",
+      "widget": {
+        "title": "Cumulative Volume - Last 6 Months",
+        "type": "chart",
+        "data": {
+          "subGraphId": "messari/uniswap-v3-ethereum",
+          "entity": "financialsDailySnapshots",
+          "filters": {
+            "orderDirection": "desc",
+            "orderBy": "timestamp",
+            "skip": 1,
+            "first": 180
+          }
+        },
+        "chart": {
+          "xAxis": {
+            "dataKey": "timestamp",
+            "transform": "dateMMMdd"
+          },
+          "yAxis": {
+            "transform": "compactNumber"
+          },
+          "areas": [
+            {
+              "dataKey": "dailyVolumeUSD",
+              "label": "Cumulative Volume (USD)"
+            }
+          ]
+        }
+      },
       "layout": {
         "x": 0,
         "y": 1,
-        "w": 4,
+        "w": 8,
         "h": 4,
         "minW": 4
-      },
+      }
+    },
+
+    {
+      "type": "widget",
       "widget": {
         "title": "Top pools of the day",
+        "type": "pieChart",
+        "data": {
+          "subGraphId": "messari/uniswap-v3-ethereum",
+          "entity": "liquidityPoolDailySnapshots",
+          "filters": {
+            "orderDirection": "desc",
+            "orderBy": "dailyVolumeUSD",
+            "skip": 1,
+            "first": 10,
+            "where": {
+              "timestamp_gte": 1658016000
+            }
+          }
+        },
+        "pieChart": {
+          "dataKey": "dailyVolumeUSD",
+          "nameKey": "pool.symbol"
+        }
+      },
+      "layout": {
+        "x": 0,
+        "y": 1,
+        "w": 3,
+        "h": 4,
+        "minW": 2
+      }
+    },
+    {
+      "type": "widget",
+      "widget": {
+        "title": "Usage Trend - Last 30 Days",
+        "type": "chart",
+        "data": {
+          "subGraphId": "messari/uniswap-v3-ethereum",
+          "entity": "usageMetricsDailySnapshots",
+          "filters": {
+            "orderDirection": "desc",
+            "orderBy": "timestamp",
+            "skip": 1,
+            "first": 30
+          }
+        },
+        "chart": {
+          "xAxis": {
+            "dataKey": "timestamp",
+            "transform": "dateMMMdd"
+          },
+          "yAxis": {
+            "transform": "number"
+          },
+          "lines": [
+            {
+              "dataKey": "dailyActiveUsers",
+              "label": "Daily Active Users"
+            },
+            {
+              "dataKey": "dailySwapCount",
+              "label": "Daily Swap Count"
+            }
+          ]
+        }
+      },
+      "layout": {
+        "x": 3,
+        "y": 1,
+        "w": 5,
+        "h": 4,
+        "minW": 4
+      }
+    },
+    
+    {
+      "type": "widget",
+      "layout": {
+        "x": 0,
+        "y": 1,
+        "w": 8,
+        "h": 4,
+        "minW": 6
+      },
+      "widget": {
+        "title": "Liquidity Pools (Last 7 Days)",
         "type": "table",
         "data": {
           "subGraphId": "messari/uniswap-v3-ethereum",
@@ -71,7 +229,7 @@
             "orderDirection": "desc",
             "orderBy": "dailyVolumeUSD",
             "skip": 1,
-            "first": 20,
+            "first": 50,
             "where": {
               "timestamp_gte": 1658016000
             }
@@ -91,56 +249,21 @@
             },
             {
               "dataKey": "dailyVolumeUSD",
-              "label": "Daily Volume (USD)",
-              "transform": "currency"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "type": "widget",
-      "widget": {
-        "title": "Last 10 days liquidity",
-        "type": "chart",
-        "chart": {
-          "xAxis": {
-            "dataKey": "date",
-            "transform": "unixDate"
-          },
-          "yAxis": {
-            "transform": "roundedNumber"
-          },
-          "lines": [
-            {
-              "dataKey": "dailyVolumeETH",
-              "label": "Daily Volume",
-              "transform": "roundedNumber"
+              "label": "Volume (USD)",
+              "transform": "number"
             },
             {
-              "dataKey": "totalVolumeETH",
-              "label": "Total Volume",
-              "transform": "roundedNumber"
+              "dataKey": "totalValueLockedUSD",
+              "label": "TVL (USD)",
+              "transform": "number"
+            },
+             {
+              "dataKey": "dailySupplySideRevenueUSD",
+              "label": "Revenue (USD)",
+              "transform": "number"
             }
           ]
-        },
-        "data": {
-          "subGraphId": "uniswap/uniswap-v2",
-          "entity": "uniswapDayDatas",
-          "filters": {
-            "orderDirection": "desc",
-            "orderBy": "date",
-            "skip": 1,
-            "first": 20
-          }
         }
-      },
-      "layout": {
-        "x": 4,
-        "y": 1,
-        "w": 4,
-        "h": 4,
-        "minW": 4
       }
     }
   ]

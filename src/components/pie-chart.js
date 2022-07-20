@@ -26,7 +26,7 @@ function PieChart(props) {
           cy="50%"
           outerRadius={125}
           fill={COLORS[0]}
-          label
+          label={(item) => `${item.name}: ${item.value}`}
         />
       </RechartPieChart>
     </ResponsiveContainer>

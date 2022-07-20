@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Line, ComposedChart, XAxis, YAxis, Tooltip, ResponsiveContainer, Bar, Area,
 } from 'recharts';
@@ -12,6 +13,18 @@ function Chart(props) {
     },
   } = props;
 
+  const dataKeys = [...lines, ...areas, ...bars].map((c) => c.dataKey);
+  let maxData = 0;
+
+  for (const datum of data) {
+    for (const dataKey of dataKeys) {
+      const value = Number(datum[dataKey]);
+      if (value > maxData) {
+        maxData = value;
+      }
+    }
+  }
+
   return (
     <ResponsiveContainer>
       <ComposedChart
@@ -19,11 +32,14 @@ function Chart(props) {
       >
         <XAxis
           dataKey={xAxis.dataKey}
+          {...typeof formatters[xAxis.transform] === 'function' && { tickFormatter: formatters[xAxis.transform] }}
           {...xAxis.transform && { tickFormatter: formatters[xAxis.transform] }}
         />
 
         <YAxis
-          {...yAxis?.transform && { tickFormatter: formatters[yAxis.transform] }}
+          {...typeof formatters[yAxis.transform] === 'function' && { tickFormatter: formatters[yAxis.transform] }}
+          type="number"
+          domain={[0, maxData * 1.1]}
         />
 
         <Tooltip
@@ -72,4 +88,4 @@ function Chart(props) {
   );
 }
 
-export default Chart;
+export default React.memo(Chart);
