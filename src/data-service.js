@@ -14,16 +14,14 @@ export function getDashboard(dashboardId) {
   }
 }
 
-export function getWidget(widgetId) {
-  const response = axios({
+export async function getWidget(widgetId) {
+  const response = await axios({
     method: 'get',
     baseURL: 'https://ipfs.io/ipfs/',
     url: widgetId,
   });
 
-  console.log(response);
-
-  return JSON.parse(response.data);
+  return response.data;
 }
 
 export async function getGraphData({

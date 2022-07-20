@@ -68,9 +68,14 @@ function usePromise(promise, options = {}) {
     cachedData = cache.get(cacheKey);
   }
 
+  const allConditionsValid = conditions.every((condition) => {
+    if (typeof condition === 'function') return !!condition();
+    return !!condition;
+  });
+
   const [result, setResult] = React.useState(cachedData ? cachedData.data : defaultValue);
   const [fetchedAt, setFetchedAt] = React.useState(cachedData ? cachedData.storedAt : undefined);
-  const [isFetching, setIsFetching] = React.useState(!(cachedData && cachedData.data));
+  const [isFetching, setIsFetching] = React.useState(allConditionsValid && !(cachedData && cachedData.data));
   const [error, setError] = React.useState();
 
   let didCancel = false;
@@ -118,11 +123,6 @@ function usePromise(promise, options = {}) {
   }
 
   React.useEffect(() => {
-    const allConditionsValid = conditions.every((condition) => {
-      if (typeof condition === 'function') return !!condition();
-      return !!condition;
-    });
-
     if (!allConditionsValid) return;
 
     fetch();

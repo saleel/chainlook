@@ -6,12 +6,31 @@ import { Link } from 'react-router-dom';
 import widgetSchema from '../schema/widget.json';
 import Widget from '../components/widget';
 import defaultJson from '../examples/widget.json';
-import { publishWidgetToIPFS, saveWidgetLocally } from '../data-service';
+import { getWidget, publishWidgetToIPFS, saveWidgetLocally } from '../data-service';
+import usePromise from '../hooks/use-promise';
 
 function NewWidgetPage() {
-  const [widgetJson, setWidgetJson] = React.useState(JSON.stringify(defaultJson, null, 2));
+  const fromId = new URL(window.location).searchParams?.get('fromId');
+
+  const [fromWidgetConfig, { isFetching, error }] = usePromise(async () => {
+    if (fromId) {
+      return getWidget(fromId);
+    }
+
+    return defaultJson;
+  }, {
+    dependencies: [fromId],
+    conditions: [],
+  });
+
+  const [widgetJson, setWidgetJson] = React.useState();
   const [validWidgetConfig, setValidWidgetConfig] = React.useState(defaultJson);
   const [publishedWidgetCID, setPublishedWidgetCID] = React.useState();
+
+  React.useEffect(() => {
+    setValidWidgetConfig(fromWidgetConfig);
+    setWidgetJson(JSON.stringify(fromWidgetConfig, null, 2));
+  }, [fromWidgetConfig]);
 
   const debounced = useDebouncedCallback(
     (newJson) => {
@@ -42,6 +61,14 @@ function NewWidgetPage() {
         <Link to={`/widget/${publishedWidgetCID}`}>View</Link>
       </>
     );
+  }
+
+  if (isFetching) {
+    return (<div>Loading</div>);
+  }
+
+  if (error) {
+    return (<div>{error.message}</div>);
   }
 
   return (

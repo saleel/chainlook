@@ -4,14 +4,23 @@ import HomePage from './pages/home-page';
 import DashboardPage from './pages/dashboard-page';
 import Layout from './components/layout';
 import NewWidgetPage from './pages/new-widget-page';
+import WidgetPage from './pages/widget-page';
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
+      <Route exact path="/" element={<Layout />}>
         <Route index element={<HomePage />} />
-        <Route path="/dashboard/:dashboardId" element={<DashboardPage />} />
-        <Route path="/widget/new" element={<NewWidgetPage />} />
+
+        <Route path="widget">
+          <Route path=":widgetId" element={<WidgetPage />} />
+          <Route path="new" element={<NewWidgetPage />} />
+        </Route>
+
+        <Route path="dashboard">
+          <Route path=":dashboardId" element={<DashboardPage />} />
+        </Route>
+
       </Route>
     </Routes>
   );

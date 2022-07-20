@@ -52,19 +52,23 @@ body {
   align-items: baseline;
 }
 
-.menu-item {
-  margin: 1rem 1.5rem;
+.link {
   font-size: 1.1rem;
   font-weight: 500;
   color: var(--text-color);
 
-  &:last-child {
-    margin-right: 0;
-  }
-
   &:hover {
     color: var(--text-color);
     text-decoration: underline;
+  }
+}
+
+.menu-item {
+  @extend .link;
+  margin: 1rem 1.5rem;
+
+  &:last-child {
+    margin-right: 0;
   }
 }
 
@@ -216,7 +220,10 @@ body {
   }
 }
 
-.widget-table,
+.widget-table {
+  min-height: 100px;
+}
+
 .widget-chart,
 .widget-pieChart {
   min-height: 300px;
@@ -228,6 +235,7 @@ body {
   display: flex;
   justify-content: space-between;
   flex-direction: column;
+  height: auto !important;
 
   .widget-title {
     border-bottom: none;
@@ -305,12 +313,25 @@ body {
   .widget {
     height: 100%;
   }
+}
 
-  .widget-metric {
-    height: auto;
+.widget-page {
+  .widget {
+    height: 500px;
   }
 }
 
 .message {
   padding: 1rem;
+}
+
+.delay {
+  visibility: hidden;
+  animation: appear 1s ease 2s forwards;
+}
+
+@keyframes appear {
+  to {
+    visibility: visible;
+  }
 }
