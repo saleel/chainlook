@@ -3,6 +3,7 @@ import { getWidget, getWidgetData } from '../data-service';
 import usePromise from '../hooks/use-promise';
 import Chart from './chart';
 import Table from './table';
+import Text from './text';
 import Metric from './metric';
 import PieChart from './pie-chart';
 
@@ -21,7 +22,7 @@ function Widget(props) {
           widgetConfig = await getWidget(id);
         }
 
-        const widgetData = await getWidgetData(widgetConfig);
+        const widgetData = widgetConfig.data ? await getWidgetData(widgetConfig) : null;
 
         return { widgetConfig, widgetData };
       },
@@ -37,15 +38,23 @@ function Widget(props) {
     }
 
     if (isFetchingData) {
-      return <div>Loading</div>;
+      return <div className="widget p-4">Loading</div>;
     }
 
-    if (!data) {
-      return <div>No data</div>;
+    if (config?.data && !data) {
+      return <div className="widget p-4">No data</div>;
     }
 
     // eslint-disable-next-line no-inner-declarations
     function renderWidget() {
+      if (config.type === 'text') {
+        return (
+          <Text
+            config={config.text}
+          />
+        );
+      }
+
       if (config.type === 'chart') {
         return (
           <Chart
@@ -82,6 +91,10 @@ function Widget(props) {
         );
       }
 
+      return null;
+    }
+
+    if (!config) {
       return null;
     }
 

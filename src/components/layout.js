@@ -15,7 +15,7 @@ export default function Layout() {
               New Widget
             </div>
           </Link>
-          <Link to="/widget/new">
+          <Link to="/dashboard/new">
             <div className="menu-item">
               New Dashboard
             </div>

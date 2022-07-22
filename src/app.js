@@ -5,6 +5,7 @@ import DashboardPage from './pages/dashboard-page';
 import Layout from './components/layout';
 import NewWidgetPage from './pages/new-widget-page';
 import WidgetPage from './pages/widget-page';
+import NewDashboardPage from './pages/new-dashboard-page';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
 
         <Route path="dashboard">
           <Route path=":dashboardId" element={<DashboardPage />} />
+          <Route path="new" element={<NewDashboardPage />} />
         </Route>
 
       </Route>

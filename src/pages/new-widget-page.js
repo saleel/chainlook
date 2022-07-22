@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import widgetSchema from '../schema/widget.json';
 import Widget from '../components/widget';
 import defaultJson from '../examples/widget.json';
-import { getWidget, publishWidgetToIPFS, saveWidgetLocally } from '../data-service';
+import { getWidget, publishToIPFS, saveWidgetLocally } from '../data-service';
 import usePromise from '../hooks/use-promise';
 
 function NewWidgetPage() {
@@ -23,9 +23,9 @@ function NewWidgetPage() {
     conditions: [],
   });
 
+  const [message, setMessage] = React.useState();
   const [widgetJson, setWidgetJson] = React.useState();
   const [validWidgetConfig, setValidWidgetConfig] = React.useState(defaultJson);
-  const [publishedWidgetCID, setPublishedWidgetCID] = React.useState();
 
   React.useEffect(() => {
     setValidWidgetConfig(fromWidgetConfig);
@@ -44,22 +44,25 @@ function NewWidgetPage() {
   );
 
   async function onPublishToIPFSClick() {
-    const widgetCID = await publishWidgetToIPFS(validWidgetConfig);
-    setPublishedWidgetCID(widgetCID);
+    await saveWidgetLocally(validWidgetConfig);
+    const widgetCID = await publishToIPFS(validWidgetConfig);
+
+    setMessage(
+      <>
+        Widget published to IPFS.
+        {' '}
+        <Link to={`/widget/${widgetCID}`}>View</Link>
+      </>,
+    );
   }
 
   async function onSaveLocallyClick() {
     await saveWidgetLocally(validWidgetConfig);
-  }
 
-  let message;
-  if (publishedWidgetCID) {
-    message = (
+    setMessage(
       <>
-        Widget published to IPFS.
-        {' '}
-        <Link to={`/widget/${publishedWidgetCID}`}>View</Link>
-      </>
+        Widget saved locally. You can use it while creating dashboards.
+      </>,
     );
   }
 

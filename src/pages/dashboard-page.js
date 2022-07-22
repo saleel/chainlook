@@ -14,11 +14,11 @@ function DashboardPage() {
   });
 
   if (isFetching) {
-    return (<div>Loading</div>);
+    return (<div className="page dashboard-page">Loading</div>);
   }
 
   if (error) {
-    return (<div>{error.message}</div>);
+    return (<div className="page dashboard-page">{error.message}</div>);
   }
 
   return (

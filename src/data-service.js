@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { Web3Storage } from 'web3.storage';
 import { jsonToGraphQLQuery } from 'json-to-graphql-query';
+import Loki from 'lokijs';
+import LokiIndexedAdapter from 'lokijs/src/loki-indexed-adapter';
 import get from 'lodash/get';
 import set from 'lodash/set';
 import aggregations from './helpers/aggregations';
@@ -8,20 +10,40 @@ import sampleDashboard from './examples/dashboard.json';
 
 const web3Storage = new Web3Storage({ token: process.env.REACT_APP_WEB3_STORAGE_API_KEY });
 
-export function getDashboard(dashboardId) {
-  if (dashboardId === 'sample') {
-    return sampleDashboard;
-  }
-}
+const adapter = new LokiIndexedAdapter();
+let dbReady = false;
+const db = new Loki('chainlook.db', {
+  adapter,
+  autoload: true,
+  autosave: true,
+  autosaveInterval: 1000,
+  autoloadCallback: (err) => {
+    if (!err) {
+      dbReady = true;
+    }
+  },
+});
 
-export async function getWidget(widgetId) {
+async function getJsonFromIPFS(cid) {
   const response = await axios({
     method: 'get',
     baseURL: 'https://ipfs.io/ipfs/',
-    url: widgetId,
+    url: cid,
   });
 
   return response.data;
+}
+
+export async function getDashboard(dashboardId) {
+  if (dashboardId === 'sample') {
+    return sampleDashboard;
+  }
+
+  return getJsonFromIPFS(dashboardId);
+}
+
+export async function getWidget(widgetId) {
+  return getJsonFromIPFS(widgetId);
 }
 
 export async function getGraphData({
@@ -136,12 +158,12 @@ export async function getWidgetData(widget) {
   return data;
 }
 
-export async function publishWidgetToIPFS(widgetConfig) {
+export async function publishToIPFS(jsonData) {
   const rootCid = await web3Storage.put([{
-    name: `ChainLook: ${widgetConfig.type} - ${widgetConfig.title}`,
+    name: ['ChainLook: ', jsonData.type, jsonData.title].filter(Boolean).join(' '),
     stream: () => new ReadableStream({
       start(controller) {
-        controller.enqueue(JSON.stringify(widgetConfig, null, 2));
+        controller.enqueue(JSON.stringify(jsonData, null, 2));
         controller.close();
       },
     }),
@@ -153,6 +175,48 @@ export async function publishWidgetToIPFS(widgetConfig) {
   return files[0]?.cid;
 }
 
-export async function saveWidgetLocally() {
-  alert();
+async function getLocalDbCollection(collectionName) {
+  if (!dbReady) {
+    await new Promise((resolve) => {
+      const interval = setInterval(() => {
+        if (dbReady) {
+          resolve();
+          clearInterval(interval);
+        }
+      });
+    });
+  }
+
+  let collection = db.getCollection(collectionName);
+
+  if (collection === null) {
+    db.addCollection(collectionName);
+    collection = db.getCollection(collectionName);
+  }
+
+  return collection;
+}
+
+export async function saveWidgetLocally(widgetConfig) {
+  const widgetsDb = await getLocalDbCollection('widgets');
+
+  widgetsDb.insert({ ...widgetConfig, createdAt: new Date().getTime() });
+}
+
+export async function getAllWidgets() {
+  const widgetsDb = await getLocalDbCollection('widgets');
+
+  return widgetsDb.find({});
+}
+
+export async function saveDashboardLocally(dashboardConfig) {
+  const dashboardDb = await getLocalDbCollection('dashboard');
+
+  dashboardDb.findAndRemove({}); // clear everything - using as singleton
+  dashboardDb.insert({ ...dashboardConfig, createdAt: new Date().getTime() });
+}
+
+export async function getLocalDashboard() {
+  const dashboardDb = await getLocalDbCollection('dashboard');
+  return dashboardDb.find({})?.[0];
 }

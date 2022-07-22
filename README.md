@@ -11,6 +11,7 @@ TODOs
 - Optimize querying to TheGraph
 - Use IPNS in URLs
 - Improve styling
+- Pagination for tables
 
 
 Tech:

@@ -1,15 +1,15 @@
 import React from 'react';
 import ReactGridLayout from 'react-grid-layout';
 import Widget from './widget';
-import Text from './text';
 
 export default function Dashboard(props) {
-  const { config, isEditable = false } = props;
+  const { config, isEditable = false, onLayoutChange } = props;
 
-  const { elements, title } = config;
+  const { widgets, title } = config;
 
   return (
     <div className="dashboard">
+
       <h2 className="dashboard-title">
         {title}
       </h2>
@@ -27,28 +27,17 @@ export default function Dashboard(props) {
         isDraggable={isEditable}
         isResizable={isEditable}
         compactType={null}
+        preventCollision
+        resizeHandles={['se']}
+        {...onLayoutChange && { onLayoutChange }}
       >
-        {elements.map((element, index) => {
-          if (element.type === 'widget') {
-            return (
-              <div key={element.id || index} data-grid={{ ...element.layout }}>
-                <Widget id={element.widgetId} config={element.widget} />
-              </div>
-            );
-          }
-
-          if (element.type === 'text') {
-            return (
-              <div key={element.id || index} data-grid={{ ...element.layout }}>
-                <Text config={element.text} />
-              </div>
-            );
-          }
-
-          return null;
-        })}
+        {widgets.map((widget, index) => (
+          <div key={widget.id || index} data-grid={{ ...widget.layout }}>
+            <Widget id={widget.cid} config={widget.widget} />
+          </div>
+        ))}
       </ReactGridLayout>
-    </div>
 
+    </div>
   );
 }

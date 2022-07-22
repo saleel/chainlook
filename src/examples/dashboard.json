@@ -1,12 +1,13 @@
 {
   "title": "Uniswap V3",
-  "elements": [
+  "widgets": [
     {
-      "id": "text-main",
-      "type": "text",
-      "text": {
+      "widget": {
         "title": "Data Source",
-        "message": "This is a Uniswap v3 dashboard based on subgraph messari/uniswap-v3-ethereum."
+        "type": "text",
+        "text": {
+          "message": "This is a Uniswap v3 dashboard based on subgraph messari/uniswap-v3-ethereum."
+        }
       },
       "layout": {
         "x": 0,
@@ -16,7 +17,6 @@
       }
     },
     {
-      "type": "widget",
       "widget": {
         "title": "Total Value Locked",
         "type": "metric",
@@ -43,7 +43,6 @@
       }
     },
     {
-      "type": "widget",
       "widget": {
         "title": "Total Revenue",
         "type": "metric",
@@ -70,7 +69,6 @@
       }
     },
     {
-      "type": "widget",
       "widget": {
         "title": "Total Pool Count",
         "type": "metric",
@@ -96,7 +94,6 @@
       }
     },
     {
-      "type": "widget",
       "widget": {
         "title": "Cumulative Volume - Last 6 Months",
         "type": "chart",
@@ -134,9 +131,7 @@
         "minW": 4
       }
     },
-
     {
-      "type": "widget",
       "widget": {
         "title": "Top pools of the day",
         "type": "pieChart",
@@ -167,7 +162,6 @@
       }
     },
     {
-      "type": "widget",
       "widget": {
         "title": "Usage Trend - Last 30 Days",
         "type": "chart",
@@ -210,7 +204,6 @@
       }
     },
     {
-      "type": "widget",
       "layout": {
         "x": 0,
         "y": 1,
@@ -257,7 +250,7 @@
               "label": "TVL (USD)",
               "transform": "number"
             },
-             {
+            {
               "dataKey": "dailyTotalRevenueUSD",
               "label": "Revenue (USD)",
               "transform": "number"

@@ -115,8 +115,7 @@ body {
   margin-bottom: 1rem;
 }
 
-.widget,
-.text {
+.widget {
   background-color: white;
   overflow: hidden;
   height: 100%;
@@ -132,8 +131,7 @@ body {
   }
 }
 
-.widget-title,
-.text-title {
+.widget-title {
   font-weight: 600;
   padding-left: 1rem;
   height: 2.5rem;
@@ -265,7 +263,7 @@ body {
 
 .text-message {
   font-size: 0.9rem;
-  padding: 0rem 1rem 1rem 1rem;
+  padding: 0.5rem 1rem;
 }
 
 .create-widget-container {
@@ -285,16 +283,19 @@ body {
   .button {
     display: block;
     margin-bottom: 1rem;
-    border-radius: 0;
-    color: var(--text-color);
-    border: 1px solid var(--text-color);
-    font-weight: 500;
-    font-size: 1.1rem;
+  }
+}
 
-    &:hover {
-      background-color: var(--text-color);
-      color: #fff;
-    }
+.button {
+  border-radius: 0;
+  color: var(--text-color);
+  border: 1px solid var(--text-color);
+  font-weight: 500;
+  font-size: 1.1rem;
+
+  &:hover {
+    background-color: var(--text-color);
+    color: #fff;
   }
 }
 
@@ -318,6 +319,26 @@ body {
 .widget-page {
   .widget {
     height: 500px;
+  }
+}
+
+.add-widget-item {
+  border: 1px solid var(--text-color);
+  margin-bottom: 1rem;
+  padding: 5px 0.5rem;
+  width: 100%;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--gray-200);
+  }
+}
+
+.new-dashboard-actions {
+  margin-bottom: 2rem;
+
+  .button {
+    margin-right: 1rem;
   }
 }
 
