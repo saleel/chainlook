@@ -7,7 +7,7 @@ const popularDashboard = [
     id: 'bafkreifxglc7dz4gouevtv52jxxtqzjz5u6pjb4gyx5qvjo773lbhft6my',
   },
   {
-    title: 'Dashboard with IPFS Source',
+    title: 'Dashboard with IPFS and Tableland data',
     id: 'bafkreienmpke565i56qtiphdwljfzaye7nbyfjv5xipooxkhnkjte3whni',
   },
 ];
