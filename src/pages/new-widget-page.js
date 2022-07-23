@@ -6,7 +6,9 @@ import { Link } from 'react-router-dom';
 import widgetSchema from '../schema/widget.json';
 import Widget from '../components/widget';
 import defaultJson from '../examples/widget.json';
-import { getWidget, publishToIPFS, saveWidgetLocally } from '../data-service';
+import {
+  getAllWidgets, getWidget, publishToIPFS, saveWidgetLocally,
+} from '../data-service';
 import usePromise from '../hooks/use-promise';
 
 function NewWidgetPage() {
@@ -15,6 +17,11 @@ function NewWidgetPage() {
   const [fromWidgetConfig, { isFetching, error }] = usePromise(async () => {
     if (fromId) {
       return getWidget(fromId);
+    }
+
+    const localWidgets = await getAllWidgets();
+    if (localWidgets.length > 0) {
+      return localWidgets[localWidgets.length - 1];
     }
 
     return defaultJson;
@@ -80,7 +87,7 @@ function NewWidgetPage() {
 
   return (
     <div className="page create-widget-page">
-      <h2 className="dashboard-title">
+      <h2 className="section-title">
         Create new widget
       </h2>
 

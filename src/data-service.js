@@ -221,7 +221,12 @@ export async function saveWidgetLocally(widgetConfig) {
 export async function getAllWidgets() {
   const widgetsDb = await getLocalDbCollection('widgets');
 
-  return widgetsDb.find({});
+  return widgetsDb.find({}).map((w) => ({
+    ...w,
+    createdAt: undefined,
+    $loki: undefined,
+    meta: undefined,
+  }));
 }
 
 export async function removeLocalDashboards() {
@@ -239,11 +244,16 @@ export async function saveDashboardLocally(dashboardConfig) {
 
 export async function getLocalDashboard() {
   const dashboardDb = await getLocalDbCollection('dashboard');
-  const firstItem = dashboardDb.find({})?.[0];
+  const firstItem = dashboardDb.find({})?.map((w) => ({
+    ...w,
+    createdAt: undefined,
+    $loki: undefined,
+    meta: undefined,
+  }))?.[0];
 
   if (!firstItem) {
     return null;
   }
 
-  return { widgets: firstItem.widgets, title: firstItem.title };
+  return firstItem;
 }
