@@ -2,7 +2,7 @@ import format from 'date-fns/format';
 
 const formatters = {
   dateMMMdd: (input) => {
-    const date = new Date(Number(input) * 1000);
+    const date = new Date(Number(input) ? (Number(input) * 1000) : input);
     return format(date, 'MMM dd');
   },
   roundedNumber: (input) => new Intl.NumberFormat().format(Number(input).toFixed(2)),

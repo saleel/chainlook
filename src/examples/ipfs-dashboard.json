@@ -1,0 +1,66 @@
+{
+  "title": "Uniswap V3",
+  "widgets": [
+    {
+      "widget": {
+        "title": "Info",
+        "type": "text",
+        "text": {
+          "message": "This is a sample dashboard based on data from IPFS."
+        }
+      },
+      "layout": {
+        "x": 0,
+        "y": 0,
+        "w": 2,
+        "h": 1
+      }
+    },
+    {
+      "layout": {
+        "x": 0,
+        "y": 1,
+        "w": 8,
+        "h": 4,
+        "minW": 6
+      },
+      "widget": {
+        "title": "Price History (data from IPFS)",
+        "type": "table",
+        "data": {
+          "source": "ipfs",
+          "cid": "bafkreifnyss54ouwluscy75qiitqox74g7do2cayq5af3qgqsyigj64sy4"
+        },
+        "table": {
+          "columns": [
+            {
+              "dataKey": "date",
+              "label": "date",
+              "transform": "dateMMMdd"
+            },
+            {
+              "dataKey": "open",
+              "label": "Open",
+              "transform": "number"
+            },
+            {
+              "dataKey": "high",
+              "label": "High",
+              "transform": "number"
+            },
+            {
+              "dataKey": "low",
+              "label": "Low",
+              "transform": "number"
+            },
+            {
+              "dataKey": "close",
+              "label": "Close",
+              "transform": "number"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

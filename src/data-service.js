@@ -7,6 +7,7 @@ import get from 'lodash/get';
 import set from 'lodash/set';
 import aggregations from './helpers/aggregations';
 import sampleDashboard from './examples/dashboard.json';
+import ipfsSampleDashboard from './examples/ipfs-dashboard.json';
 import variables from './helpers/variables';
 
 const web3Storage = new Web3Storage({ token: process.env.REACT_APP_WEB3_STORAGE_API_KEY });
@@ -40,6 +41,9 @@ export async function getDashboard(dashboardId) {
   if (dashboardId === 'sample') {
     return sampleDashboard;
   }
+  if (dashboardId === 'ipfssample') {
+    return ipfsSampleDashboard;
+  }
 
   return getJsonFromIPFS(dashboardId);
 }
@@ -54,6 +58,7 @@ export async function getGraphData({
   const fieldsObject = {};
   fields.forEach((field) => set(fieldsObject, field, true));
 
+  // Replace variables with actual values
   const updatedFilters = { ...filters };
   Object.keys(updatedFilters?.where || {}).forEach((whereKey) => {
     const whereValue = updatedFilters.where[whereKey];
@@ -154,23 +159,30 @@ export function getDataFieldsForWidget(widget) {
 }
 
 export async function getWidgetData(widget) {
-  let data = [];
-
-  const fields = getDataFieldsForWidget(widget);
-
-  if (!fields.length) {
-    throw new Error(`Invalid widget type ${widget.type} or no fields to fetch`);
+  if (widget.data.source === 'ipfs') {
+    return getJsonFromIPFS(widget.data.cid);
   }
 
-  data = await getGraphData({
-    subGraphId: widget.data.subGraphId,
-    entity: widget.data.entity,
-    fields,
-    filters: widget.data.filters,
-    group: widget.data.group,
-  });
+  if (widget.data.source === 'graph') {
+    let data = [];
+    const fields = getDataFieldsForWidget(widget);
 
-  return data;
+    if (!fields.length) {
+      throw new Error(`Invalid widget type ${widget.type} or no fields to fetch`);
+    }
+
+    data = await getGraphData({
+      subGraphId: widget.data.subGraphId,
+      entity: widget.data.entity,
+      fields,
+      filters: widget.data.filters,
+      group: widget.data.group,
+    });
+
+    return data;
+  }
+
+  return [];
 }
 
 export async function publishToIPFS(jsonData) {

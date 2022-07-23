@@ -26,6 +26,7 @@
           "transform": "bigDecimal"
         },
         "data": {
+          "source": "graph",
           "subGraphId": "messari/uniswap-v3-ethereum",
           "entity": "financialsDailySnapshots",
           "filters": {
@@ -52,6 +53,7 @@
           "transform": "compactNumber"
         },
         "data": {
+          "source": "graph",
           "subGraphId": "messari/uniswap-v3-ethereum",
           "entity": "financialsDailySnapshots",
           "filters": {
@@ -77,6 +79,7 @@
           "transform": "number"
         },
         "data": {
+          "source": "graph",
           "subGraphId": "messari/uniswap-v3-ethereum",
           "entity": "usageMetricsDailySnapshots",
           "filters": {
@@ -98,6 +101,7 @@
         "title": "Cumulative Volume - Last 6 Months",
         "type": "chart",
         "data": {
+          "source": "graph",
           "subGraphId": "messari/uniswap-v3-ethereum",
           "entity": "financialsDailySnapshots",
           "filters": {
@@ -136,6 +140,7 @@
         "title": "Top pools of the day",
         "type": "pieChart",
         "data": {
+          "source": "graph",
           "subGraphId": "messari/uniswap-v3-ethereum",
           "entity": "liquidityPoolDailySnapshots",
           "filters": {
@@ -166,6 +171,7 @@
         "title": "Usage Trend - Last 30 Days",
         "type": "chart",
         "data": {
+          "source": "graph",
           "subGraphId": "messari/uniswap-v3-ethereum",
           "entity": "usageMetricsDailySnapshots",
           "filters": {
@@ -215,6 +221,7 @@
         "title": "Liquidity Pools (Last 7 Days)",
         "type": "table",
         "data": {
+          "source": "graph",
           "subGraphId": "messari/uniswap-v3-ethereum",
           "entity": "liquidityPoolDailySnapshots",
           "filters": {
