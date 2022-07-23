@@ -43,7 +43,9 @@ function NewWidgetPage() {
     500,
   );
 
-  async function onPublishToIPFSClick() {
+  async function onPublishToIPFSClick(e) {
+    e.target.disabled = true;
+
     await saveWidgetLocally(validWidgetConfig);
     const widgetCID = await publishToIPFS(validWidgetConfig);
 
@@ -54,6 +56,8 @@ function NewWidgetPage() {
         <Link to={`/widget/${widgetCID}`}>View</Link>
       </>,
     );
+
+    e.target.disabled = false;
   }
 
   async function onSaveLocallyClick() {

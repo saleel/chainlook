@@ -56,9 +56,13 @@ function NewDashboardPage() {
     defaultValue: [],
   });
 
-  async function onPublishToIPFSClick() {
+  async function onPublishToIPFSClick(e) {
+    e.target.disabled = true;
+
     const widgetCID = await publishToIPFS(dashboardConfig);
     await removeLocalDashboards(); // Remove local draft
+
+    e.target.disabled = false;
 
     // Redirect to new dashboard
     navigate(`/dashboard/${widgetCID}`);
@@ -183,7 +187,7 @@ function NewDashboardPage() {
             Add Widget
           </button>
           <button type="button" className="button btn-add-widget" onClick={onPublishToIPFSClick}>
-            Publish to IPFS
+            Publish
           </button>
         </div>
       </div>
