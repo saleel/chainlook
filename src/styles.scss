@@ -25,6 +25,10 @@
   font-size: 14px;
 }
 
+html, body {
+  height: 100%;
+}
+
 body {
   font-family: "Fira Code", monospace;
   color: var(--text-color);
@@ -32,21 +36,33 @@ body {
   padding: 0;
 }
 
+#root {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+}
+
+.main {
+  flex-grow: 1;
+  align-self: stretch;
+}
+
 .wrapper {
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 1.5rem;
+  width: 100%;
 }
 
 .header {
   height: 3rem;
-  margin-bottom: 2rem;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .menu {
-  height: 3rem;
+  height: 100%;
   display: flex;
   flex-direction: row;
   align-items: baseline;
@@ -75,28 +91,27 @@ body {
 .logo {
   font-size: 1.5rem;
   font-weight: 600;
-  padding: 1rem 0;
-  color: var(--text-color);
+  height: 100%;
+
+  a {
+    color: var(--text-color);
+    line-height: 3.5rem;
+  }
 
   &:hover {
-    color: var(--text-color);
-    text-decoration: underline;
+    a {
+      color: var(--text-color);
+      text-decoration: underline;
+    }
   }
 }
 
 .footer {
-  height: 5rem;
-  margin-top: 3rem;
   text-align: center;
   width: 100%;
-  background-color: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.page {
-  min-height: calc(100vh - 3rem - 2rem - 8rem); // Subtract header + footer
+  margin-top: 2rem;
+  padding: 2rem 0;
+  background-color: none;
 }
 
 .w-100 {
@@ -319,6 +334,10 @@ body {
   .widget {
     height: 500px;
   }
+}
+
+.add-widget-container {
+  overflow-y: scroll;
 }
 
 .add-widget-item {
