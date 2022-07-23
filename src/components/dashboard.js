@@ -1,7 +1,9 @@
 import React from 'react';
-import ReactGridLayout from 'react-grid-layout';
+import { Responsive, WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import Widget from './widget';
+
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
 export default function Dashboard(props) {
   const {
@@ -13,7 +15,7 @@ export default function Dashboard(props) {
   return (
     <div className="dashboard">
 
-      <ReactGridLayout
+      <ResponsiveGridLayout
         className="layout"
         rowHeight={100}
         width={1400}
@@ -22,7 +24,9 @@ export default function Dashboard(props) {
         breakpoints={{
           lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0,
         }}
-        cols={8}
+        cols={{
+          lg: 8, md: 8, sm: 4, xs: 4, xxs: 1,
+        }}
         isDraggable={isEditable}
         isResizable={isEditable}
         compactType={null}
@@ -42,7 +46,7 @@ export default function Dashboard(props) {
             )}
           </div>
         ))}
-      </ReactGridLayout>
+      </ResponsiveGridLayout>
 
     </div>
   );

@@ -25,7 +25,8 @@
   font-size: 14px;
 }
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
@@ -405,7 +406,8 @@ body {
   }
 }
 
-.dashboard-actions, .widget-actions {
+.dashboard-actions,
+.widget-actions {
   margin-bottom: 2rem;
   display: flex;
   justify-content: space-between;
@@ -459,5 +461,12 @@ body {
 @keyframes appear {
   to {
     visibility: visible;
+  }
+}
+
+@media screen and (max-width:641px) {
+  // Disable create dashboard and widgets on small screens
+  .menu {
+    display: none;
   }
 }
