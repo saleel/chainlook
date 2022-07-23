@@ -139,13 +139,19 @@ function NewDashboardPage() {
         </div>
       </div>
 
-      {dashboardConfig && (
+      {dashboardConfig && dashboardConfig.widgets.length > 0 && (
         <Dashboard
           config={dashboardConfig}
           isEditable
           onLayoutChange={onLayoutChange}
           onRemoveWidgetClick={onRemoveWidgetClick}
         />
+      )}
+
+      {dashboardConfig && dashboardConfig.widgets.length === 0 && (
+        <div className="mt-4">
+          Start creating dashboard by Adding Widgets
+        </div>
       )}
 
       <ReactModal
