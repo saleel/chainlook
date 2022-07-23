@@ -4,6 +4,7 @@ import React from 'react';
 import ReactModal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
 import Dashboard from '../components/dashboard';
+import Modal from '../components/modal';
 import {
   getAllWidgets, getDashboard, getLocalDashboard, publishToIPFS, removeLocalDashboards, saveDashboardLocally,
 } from '../data-service';
@@ -13,7 +14,8 @@ function NewDashboardPage() {
   const fromId = new URL(window.location).searchParams?.get('fromId');
 
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [isNewWidgetModalOpen, setIsNewWidgetModalOpen] = React.useState(false);
+  const [isNewTextModalOpen, setIsNewTextModalOpen] = React.useState(false);
   const [dashboardConfig, setDashboardConfig] = React.useState();
 
   const [fromDashboardConfig, { isFetching, error }] = usePromise(async () => {
@@ -49,8 +51,8 @@ function NewDashboardPage() {
   }, [dashboardConfig]);
 
   const [allLocalWidgets] = usePromise(() => getAllWidgets(), {
-    dependencies: [isModalOpen],
-    conditions: [isModalOpen],
+    dependencies: [isNewWidgetModalOpen],
+    conditions: [isNewWidgetModalOpen],
     defaultValue: [],
   });
 
@@ -63,17 +65,37 @@ function NewDashboardPage() {
   }
 
   function onSelectWidget(widgetConfig) {
+    let width = 4;
+    let height = 4;
+    let minWidth = 1;
+    let minHeight = 1;
+
+    if (widgetConfig?.type === 'metric') {
+      width = 1;
+      height = 1;
+    }
+
+    if (widgetConfig?.type === 'table') {
+      minWidth = 4;
+      minHeight = 3;
+    }
+
+    if (widgetConfig?.type === 'chart' || widgetConfig?.type === 'pieChart') {
+      minWidth = 2;
+      minHeight = 2;
+    }
+
     setDashboardConfig((ex) => ({
       ...ex,
       widgets: [...ex.widgets, {
         widget: widgetConfig,
         layout: {
-          i: ex.widgets.length, x: 0, y: 0, w: 4, h: 4,
+          i: ex.widgets.length, x: 0, y: 0, w: width, h: height, minW: minWidth, minH: minHeight,
         },
       }],
     }));
 
-    setIsModalOpen(false);
+    setIsNewWidgetModalOpen(false);
   }
 
   function onLayoutChange(allLayouts) {
@@ -110,6 +132,30 @@ function NewDashboardPage() {
     }
   }
 
+  function onNewTextFormSubmit(e) {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const title = formData.get('title');
+    const message = formData.get('message');
+
+    setDashboardConfig((ex) => ({
+      ...ex,
+      widgets: [...ex.widgets, {
+        widget: {
+          type: 'text',
+          title,
+          text: { message },
+        },
+        layout: {
+          i: ex.widgets.length, x: 0, y: 0, w: 2, h: 1,
+        },
+      }],
+    }));
+
+    setIsNewTextModalOpen(false);
+  }
+
   if (!dashboardConfig || isFetching) {
     return (<div>Loading</div>);
   }
@@ -130,7 +176,10 @@ function NewDashboardPage() {
           <button type="button" className="button btn-add-widget" onClick={onEditTitleClick}>
             Edit Title
           </button>
-          <button type="button" className="button btn-add-widget" onClick={() => setIsModalOpen(true)}>
+          <button type="button" className="button btn-add-widget" onClick={() => setIsNewTextModalOpen(true)}>
+            Add Text Widget
+          </button>
+          <button type="button" className="button btn-add-widget" onClick={() => setIsNewWidgetModalOpen(true)}>
             Add Widget
           </button>
           <button type="button" className="button btn-add-widget" onClick={onPublishToIPFSClick}>
@@ -154,24 +203,12 @@ function NewDashboardPage() {
         </div>
       )}
 
-      <ReactModal
-        isOpen={isModalOpen}
-        onRequestClose={() => setIsModalOpen(false)}
-        style={{
-          content: {
-            top: '40%',
-            left: '50%',
-            marginRight: '-50%',
-            transform: 'translate(-50%, -50%)',
-            height: '400px',
-            width: '600px',
-          },
-        }}
-        contentLabel="Add Widget"
+      <Modal
+        isOpen={isNewWidgetModalOpen}
+        onRequestClose={() => setIsNewWidgetModalOpen(false)}
+        title="Add Widget"
       >
-        <h3 className="subtitle">Add Widget</h3>
-
-        <div className="add-widget-container">
+        <div>
           {allLocalWidgets.length > 0 ? allLocalWidgets.map((widget) => (
             <div key={widget.title} tabIndex={0} role="button" className="add-widget-item" onClick={() => onSelectWidget(widget)}>
               {widget.type} - {widget.title}
@@ -182,14 +219,20 @@ function NewDashboardPage() {
             </div>
           )}
         </div>
+      </Modal>
 
-        <button
-          type="button"
-          className="modal-close is-large"
-          aria-label="close"
-          onClick={() => setIsModalOpen(false)}
-        />
-      </ReactModal>
+      <Modal
+        isOpen={isNewTextModalOpen}
+        onRequestClose={() => setIsNewTextModalOpen(false)}
+        title="Add Text Widget"
+      >
+        <form onSubmit={onNewTextFormSubmit}>
+          <input name="title" className="form-input" type="text" placeholder="Title" />
+          <textarea name="message" className="form-input" type="text" placeholder="Message" />
+
+          <button className="button mt-4" type="submit">Submit</button>
+        </form>
+      </Modal>
 
     </div>
   );

@@ -9,5 +9,4 @@ TODOs
 - Use IPNS in URLs
 - Replace monaco editor
 - Use lazy loading for routes
-- Add globals
 - Add minwidth

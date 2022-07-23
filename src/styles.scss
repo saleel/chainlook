@@ -124,6 +124,13 @@ body {
   margin-bottom: 1rem;
 }
 
+.intro {
+  font-size: 1.25rem;
+  background-color: var(--gray-200);
+  border-radius: 5px;
+  padding: 2rem;
+}
+
 .dashboard-title {
   font-weight: 500;
   font-size: 1.25rem;
@@ -336,8 +343,12 @@ body {
   }
 }
 
-.add-widget-container {
+.modal-body {
   overflow-y: scroll;
+}
+
+.modal-close {
+  background-color: var(--gray-400);
 }
 
 .add-widget-item {
@@ -383,6 +394,16 @@ body {
   top: 0.25rem;
   right: 0.25rem;
   cursor: pointer;
+}
+
+.form-input {
+  display: block;
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  font-size: 1.2rem;
+  border: 1px solid var(--text-color);
+  border-radius: 0;
 }
 
 .message {
