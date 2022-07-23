@@ -1,5 +1,5 @@
 {
-  "title": "Uniswap V3",
+  "title": "IPFS Data",
   "widgets": [
     {
       "widget": {
@@ -25,38 +25,62 @@
         "minW": 6
       },
       "widget": {
-        "title": "Price History (data from IPFS)",
-        "type": "table",
+        "title": "BTC Price History (data from IPFS)",
+        "type": "chart",
         "data": {
           "source": "ipfs",
           "cid": "bafkreifnyss54ouwluscy75qiitqox74g7do2cayq5af3qgqsyigj64sy4"
         },
-        "table": {
-          "columns": [
-            {
-              "dataKey": "date",
-              "label": "date",
-              "transform": "dateMMMdd"
-            },
-            {
-              "dataKey": "open",
-              "label": "Open",
-              "transform": "number"
-            },
-            {
-              "dataKey": "high",
-              "label": "High",
-              "transform": "number"
-            },
-            {
-              "dataKey": "low",
-              "label": "Low",
-              "transform": "number"
-            },
+        "chart": {
+          "xAxis": {
+            "dataKey": "date",
+            "label": "date",
+            "format": "dateMMMdd"
+          },
+          "yAxis": {
+            "format": "compactNumber"
+          },
+          "bars": [
             {
               "dataKey": "close",
               "label": "Close",
-              "transform": "number"
+              "format": "number"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "layout": {
+        "x": 0,
+        "y": 1,
+        "w": 8,
+        "h": 4,
+        "minW": 6
+      },
+      "widget": {
+        "title": "Rigs (from Tableland)",
+        "type": "table",
+        "data": {
+          "source": "tableland",
+          "network": "testnet",
+          "tableName": "rigs_5_28",
+          "filters": {
+            "orderBy": "id",
+            "orderDirection": "asc",
+            "offset": 10,
+            "limit": 100
+          }
+        },
+        "table": {
+          "columns": [
+            {
+              "dataKey": "id",
+              "label": "id"
+            },
+            {
+              "dataKey": "image",
+              "label": "Image URL"
             }
           ]
         }

@@ -14,7 +14,7 @@ function Table(props) {
             <tr>
               {columns.map((column) => (
                 <th
-                  style={{ width: `${100 / columns.length}%` }}
+                  // style={{ width: `${100 / columns.length}%` }}
                   key={column.dataKey}
                 >
                   {column.label || column.key}
@@ -30,8 +30,8 @@ function Table(props) {
                 {columns.map((column) => {
                   let value = get(d, column.dataKey);
 
-                  if (column.transform) {
-                    value = formatters[column.transform](value);
+                  if (column.format) {
+                    value = formatters[column.format](value);
                   }
 
                   return (

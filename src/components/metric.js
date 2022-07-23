@@ -5,11 +5,11 @@ function Metric(props) {
     data, config,
   } = props;
 
-  const { dataKey, unit, transform } = config;
+  const { dataKey, unit, format } = config;
 
   let value = Array.isArray(data) ? data[0]?.[dataKey] : data[dataKey];
-  if (transform && typeof formatters[transform] === 'function') {
-    value = formatters[transform](value);
+  if (format && typeof formatters[format] === 'function') {
+    value = formatters[format](value);
   }
 
   return (

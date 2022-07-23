@@ -23,7 +23,7 @@
         "metric": {
           "dataKey": "totalValueLockedUSD",
           "unit": "USD",
-          "transform": "bigDecimal"
+          "format": "bigDecimal"
         },
         "data": {
           "source": "graph",
@@ -50,7 +50,7 @@
         "metric": {
           "dataKey": "cumulativeTotalRevenueUSD",
           "unit": "USD",
-          "transform": "compactNumber"
+          "format": "compactNumber"
         },
         "data": {
           "source": "graph",
@@ -76,7 +76,7 @@
         "type": "metric",
         "metric": {
           "dataKey": "totalPoolCount",
-          "transform": "number"
+          "format": "number"
         },
         "data": {
           "source": "graph",
@@ -114,10 +114,10 @@
         "chart": {
           "xAxis": {
             "dataKey": "timestamp",
-            "transform": "dateMMMdd"
+            "format": "dateMMMdd"
           },
           "yAxis": {
-            "transform": "compactNumber"
+            "format": "compactNumber"
           },
           "areas": [
             {
@@ -184,10 +184,10 @@
         "chart": {
           "xAxis": {
             "dataKey": "timestamp",
-            "transform": "dateMMMdd"
+            "format": "dateMMMdd"
           },
           "yAxis": {
-            "transform": "number"
+            "format": "number"
           },
           "lines": [
             {
@@ -250,17 +250,17 @@
             {
               "dataKey": "dailyVolumeUSD",
               "label": "Volume (USD)",
-              "transform": "number"
+              "format": "number"
             },
             {
               "dataKey": "totalValueLockedUSD",
               "label": "TVL (USD)",
-              "transform": "number"
+              "format": "number"
             },
             {
               "dataKey": "dailyTotalRevenueUSD",
               "label": "Revenue (USD)",
-              "transform": "number"
+              "format": "number"
             }
           ]
         }

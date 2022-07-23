@@ -32,19 +32,19 @@ function Chart(props) {
       >
         <XAxis
           dataKey={xAxis.dataKey}
-          {...typeof formatters[xAxis.transform] === 'function' && { tickFormatter: formatters[xAxis.transform] }}
-          {...xAxis.transform && { tickFormatter: formatters[xAxis.transform] }}
+          {...typeof formatters[xAxis.format] === 'function' && { tickFormatter: formatters[xAxis.format] }}
+          {...xAxis.format && { tickFormatter: formatters[xAxis.format] }}
         />
 
         <YAxis
-          {...typeof formatters[yAxis.transform] === 'function' && { tickFormatter: formatters[yAxis.transform] }}
+          {...typeof formatters[yAxis?.format] === 'function' && { tickFormatter: formatters[yAxis.format] }}
           type="number"
           domain={[0, maxData * 1.1]}
         />
 
         <Tooltip
-          {...xAxis.transform && { labelFormatter: formatters[xAxis.transform] }}
-          {...yAxis?.transform && { formatter: formatters[yAxis.transform] }}
+          {...xAxis.format && { labelFormatter: formatters[xAxis.format] }}
+          {...yAxis?.format && { formatter: formatters[yAxis.format] }}
         />
 
         {areas.map((area, i) => (

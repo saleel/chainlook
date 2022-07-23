@@ -7,12 +7,12 @@ const COLORS = ['var(--blue-500)', 'var(--green-300)', 'var(--yellow-500)'];
 
 function PieChart(props) {
   const {
-    data = [], config: { dataKey, nameKey, transform },
+    data = [], config: { dataKey, nameKey, format },
   } = props;
 
   const formattedData = data.map((d) => ({
     ...d,
-    [dataKey]: transform ? Math.round(formatters[transform](d[dataKey])) : Math.round(d[dataKey]),
+    [dataKey]: format ? Math.round(formatters[format](d[dataKey])) : Math.round(d[dataKey]),
   }));
 
   return (

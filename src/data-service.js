@@ -5,6 +5,7 @@ import Loki from 'lokijs';
 import LokiIndexedAdapter from 'lokijs/src/loki-indexed-adapter';
 import get from 'lodash/get';
 import set from 'lodash/set';
+import { connect } from '@tableland/sdk';
 import aggregations from './helpers/aggregations';
 import sampleDashboard from './examples/dashboard.json';
 import ipfsSampleDashboard from './examples/ipfs-dashboard.json';
@@ -158,28 +159,88 @@ export function getDataFieldsForWidget(widget) {
   return fields;
 }
 
+async function getWidgetDataFromGraph(widget) {
+  let data = [];
+  const fields = getDataFieldsForWidget(widget);
+
+  if (!fields.length) {
+    throw new Error(`Invalid widget type ${widget.type} or no fields to fetch`);
+  }
+
+  data = await getGraphData({
+    subGraphId: widget.data.subGraphId,
+    entity: widget.data.entity,
+    fields,
+    filters: widget.data.filters,
+    group: widget.data.group,
+  });
+
+  return data;
+}
+
+async function getWidgetDataFromTableLand(widget) {
+  const fields = getDataFieldsForWidget(widget);
+
+  if (!fields.length) {
+    throw new Error(`Invalid widget type ${widget.type} or no fields to fetch`);
+  }
+
+  const tableland = await connect({ network: widget.data.network });
+  const { filters = {} } = widget.data;
+
+  let whereQuery = Object.entries(filters?.where || {})
+    .map(([key, value]) => `${key} = ${value}`)
+    .join(' AND ');
+
+  if (whereQuery) {
+    whereQuery = ` WHERE ${whereQuery}`;
+  } else {
+    whereQuery = '';
+  }
+
+  let filtersQuery = '';
+  if (filters.orderBy) {
+    filtersQuery += `ORDER BY ${filters.orderBy}`;
+
+    if (filters.orderDirection) {
+      filtersQuery += ` ${filters.orderDirection}`;
+    }
+  }
+
+  if (filters.limit) {
+    filtersQuery += ` LIMIT ${filters.limit}`;
+  }
+
+  if (filters.offset) {
+    filtersQuery += ` OFFSET ${filters.offset}`;
+  }
+
+  const query = `SELECT ${fields.join(', ')} FROM ${widget.data.tableName} ${whereQuery} ${filtersQuery};`;
+
+  const result = await tableland.read(query);
+
+  const { columns, rows } = result;
+
+  const data = rows.map((r) => {
+    const datum = {};
+    columns.forEach((col, i) => { datum[col.name] = r[i]; });
+    return datum;
+  });
+
+  return data;
+}
+
 export async function getWidgetData(widget) {
   if (widget.data.source === 'ipfs') {
     return getJsonFromIPFS(widget.data.cid);
   }
 
   if (widget.data.source === 'graph') {
-    let data = [];
-    const fields = getDataFieldsForWidget(widget);
+    return getWidgetDataFromGraph(widget);
+  }
 
-    if (!fields.length) {
-      throw new Error(`Invalid widget type ${widget.type} or no fields to fetch`);
-    }
-
-    data = await getGraphData({
-      subGraphId: widget.data.subGraphId,
-      entity: widget.data.entity,
-      fields,
-      filters: widget.data.filters,
-      group: widget.data.group,
-    });
-
-    return data;
+  if (widget.data.source === 'tableland') {
+    return getWidgetDataFromTableLand(widget);
   }
 
   return [];

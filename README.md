@@ -14,4 +14,5 @@ TODOs
 - Update schema
 - JSON schem abased UI
 - Add copy widget
-
+- Set page title
+- Add orbitDB handler
