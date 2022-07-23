@@ -2,6 +2,7 @@
   "name": "chainlook",
   "version": "0.1.0",
   "private": true,
+  "homepage": "./",
   "dependencies": {
     "@tableland/sdk": "^2.0.2",
     "axios": "^0.27.2",
