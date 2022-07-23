@@ -21,9 +21,11 @@ export default function Layout() {
             </div>
           </Link>
         </div>
+
       </div>
 
       <div className="main wrapper">
+        <hr />
         <Outlet />
       </div>
 

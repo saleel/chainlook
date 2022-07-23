@@ -1,18 +1,17 @@
 import React from 'react';
 import ReactGridLayout from 'react-grid-layout';
+import 'react-grid-layout/css/styles.css';
 import Widget from './widget';
 
 export default function Dashboard(props) {
-  const { config, isEditable = false, onLayoutChange } = props;
+  const {
+    config, isEditable = false, onLayoutChange, onRemoveWidgetClick,
+  } = props;
 
-  const { widgets, title } = config;
+  const { widgets } = config;
 
   return (
     <div className="dashboard">
-
-      <h2 className="dashboard-title">
-        {title}
-      </h2>
 
       <ReactGridLayout
         className="layout"
@@ -28,12 +27,19 @@ export default function Dashboard(props) {
         isResizable={isEditable}
         compactType={null}
         preventCollision
-        resizeHandles={['se']}
+        draggableHandle=".widget-title"
         {...onLayoutChange && { onLayoutChange }}
+        onDragStart={(e) => e.dataTransfer?.setData('text/plain', '')}
       >
         {widgets.map((widget, index) => (
           <div key={widget.id || index} data-grid={{ ...widget.layout }}>
             <Widget id={widget.cid} config={widget.widget} />
+
+            {isEditable && (
+              <button type="button" className="new-dashboard-widget-delete" onClick={() => onRemoveWidgetClick(widget)}>
+                +
+              </button>
+            )}
           </div>
         ))}
       </ReactGridLayout>

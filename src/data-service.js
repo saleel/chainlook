@@ -209,14 +209,26 @@ export async function getAllWidgets() {
   return widgetsDb.find({});
 }
 
-export async function saveDashboardLocally(dashboardConfig) {
+export async function removeLocalDashboards() {
   const dashboardDb = await getLocalDbCollection('dashboard');
 
   dashboardDb.findAndRemove({}); // clear everything - using as singleton
+}
+
+export async function saveDashboardLocally(dashboardConfig) {
+  await removeLocalDashboards(); // clear everything - using as singleton
+
+  const dashboardDb = await getLocalDbCollection('dashboard');
   dashboardDb.insert({ ...dashboardConfig, createdAt: new Date().getTime() });
 }
 
 export async function getLocalDashboard() {
   const dashboardDb = await getLocalDbCollection('dashboard');
-  return dashboardDb.find({})?.[0];
+  const firstItem = dashboardDb.find({})?.[0];
+
+  if (!firstItem) {
+    return null;
+  }
+
+  return { widgets: firstItem.widgets, title: firstItem.title };
 }

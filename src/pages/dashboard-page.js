@@ -24,6 +24,12 @@ function DashboardPage() {
   return (
     <div className="page dashboard-page">
 
+      <div className="dashboard-actions">
+        <h2 className="dashboard-title">
+          {dashboard?.title}
+        </h2>
+      </div>
+
       <Dashboard config={dashboard} />
 
     </div>

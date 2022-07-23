@@ -1,10 +1,11 @@
+/* eslint-disable react/jsx-no-bind */
 /* eslint-disable react/no-array-index-key */
 import React from 'react';
 import ReactModal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
 import Dashboard from '../components/dashboard';
 import {
-  getAllWidgets, getDashboard, getLocalDashboard, publishToIPFS, saveDashboardLocally,
+  getAllWidgets, getDashboard, getLocalDashboard, publishToIPFS, removeLocalDashboards, saveDashboardLocally,
 } from '../data-service';
 import usePromise from '../hooks/use-promise';
 
@@ -13,7 +14,7 @@ function NewDashboardPage() {
 
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [dashboardConfig, setDashboardJson] = React.useState();
+  const [dashboardConfig, setDashboardConfig] = React.useState();
 
   const [fromDashboardConfig, { isFetching, error }] = usePromise(async () => {
     if (fromId) {
@@ -38,8 +39,14 @@ function NewDashboardPage() {
   });
 
   React.useEffect(() => {
-    setDashboardJson(fromDashboardConfig);
+    setDashboardConfig(fromDashboardConfig);
   }, [fromDashboardConfig]);
+
+  React.useEffect(() => {
+    if (dashboardConfig) {
+      saveDashboardLocally(dashboardConfig);
+    }
+  }, [dashboardConfig]);
 
   const [allLocalWidgets] = usePromise(() => getAllWidgets(), {
     dependencies: [isModalOpen],
@@ -49,43 +56,58 @@ function NewDashboardPage() {
 
   async function onPublishToIPFSClick() {
     const widgetCID = await publishToIPFS(dashboardConfig);
+    await removeLocalDashboards(); // Remove local draft
+
+    // Redirect to new dashboard
     navigate(`/dashboard/${widgetCID}`);
   }
 
   function onSelectWidget(widgetConfig) {
-    setDashboardJson((ex) => ({
+    setDashboardConfig((ex) => ({
       ...ex,
       widgets: [...ex.widgets, {
         widget: widgetConfig,
         layout: {
-          x: 0, y: 0, w: 4, h: 4,
+          i: ex.widgets.length, x: 0, y: 0, w: 4, h: 4,
         },
       }],
     }));
 
     setIsModalOpen(false);
-    saveDashboardLocally(dashboardConfig);
   }
 
   function onLayoutChange(allLayouts) {
-    setDashboardJson((ex) => ({
+    setDashboardConfig((ex) => ({
       ...ex,
       widgets: ex.widgets.map((wi, index) => {
         const layout = allLayouts.find((l) => l.i === index.toString());
         const {
-          x, y, w, h,
+          i, x, y, w, h,
         } = layout;
 
         return {
           ...wi,
           layout: {
-            x, y, w, h,
+            i, x, y, w, h,
           },
         };
       }),
     }));
+  }
 
-    saveDashboardLocally(dashboardConfig);
+  function onRemoveWidgetClick(removedWidget) {
+    setDashboardConfig((ex) => ({
+      ...ex,
+      widgets: ex.widgets.filter((w) => w.layout.i !== removedWidget.layout.i),
+    }));
+  }
+
+  function onEditTitleClick() {
+    // eslint-disable-next-line no-alert
+    const newTitle = window.prompt('Enter the title for the dashboard', dashboardConfig?.title);
+    if (newTitle) {
+      setDashboardConfig((ex) => ({ ...ex, title: newTitle }));
+    }
   }
 
   if (!dashboardConfig || isFetching) {
@@ -99,18 +121,31 @@ function NewDashboardPage() {
   return (
     <div className="page new-dashboard-page">
 
-      <div className="new-dashboard-actions">
-        <button type="button" className="button btn-add-widget" onClick={() => setIsModalOpen(true)}>
-          Add Widget
-        </button>
-        <button type="button" className="button btn-add-widget" onClick={onPublishToIPFSClick}>
-          Publish to IPFS
-        </button>
+      <div className="dashboard-actions">
+        <h2 className="dashboard-title">
+          {dashboardConfig?.title}
+        </h2>
+
+        <div>
+          <button type="button" className="button btn-add-widget" onClick={onEditTitleClick}>
+            Edit Title
+          </button>
+          <button type="button" className="button btn-add-widget" onClick={() => setIsModalOpen(true)}>
+            Add Widget
+          </button>
+          <button type="button" className="button btn-add-widget" onClick={onPublishToIPFSClick}>
+            Publish to IPFS
+          </button>
+        </div>
       </div>
 
       {dashboardConfig && (
-        // eslint-disable-next-line react/jsx-no-bind
-        <Dashboard config={dashboardConfig} isEditable onLayoutChange={onLayoutChange} />
+        <Dashboard
+          config={dashboardConfig}
+          isEditable
+          onLayoutChange={onLayoutChange}
+          onRemoveWidgetClick={onRemoveWidgetClick}
+        />
       )}
 
       <ReactModal
@@ -132,7 +167,7 @@ function NewDashboardPage() {
 
         <div className="add-widget-container">
           {allLocalWidgets.length > 0 ? allLocalWidgets.map((widget) => (
-            <div key={widget.name} tabIndex={0} role="button" className="add-widget-item" onClick={() => onSelectWidget(widget)}>
+            <div key={widget.title} tabIndex={0} role="button" className="add-widget-item" onClick={() => onSelectWidget(widget)}>
               {widget.type} - {widget.title}
             </div>
           )) : (

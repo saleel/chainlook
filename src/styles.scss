@@ -112,7 +112,6 @@ body {
 .dashboard-title {
   font-weight: 500;
   font-size: 1.25rem;
-  margin-bottom: 1rem;
 }
 
 .widget {
@@ -334,12 +333,37 @@ body {
   }
 }
 
-.new-dashboard-actions {
+.new-dashboard-page {
+  .widget-title {
+    cursor: move;
+  }
+}
+
+.dashboard-actions {
   margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
   .button {
     margin-right: 1rem;
+
+    &:last-child {
+      margin-right: 0;
+    }
   }
+}
+
+.new-dashboard-widget-delete {
+  background: none;
+  border: none;
+  transform: rotate(45deg);
+  font-size: 1.5rem;
+  font-weight: 600;
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  cursor: pointer;
 }
 
 .message {
