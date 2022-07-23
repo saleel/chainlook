@@ -7,7 +7,7 @@ import get from 'lodash/get';
 import set from 'lodash/set';
 import { connect } from '@tableland/sdk';
 import aggregations from './helpers/aggregations';
-import sampleDashboard from './examples/dashboard.json';
+import sampleDashboard from './examples/uniswap-v3.json';
 import ipfsSampleDashboard from './examples/ipfs-dashboard.json';
 import variables from './helpers/variables';
 
@@ -330,3 +330,5 @@ export async function getLocalDashboard() {
 
   return firstItem;
 }
+
+// web3Storage.get("").then(r => r.files()).then(console.log);

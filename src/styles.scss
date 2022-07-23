@@ -128,9 +128,19 @@ body {
 
 .intro {
   font-size: 1.15rem;
-  background-color: var(--gray-200);
+  // background-color: var(--gray-200);
   border-radius: 5px;
-  padding: 1rem;
+  padding: 2rem 0rem;
+  max-width: 1000px;
+}
+
+.popular-dashboards {
+  .link {
+    display: block;
+    font-weight: 400;
+    margin-left: 1rem;
+    margin-bottom: 3px;
+  }
 }
 
 .dashboard-title {
@@ -395,7 +405,7 @@ body {
   }
 }
 
-.dashboard-actions {
+.dashboard-actions, .widget-actions {
   margin-bottom: 2rem;
   display: flex;
   justify-content: space-between;

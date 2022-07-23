@@ -10,9 +10,8 @@ TODOs
 - Integrate IPNS
 - Replace monaco editor
 - Use lazy loading for routes
-- Add minwidth
 - Update schema
 - JSON schem abased UI
-- Add copy widget
 - Set page title
 - Add orbitDB handler
+- Add templates for widgets
