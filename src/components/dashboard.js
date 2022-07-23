@@ -33,7 +33,7 @@ export default function Dashboard(props) {
       >
         {widgets.map((widget, index) => (
           <div key={widget.id || index} data-grid={{ ...widget.layout }}>
-            <Widget id={widget.cid} config={widget.widget} />
+            <Widget id={widget.cid} config={widget.widget} enableFork={!isEditable} />
 
             {isEditable && (
               <button type="button" className="new-dashboard-widget-delete" onClick={() => onRemoveWidgetClick(widget)}>

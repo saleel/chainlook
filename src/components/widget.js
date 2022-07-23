@@ -1,5 +1,6 @@
 import React from 'react';
-import { getWidget, getWidgetData } from '../data-service';
+import { useNavigate } from 'react-router-dom';
+import { getWidget, getWidgetData, saveWidgetLocally } from '../data-service';
 import usePromise from '../hooks/use-promise';
 import Chart from './chart';
 import Table from './table';
@@ -8,7 +9,9 @@ import Metric from './metric';
 import PieChart from './pie-chart';
 
 function Widget(props) {
-  const { id, config: defaultConfig } = props;
+  const { id, config: defaultConfig, enableFork } = props;
+
+  const navigate = useNavigate();
 
   try {
     const [
@@ -32,6 +35,11 @@ function Widget(props) {
       // cacheKey: JSON.stringify(config.data),
       },
     );
+
+    const onForkClick = React.useCallback(async () => {
+      await saveWidgetLocally(config);
+      navigate('/widget/new'); // TODO: a hack for now - new widget page will load the most recent local widget
+    }, [config]);
 
     if (errorData) {
       throw errorData;
@@ -102,6 +110,12 @@ function Widget(props) {
       <div className={`widget widget-${config.type}`}>
         <h4 className="widget-title">
           {config.title}
+
+          {enableFork && (
+            <div role="button" tabIndex={0} className="icon-button" onClick={onForkClick} title="Copy this widget locally and edit">
+              <i className="icon-clone" />
+            </div>
+          )}
         </h4>
 
         <div className="widget-body">

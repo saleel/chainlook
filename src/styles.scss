@@ -82,6 +82,7 @@ body {
 .menu-item {
   @extend .link;
   margin: 1rem 1.5rem;
+  padding-top: 0.5rem;
 
   &:last-child {
     margin-right: 0;
@@ -92,6 +93,7 @@ body {
   font-size: 1.5rem;
   font-weight: 600;
   height: 100%;
+  padding-top: 0.5rem;
 
   a {
     color: var(--text-color);
@@ -125,15 +127,20 @@ body {
 }
 
 .intro {
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   background-color: var(--gray-200);
   border-radius: 5px;
-  padding: 2rem;
+  padding: 1rem;
 }
 
 .dashboard-title {
   font-weight: 500;
   font-size: 1.25rem;
+}
+
+.view-source {
+  font-size: 1rem;
+  font-weight: normal;
 }
 
 .widget {
@@ -155,9 +162,28 @@ body {
 .widget-title {
   font-weight: 600;
   padding-left: 1rem;
+  padding-right: 0.5rem;
   height: 2.5rem;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+
+  .icon-button {
+    display: none;
+  }
+
+  &:hover {
+    .icon-button {
+      display: block;
+    }
+  }
+}
+
+.icon-button {
+  cursor: pointer;
+  background: none;
+  padding: 0;
+  margin: 0;
 }
 
 .widget-title {
@@ -413,6 +439,11 @@ body {
 .delay {
   visibility: hidden;
   animation: appear 1s ease 2s forwards;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
 }
 
 @keyframes appear {
