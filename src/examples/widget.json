@@ -10,7 +10,7 @@
       "skip": 1,
       "first": 20,
       "where": {
-        "timestamp_gte": 1658016000
+        "timestamp_gte": "$startOfDay"
       }
     },
     "group": {

@@ -5,9 +5,11 @@ export default function Layout() {
   return (
     <>
       <div className="header wrapper">
-        <Link to="/">
-          <h1 className="logo">ChainLook</h1>
-        </Link>
+        <h1 className="logo">
+          <Link to="/">
+            ChainLook
+          </Link>
+        </h1>
 
         <div className="menu">
           <Link to="/widget/new">

@@ -114,11 +114,11 @@ function Widget(props) {
     console.error(error);
 
     return (
-      <div className="widget widget-error">
+      <div className="widget">
         <h4 className="widget-title">
           {defaultConfig?.title ?? id}
         </h4>
-        <div className="widget-body">
+        <div className="widget-body p-4">
           <div>Error rendering Widget</div>
           {error.message}
         </div>

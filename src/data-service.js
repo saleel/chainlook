@@ -7,6 +7,7 @@ import get from 'lodash/get';
 import set from 'lodash/set';
 import aggregations from './helpers/aggregations';
 import sampleDashboard from './examples/dashboard.json';
+import variables from './helpers/variables';
 
 const web3Storage = new Web3Storage({ token: process.env.REACT_APP_WEB3_STORAGE_API_KEY });
 
@@ -35,6 +36,7 @@ async function getJsonFromIPFS(cid) {
 }
 
 export async function getDashboard(dashboardId) {
+  // Easier for local dev
   if (dashboardId === 'sample') {
     return sampleDashboard;
   }
@@ -52,10 +54,19 @@ export async function getGraphData({
   const fieldsObject = {};
   fields.forEach((field) => set(fieldsObject, field, true));
 
+  const updatedFilters = { ...filters };
+  Object.keys(updatedFilters?.where || {}).forEach((whereKey) => {
+    const whereValue = updatedFilters.where[whereKey];
+
+    if (typeof whereValue === 'string' && whereValue.startsWith('$')) {
+      updatedFilters.where[whereKey] = variables[whereValue]();
+    }
+  });
+
   const queryObj = {
     query: {
       [entity]: {
-        __args: filters,
+        __args: updatedFilters,
         ...fieldsObject,
       },
     },
@@ -75,7 +86,11 @@ export async function getGraphData({
 
   let result = response.data?.[entity];
 
-  if (group && group.key) {
+  if (!result) {
+    return null;
+  }
+
+  if (group && group.key && result.length) {
     const uniqueMap = {};
 
     result.forEach((item) => {

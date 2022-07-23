@@ -144,7 +144,7 @@
             "skip": 1,
             "first": 10,
             "where": {
-              "timestamp_gte": 1658016000
+              "timestamp_gte": "$startOfDay"
             }
           }
         },
@@ -223,7 +223,7 @@
             "skip": 1,
             "first": 100,
             "where": {
-              "timestamp_gte": 1658016000
+              "timestamp_gte": "$startOfLast7D"
             }
           },
           "group": {
