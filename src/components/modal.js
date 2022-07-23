@@ -15,7 +15,7 @@ function Modal(props) {
           top: '40%',
           left: '50%',
           marginRight: '-50%',
-          format: 'translate(-50%, -50%)',
+          transform: 'translate(-50%, -50%)',
           height: '400px',
           width: '600px',
         },
