@@ -1,5 +1,7 @@
 # ChainLook
 
+[https://chainlook.xyz](https://chainlook.xyz)
+
 ChainLook is a decentralized blockchain analytics tool based on TheGraph and IPFS.
 <br />
 You can create beautiful widgets and dashboards based on data from subgraphs. The configuration JSONs
