@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const popularDashboard = [
   {
     title: 'Uniswap v3',
-    id: 'bafkreifxglc7dz4gouevtv52jxxtqzjz5u6pjb4gyx5qvjo773lbhft6my',
+    id: 'bafkreihrtacvuegqtfegyradaugnfwlqkk5hr2jxgv3e6sj5f6rnu5dyqi',
   },
   {
     title: 'Dashboard with IPFS and Tableland data',
@@ -17,11 +17,11 @@ function HomePage() {
     <div className="page home-page">
 
       <div className="intro mb-5">
-        ChainLook is a decentralized blockchain analytics tool based on TheGraph and IPFS.
+        ChainLook is a decentralized blockchain analytics platform based on TheGraph and IPFS.
         <br />
         <br />
 
-        You can create beautiful widgets and dashboards based on data from subgraphs. The configuration JSONs
+        You can create beautiful widgets and dashboards for tokens, NFTs, dApps based on data from subgraphs. The configuration JSONs
         for widgets and dashboards are stored in IPFS
         <br />
 

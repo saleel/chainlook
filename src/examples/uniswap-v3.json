@@ -98,7 +98,7 @@
     },
     {
       "widget": {
-        "title": "Cumulative Volume - Last 6 Months",
+        "title": "Daily Volume - Last 6 Months",
         "type": "chart",
         "data": {
           "source": "graph",
@@ -122,7 +122,7 @@
           "areas": [
             {
               "dataKey": "dailyVolumeUSD",
-              "label": "Cumulative Volume (USD)"
+              "label": "Daily Volume (USD)"
             }
           ]
         }
