@@ -170,7 +170,7 @@ function NewWidgetPage() {
                 });
               }}
             />
-            <a className="view-schema" href="/schema/widget.json" target="_blank">
+            <a className="view-schema link" href="/schema/widget.json" target="_blank">
               View Schema
             </a>
           </div>
