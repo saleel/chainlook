@@ -289,6 +289,9 @@ async function getLocalDbCollection(collectionName) {
 export async function saveWidgetLocally(widgetConfig) {
   const widgetsDb = await getLocalDbCollection('widgets');
 
+  // Remove existing one - TODO: improve the logic
+  widgetsDb.findAndRemove({ title: widgetConfig.title, type: widgetConfig.type });
+
   widgetsDb.insert({ ...widgetConfig, createdAt: new Date().getTime() });
 }
 
