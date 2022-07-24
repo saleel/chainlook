@@ -12,6 +12,12 @@ function WidgetPage() {
     conditions: [widgetId],
   });
 
+  React.useEffect(() => {
+    if (widgetConfig) {
+      document.title = `${widgetConfig.title} - ChainLook`;
+    }
+  }, [widgetConfig]);
+
   if (isFetching) {
     return (<div>Loading</div>);
   }

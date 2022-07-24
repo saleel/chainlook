@@ -20,7 +20,4 @@ ChainLook is a general purpose visualization tool for decentralized data.
 - Sign in with Ethereum
 - Optimize queries to TheGraph
 - Integrate IPNS
-- Update JSON schema
-- Set page title
 - Add orbitDB handler
-- Add templates for widgets

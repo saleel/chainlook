@@ -63,6 +63,10 @@ function NewWidgetPage() {
   const [validWidgetConfig, setValidWidgetConfig] = React.useState(defaultJson);
 
   React.useEffect(() => {
+    document.title = 'New Widget - ChainLook';
+  }, []);
+
+  React.useEffect(() => {
     setValidWidgetConfig(fromWidgetConfig);
     setWidgetJson(JSON.stringify(fromWidgetConfig, null, 2));
   }, [fromWidgetConfig]);

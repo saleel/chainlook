@@ -18,6 +18,10 @@ function NewDashboardPage() {
   const [isNewTextModalOpen, setIsNewTextModalOpen] = React.useState(false);
   const [dashboardConfig, setDashboardConfig] = React.useState();
 
+  React.useEffect(() => {
+    document.title = 'New Dashboard - ChainLook';
+  }, []);
+
   const [fromDashboardConfig, { isFetching, error }] = usePromise(async () => {
     if (fromId) {
       return getDashboard(fromId);

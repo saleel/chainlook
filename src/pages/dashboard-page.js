@@ -13,6 +13,12 @@ function DashboardPage() {
     conditions: [dashboardId],
   });
 
+  React.useEffect(() => {
+    if (dashboard) {
+      document.title = `${dashboard.title} - ChainLook`;
+    }
+  }, [dashboard]);
+
   if (isFetching) {
     return (<div className="page dashboard-page">Loading</div>);
   }
