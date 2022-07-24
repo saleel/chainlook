@@ -12,12 +12,21 @@
         "table",
         "chart",
         "pieChart",
-        "metric"
+        "metric",
+        "text"
       ]
     },
     "data": {
       "type": "object",
       "properties": {
+        "source": {
+          "type": "string",
+          "enum": [
+            "graph",
+            "ipfs",
+            "tableland"
+          ]
+        },
         "subGraphId": {
           "type": "string"
         },
@@ -45,11 +54,19 @@
               "additionalProperties": true
             }
           }
+        },
+        "cid": {
+          "type": "string"
+        },
+        "network": {
+          "type": "string"
+        },
+        "tableName": {
+          "type": "string"
         }
       },
       "required": [
-        "subGraphId",
-        "entity"
+        "source"
       ]
     }
   },

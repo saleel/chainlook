@@ -68,7 +68,7 @@
           "filters": {
             "orderBy": "id",
             "orderDirection": "asc",
-            "offset": 10,
+            "first": 10,
             "limit": 100
           }
         },

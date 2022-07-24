@@ -212,8 +212,8 @@ async function getWidgetDataFromTableLand(widget) {
     filtersQuery += ` LIMIT ${filters.limit}`;
   }
 
-  if (filters.offset) {
-    filtersQuery += ` OFFSET ${filters.offset}`;
+  if (filters.first) {
+    filtersQuery += ` OFFSET ${filters.first}`;
   }
 
   const query = `SELECT ${fields.join(', ')} FROM ${widget.data.tableName} ${whereQuery} ${filtersQuery};`;
