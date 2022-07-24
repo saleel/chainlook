@@ -43,7 +43,7 @@ function HomePage() {
 
         <div className="columns">
           {popularDashboard.map((d) => (
-            <Link to={`/dashboard/${d.id}`} key={d.id} className="column is-6-mobile is-4-tablet is-3-desktop">
+            <Link to={`/dashboard/${d.id}`} key={d.id} className="column is-12-mobile is-6-tablet is-3-desktop">
               <div className="popular-dashboard">
                 <div className="popular-dashboard-image">
                   <img src={d.image} alt={d.title} />
