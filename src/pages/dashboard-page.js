@@ -1,23 +1,17 @@
 /* eslint-disable react/no-array-index-key */
 import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Dashboard from '../components/dashboard';
-import { getDashboard, saveDashboardLocally } from '../data-service';
+import { getDashboard } from '../data-service';
 import usePromise from '../hooks/use-promise';
 
 function DashboardPage() {
-  const navigate = useNavigate();
   const { dashboardId } = useParams();
 
   const [dashboard, { isFetching, error }] = usePromise(() => getDashboard(dashboardId), {
     dependencies: [dashboardId],
     conditions: [dashboardId],
   });
-
-  const onForkClick = React.useCallback(async () => {
-    await saveDashboardLocally(dashboard);
-    navigate('/dashboard/new'); // TODO: a hack for now - new widget page will load the most recent local widget
-  }, [dashboard]);
 
   if (isFetching) {
     return (<div className="page dashboard-page">Loading</div>);
@@ -36,13 +30,13 @@ function DashboardPage() {
         </h2>
 
         <div className="flex-row">
-          <a className="link view-source mr-2 pt-1" href={`https://ipfs.io/ipfs/${dashboardId}`} target="_blank" rel="noreferrer" title="View source">
+          <a className="link mr-2 pt-1" href={`https://ipfs.io/ipfs/${dashboardId}`} target="_blank" rel="noreferrer" title="View source">
             <i className="icon-code" />
           </a>
 
-          <div role="button" tabIndex={0} className="icon-button pt-1" onClick={onForkClick} title="Copy this dashbord locally and edit">
+          <Link className="link icon-button pt-1" to={`/dashboard/new?fromId=${dashboardId}`} title="Copy this dashbord locally and edit">
             <i className="icon-clone" />
-          </div>
+          </Link>
         </div>
       </div>
 
