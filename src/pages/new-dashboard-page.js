@@ -64,6 +64,9 @@ function NewDashboardPage() {
 
     e.target.disabled = false;
 
+    // Wait for 2 seconds for IPFS publishing
+    await new Promise((resolve) => { setTimeout(resolve, 2000); });
+
     // Redirect to new dashboard
     navigate(`/dashboard/${widgetCID}`);
   }
