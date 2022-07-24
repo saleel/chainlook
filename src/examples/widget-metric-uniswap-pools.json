@@ -1,0 +1,18 @@
+{
+  "title": "Total Pool Count",
+  "type": "metric",
+  "metric": {
+    "dataKey": "totalPoolCount",
+    "format": "number"
+  },
+  "data": {
+    "source": "graph",
+    "subGraphId": "messari/uniswap-v3-ethereum",
+    "entity": "usageMetricsDailySnapshots",
+    "filters": {
+      "orderDirection": "desc",
+      "orderBy": "timestamp",
+      "first": 1
+    }
+  }
+}

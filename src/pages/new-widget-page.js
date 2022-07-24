@@ -1,18 +1,46 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react/no-array-index-key */
 import React from 'react';
 import MonacoEditor from 'react-monaco-editor';
 import { useDebouncedCallback } from 'use-debounce';
 import { Link } from 'react-router-dom';
-import widgetSchema from '../schema/widget.json';
 import Widget from '../components/widget';
-import defaultJson from '../examples/widget.json';
+import templateUniswapTopPoolsTable from '../examples/widget-table-uniswap-top-pools.json';
+import templateUniswapUsageLineChart from '../examples/widget-line-chart-uniswap-usage.json';
+import templateIPFS from '../examples/widget-bar-chart-ipfs.json';
+import templateTableland from '../examples/widget-table-tableland.json';
+import templateMetric from '../examples/widget-metric-uniswap-pools.json';
+import templateAreaChart from '../examples/widget-area-uniswap-daily-volume.json';
 import {
   getAllWidgets, getWidget, publishToIPFS, saveWidgetLocally,
 } from '../data-service';
 import usePromise from '../hooks/use-promise';
+import widgetSchema from '../schema/widget.json';
+
+const templates = [{
+  title: 'Table - Uniswap top pools',
+  config: templateUniswapTopPoolsTable,
+}, {
+  title: 'Line Chart - Uniswap usage trend',
+  config: templateUniswapUsageLineChart,
+}, {
+  title: 'Area Chart - Uniswap daily volume',
+  config: templateAreaChart,
+}, {
+  title: 'Metric - Uniswap total pools',
+  config: templateMetric,
+}, {
+  title: 'Bar Chart - Data from IPFS (json)',
+  config: templateIPFS,
+}, {
+  title: 'Table - Data from Tableland',
+  config: templateTableland,
+}];
 
 function NewWidgetPage() {
   const fromId = new URL(window.location).searchParams?.get('fromId');
+
+  const defaultJson = templates[0].config;
 
   const [fromWidgetConfig, { isFetching, error }] = usePromise(async () => {
     if (fromId) {
@@ -93,6 +121,28 @@ function NewWidgetPage() {
 
       <div className="create-widget-container">
 
+        <div className="new-widget-template mb-4">
+          <label htmlFor="template" className="mr-3">Load an example:</label>
+
+          <select
+            name="template"
+            id="template"
+            onChange={(e) => {
+              const newConfig = templates[e.target.value]?.config;
+
+              if (newConfig) {
+                setValidWidgetConfig(newConfig);
+                setWidgetJson(JSON.stringify(newConfig, null, 2));
+              }
+            }}
+          >
+            <option value="select">Select</option>
+            {templates.map((template, index) => (
+              <option key={template.title} value={index}>{template.title}</option>
+            ))}
+          </select>
+        </div>
+
         <div className="create-widget-section">
           <div className="create-widget-editor">
             <MonacoEditor
@@ -120,6 +170,9 @@ function NewWidgetPage() {
                 });
               }}
             />
+            <a className="view-schema" href="/schema/widget.json" target="_blank">
+              View Schema
+            </a>
           </div>
 
           <div className="create-widget-helper">

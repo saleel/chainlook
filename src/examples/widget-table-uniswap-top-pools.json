@@ -2,6 +2,7 @@
   "title": "Top pools of the day",
   "type": "table",
   "data": {
+    "source": "graph",
     "subGraphId": "messari/uniswap-v3-ethereum",
     "entity": "liquidityPoolDailySnapshots",
     "filters": {

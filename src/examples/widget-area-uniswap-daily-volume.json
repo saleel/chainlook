@@ -1,0 +1,30 @@
+{
+  "title": "Daily Volume - Last 6 Months",
+  "type": "chart",
+  "data": {
+    "source": "graph",
+    "subGraphId": "messari/uniswap-v3-ethereum",
+    "entity": "financialsDailySnapshots",
+    "filters": {
+      "orderDirection": "desc",
+      "orderBy": "timestamp",
+      "skip": 1,
+      "first": 180
+    }
+  },
+  "chart": {
+    "xAxis": {
+      "dataKey": "timestamp",
+      "format": "dateMMMdd"
+    },
+    "yAxis": {
+      "format": "compactNumber"
+    },
+    "areas": [
+      {
+        "dataKey": "dailyVolumeUSD",
+        "label": "Daily Volume (USD)"
+      }
+    ]
+  }
+}

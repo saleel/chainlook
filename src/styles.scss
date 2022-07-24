@@ -359,6 +359,12 @@ body {
   }
 }
 
+.view-schema {
+  position: absolute;
+  top: 0.5rem;
+  right: 1.5rem;
+}
+
 .button {
   border-radius: 0;
   color: var(--text-color);
@@ -376,7 +382,8 @@ body {
   height: 40vh;
   width: 75%;
   border: 1px solid var(--text-color);
-  padding: 1rem;
+  padding: 0.5rem 0;
+  position: relative;
 }
 
 .create-widget-preview {

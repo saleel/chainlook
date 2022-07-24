@@ -1,0 +1,25 @@
+{
+  "title": "BTC Price History (data from IPFS)",
+  "type": "chart",
+  "data": {
+    "source": "ipfs",
+    "cid": "bafkreifnyss54ouwluscy75qiitqox74g7do2cayq5af3qgqsyigj64sy4"
+  },
+  "chart": {
+    "xAxis": {
+      "dataKey": "date",
+      "label": "date",
+      "format": "dateMMMdd"
+    },
+    "yAxis": {
+      "format": "compactNumber"
+    },
+    "bars": [
+      {
+        "dataKey": "close",
+        "label": "Close",
+        "format": "number"
+      }
+    ]
+  }
+}

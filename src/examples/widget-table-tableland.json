@@ -1,0 +1,27 @@
+{
+  "title": "Rigs (from Tableland)",
+  "type": "table",
+  "data": {
+    "source": "tableland",
+    "network": "testnet",
+    "tableName": "rigs_5_28",
+    "filters": {
+      "orderBy": "id",
+      "orderDirection": "asc",
+      "first": 10,
+      "limit": 100
+    }
+  },
+  "table": {
+    "columns": [
+      {
+        "dataKey": "id",
+        "label": "id"
+      },
+      {
+        "dataKey": "image",
+        "label": "Image URL"
+      }
+    ]
+  }
+}

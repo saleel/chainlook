@@ -1,0 +1,34 @@
+{
+  "title": "Usage Trend - Last 30 Days",
+  "type": "chart",
+  "data": {
+    "source": "graph",
+    "subGraphId": "messari/uniswap-v3-ethereum",
+    "entity": "usageMetricsDailySnapshots",
+    "filters": {
+      "orderDirection": "desc",
+      "orderBy": "timestamp",
+      "skip": 1,
+      "first": 30
+    }
+  },
+  "chart": {
+    "xAxis": {
+      "dataKey": "timestamp",
+      "format": "dateMMMdd"
+    },
+    "yAxis": {
+      "format": "number"
+    },
+    "lines": [
+      {
+        "dataKey": "dailyActiveUsers",
+        "label": "Daily Active Users"
+      },
+      {
+        "dataKey": "dailySwapCount",
+        "label": "Daily Swap Count"
+      }
+    ]
+  }
+}
