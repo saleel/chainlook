@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable react/no-array-index-key */
 import React from 'react';
-import ReactModal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
 import Dashboard from '../components/dashboard';
 import Modal from '../components/modal';
@@ -11,7 +10,7 @@ import {
 import usePromise from '../hooks/use-promise';
 
 function NewDashboardPage() {
-  const fromId = new URL(window.location).searchParams?.get('fromId');
+  const fromId = new URL(window.location.toString().replace('/#/', '/')).searchParams?.get('fromId');
 
   const navigate = useNavigate();
   const [isNewWidgetModalOpen, setIsNewWidgetModalOpen] = React.useState(false);

@@ -38,7 +38,7 @@ const templates = [{
 }];
 
 function NewWidgetPage() {
-  const fromId = new URL(window.location).searchParams?.get('fromId');
+  const fromId = new URL(window.location.toString().replace('/#/', '/')).searchParams?.get('fromId');
 
   const defaultJson = templates[0].config;
 
