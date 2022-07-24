@@ -34,9 +34,10 @@ export default function Layout() {
       <div className="footer wrapper">
         <div className="mb-1">
           Copyright &copy;2022 ChainLook.
+          Deployed on IPFS using <a target="_blank" rel="noreferrer" href="https://fleek.co/">Fleek</a>
         </div>
         <div>
-          Deployed on IPFS using <a target="_blank" rel="noreferrer" href="https://fleek.co/">Fleek</a>
+          Disclaimer: ChainLook don&lsquo;t guarantee accuracy of the data. Project still in alpha stage and schema might change.
         </div>
       </div>
     </>
