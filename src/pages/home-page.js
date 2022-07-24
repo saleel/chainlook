@@ -4,10 +4,12 @@ import { Link } from 'react-router-dom';
 const popularDashboard = [
   {
     title: 'Uniswap v3',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Uniswap_Logo_and_Wordmark.svg/640px-Uniswap_Logo_and_Wordmark.svg.png',
     id: 'bafkreihrtacvuegqtfegyradaugnfwlqkk5hr2jxgv3e6sj5f6rnu5dyqi',
   },
   {
     title: 'Dashboard with IPFS and Tableland data',
+    image: 'https://tableland.xyz/_nuxt/img/logo-black.4b9c4b1.svg',
     id: 'bafkreienmpke565i56qtiphdwljfzaye7nbyfjv5xipooxkhnkjte3whni',
   },
 ];
@@ -32,7 +34,7 @@ function HomePage() {
         <br />
         <br />
 
-        Start by browsing popular dashboards below, or by <a href="/widget/new">creating your own Widget</a> from existing samples.
+        Start by browsing popular dashboards below, or by <Link to="/widget/new">creating your own Widget</Link> from existing samples.
 
         <br />
         <br />
@@ -41,9 +43,20 @@ function HomePage() {
 
       <div className="popular-dashboards">
         <h3 className="section-title">Popular Dashboards:</h3>
-        {popularDashboard.map((d) => (
-          <Link key={d.id} className="link" to={`/dashboard/${d.id}`}>{d.title}</Link>
-        ))}
+
+        <div className="columns">
+          {popularDashboard.map((d) => (
+            <Link to={`/dashboard/${d.id}`} key={d.id} className="column is-6-mobile is-4-tablet is-3-desktop">
+              <div className="popular-dashboard">
+                <div className="popular-dashboard-image">
+                  <img src={d.image} alt={d.title} />
+                </div>
+                <div className="popular-dashboard-title">{d.title}</div>
+              </div>
+            </Link>
+          ))}
+        </div>
+
       </div>
 
     </div>

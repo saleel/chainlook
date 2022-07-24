@@ -135,13 +135,32 @@ body {
   max-width: 1000px;
 }
 
-.popular-dashboards {
-  .link {
+.popular-dashboard {
+  border: 1px solid var(--text-color);
+  cursor: pointer;
+  color: var(--text-color);
+
+  .popular-dashboard-image {
+    height: 245px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid var(--text-color);
+  }
+
+  .popular-dashboard-title {
     display: block;
+    height: 55px;
     font-weight: 400;
-    margin-left: 1rem;
-    margin-bottom: 0.5rem;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+    padding: 0.6rem 1rem;
+    line-height: 1.4rem;
+  }
+
+  &:hover {
+    background-color: var(--gray-200);
+    text-decoration: none;
   }
 }
 
@@ -461,6 +480,7 @@ body {
 }
 
 @media screen and (max-width:641px) {
+
   // Disable create dashboard and widgets on small screens
   .menu {
     display: none;
