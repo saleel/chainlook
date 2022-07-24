@@ -108,7 +108,7 @@ export async function getGraphData({
       uniqueMap[uniqueKey].push(item);
     });
 
-    result = Object.entries(uniqueMap).reduce((acc, [_, items]) => {
+    result = Object.entries(uniqueMap).reduce((acc, [, items]) => {
       const aggregated = { ...items[0] }; // Start with first item and update all values
 
       // No need to aggregate if len = 1
