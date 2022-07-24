@@ -1,10 +1,11 @@
 import React from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Widget from '../components/widget';
-import { getWidget } from '../data-service';
+import { getWidget, saveWidgetLocally } from '../data-service';
 import usePromise from '../hooks/use-promise';
 
 function WidgetPage() {
+  const navigate = useNavigate();
   const { widgetId } = useParams();
 
   const [widgetConfig, { isFetching, error }] = usePromise(() => getWidget(widgetId), {
@@ -16,6 +17,11 @@ function WidgetPage() {
     if (widgetConfig) {
       document.title = `${widgetConfig.title} - ChainLook`;
     }
+  }, [widgetConfig]);
+
+  const onForkClick = React.useCallback(async () => {
+    await saveWidgetLocally(widgetConfig);
+    navigate('/widget/new'); // TODO: a hack for now - new widget page will load the most recent local widget
   }, [widgetConfig]);
 
   if (isFetching) {
@@ -32,13 +38,13 @@ function WidgetPage() {
       <div className="widget-actions">
         <div />
         <div className="flex-row">
-          <a className="link mr-2 pt-1" href={`https://ipfs.io/ipfs/${widgetId}`} target="_blank" rel="noreferrer" title="View source">
+          <a className="link view-source mr-2 pt-1" href={`https://ipfs.io/ipfs/${widgetId}`} target="_blank" rel="noreferrer" title="View source">
             <i className="icon-code" />
           </a>
 
-          <Link className="link icon-button pt-1" to={`/widget/new?fromId=${widgetId}`} title="Copy this dashbord locally and edit">
+          <div role="button" tabIndex={0} className="icon-button pt-1" onClick={onForkClick} title="Copy this dashbord locally and edit">
             <i className="icon-clone" />
-          </Link>
+          </div>
         </div>
       </div>
 
