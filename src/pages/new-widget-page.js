@@ -18,11 +18,11 @@ import usePromise from '../hooks/use-promise';
 import widgetSchema from '../schema/widget.json';
 
 const templates = [{
-  title: 'Table - Uniswap top pools',
-  config: templateUniswapTopPoolsTable,
-}, {
   title: 'Line Chart - Uniswap usage trend',
   config: templateUniswapUsageLineChart,
+}, {
+  title: 'Table - Uniswap top pools (incl. grouping)',
+  config: templateUniswapTopPoolsTable,
 }, {
   title: 'Area Chart - Uniswap daily volume',
   config: templateAreaChart,
