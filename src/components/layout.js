@@ -32,7 +32,12 @@ export default function Layout() {
       </div>
 
       <div className="footer wrapper">
-        Copyright &copy;2022 ChainLook
+        <div className="mb-1">
+          Copyright &copy;2022 ChainLook.
+        </div>
+        <div>
+          Deployed on IPFS using <a target="_blank" rel="noreferrer" href="https://fleek.co/">Fleek</a>
+        </div>
       </div>
     </>
   );

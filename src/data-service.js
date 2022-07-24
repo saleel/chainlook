@@ -11,7 +11,8 @@ import sampleDashboard from './examples/uniswap-v3.json';
 import ipfsSampleDashboard from './examples/ipfs-dashboard.json';
 import variables from './helpers/variables';
 
-const web3Storage = new Web3Storage({ token: process.env.REACT_APP_WEB3_STORAGE_API_KEY });
+// eslint-disable-next-line max-len
+const web3Storage = new Web3Storage({ token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGMzZDVhZjA0OUEwYTUzMDEwNTdkNWQ0OWIwRDBjN2EwRTU5NkEyNDkiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NTgzNTI1OTY2MDMsIm5hbWUiOiJjaGFpbmxvb2stYmV0YSJ9.I2VbgwchzhiJwHQzjXjKa1NSXoAtg5QAwmaTrdPjnIU' });
 
 const adapter = new LokiIndexedAdapter();
 let dbReady = false;
