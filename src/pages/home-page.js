@@ -33,6 +33,10 @@ function HomePage() {
         <br />
 
         Start by browsing popular dashboards below, or by <a href="/widget/new">creating your own Widget</a> from existing samples.
+
+        <br />
+        <br />
+        Please note that project is still in Alpha stage and schema for dashboards and widgets might change in the future.
       </div>
 
       <div className="popular-dashboards">
