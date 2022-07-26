@@ -33,7 +33,7 @@ function DashboardPage() {
     if (error.message.includes('404')) {
       return (
         <div className="page dashboard-page">
-          No dashboard found with this CID. If this is a newly created dashbaord it would take some time be available on IPFS.
+          No dashboard found with this CID. If this is a newly created dashboard it would take some time be available on IPFS.
           <br />
           Please reload this page after few seconds.
         </div>

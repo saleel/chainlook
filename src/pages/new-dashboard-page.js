@@ -67,8 +67,8 @@ function NewDashboardPage() {
 
     e.target.disabled = false;
 
-    // Wait for 2 seconds for IPFS publishing
-    await new Promise((resolve) => { setTimeout(resolve, 2000); });
+    // eslint-disable-next-line no-alert
+    window.alert('Dashboard published successfully. You will be redirected shortly.');
 
     // Redirect to new dashboard
     navigate(`/dashboard/${widgetCID}`);

@@ -15,6 +15,10 @@ const popularDashboard = [
 ];
 
 function HomePage() {
+  React.useEffect(() => {
+    document.title = 'ChainLook - Decentralized blockchain analytics powered by TheGraph and IPFS';
+  }, []);
+
   return (
     <div className="page home-page">
 
