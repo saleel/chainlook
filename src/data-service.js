@@ -11,6 +11,10 @@ import sampleDashboard from './examples/uniswap-v3.json';
 import ipfsSampleDashboard from './examples/ipfs-dashboard.json';
 import variables from './helpers/variables';
 
+const GRAPH_HOSTED_SERVICE_URL = 'https://api.thegraph.com/subgraphs/name';
+const GRAPH_API_KEY = '8c912c4609257d267b52da9834913c0b';
+const GRAPH_API_URL = `https://gateway.thegraph.com/api/${GRAPH_API_KEY}`;
+
 // eslint-disable-next-line max-len
 const web3Storage = new Web3Storage({ token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGMzZDVhZjA0OUEwYTUzMDEwNTdkNWQ0OWIwRDBjN2EwRTU5NkEyNDkiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NTgzNTI1OTY2MDMsIm5hbWUiOiJjaGFpbmxvb2stYmV0YSJ9.I2VbgwchzhiJwHQzjXjKa1NSXoAtg5QAwmaTrdPjnIU' });
 
@@ -83,8 +87,16 @@ export async function getGraphData({
 
   // console.log(query);
 
+  let url = `${GRAPH_API_URL}/subgraphs/id/${subGraphId}`;
+
+  // Hit the hosted service if the subGraphId is in user/subgraph format
+  // TODO: improve this logic
+  if (subGraphId.includes('/')) {
+    url = `${GRAPH_HOSTED_SERVICE_URL}/${subGraphId}`;
+  }
+
   const { data: response } = await axios({
-    url: `https://api.thegraph.com/subgraphs/name/${subGraphId}`,
+    url,
     method: 'POST',
     data: {
       query,
