@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Web3Storage } from 'web3.storage';
+// import { Web3Storage } from 'web3.storage';
 import { jsonToGraphQLQuery } from 'json-to-graphql-query';
 import Loki from 'lokijs';
 import LokiIndexedAdapter from 'lokijs/src/loki-indexed-adapter';
@@ -16,7 +16,7 @@ const GRAPH_API_KEY = '8c912c4609257d267b52da9834913c0b';
 const GRAPH_API_URL = `https://gateway.thegraph.com/api/${GRAPH_API_KEY}`;
 
 // eslint-disable-next-line max-len
-const web3Storage = new Web3Storage({ token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGMzZDVhZjA0OUEwYTUzMDEwNTdkNWQ0OWIwRDBjN2EwRTU5NkEyNDkiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NTgzNTI1OTY2MDMsIm5hbWUiOiJjaGFpbmxvb2stYmV0YSJ9.I2VbgwchzhiJwHQzjXjKa1NSXoAtg5QAwmaTrdPjnIU' });
+// const web3Storage = new Web3Storage({ token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGMzZDVhZjA0OUEwYTUzMDEwNTdkNWQ0OWIwRDBjN2EwRTU5NkEyNDkiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NTgzNTI1OTY2MDMsIm5hbWUiOiJjaGFpbmxvb2stYmV0YSJ9.I2VbgwchzhiJwHQzjXjKa1NSXoAtg5QAwmaTrdPjnIU' });
 
 const adapter = new LokiIndexedAdapter();
 let dbReady = false;
@@ -42,16 +42,36 @@ async function getJsonFromIPFS(cid) {
   return response.data;
 }
 
-export async function getDashboard(dashboardId) {
+async function getJsonFromIPNS(path) {
+  const response = await axios({
+    method: 'get',
+    baseURL: 'https://ipfs.io/ipns/',
+    url: path,
+  });
+
+  return response.data;
+}
+
+export async function getDashboard(protocol, id) {
   // Easier for local dev
-  if (dashboardId === 'sample') {
+  if (id === 'sample') {
     return sampleDashboard;
   }
-  if (dashboardId === 'ipfssample') {
+
+  if (id === 'ipfssample') {
     return ipfsSampleDashboard;
   }
 
-  return getJsonFromIPFS(dashboardId);
+  if (protocol === 'ipfs') {
+    return getJsonFromIPFS(id);
+  }
+
+  if (protocol === 'ipns') {
+    return getJsonFromIPNS(id);
+  }
+
+  // Raw ID assumed to be IPFS CID for the time being
+  return getJsonFromIPFS(id);
 }
 
 export async function getWidget(widgetId) {
@@ -232,15 +252,7 @@ async function getWidgetDataFromTableLand(widget) {
 
   const result = await tableland.read(query);
 
-  const { columns, rows } = result;
-
-  const data = rows.map((r) => {
-    const datum = {};
-    columns.forEach((col, i) => { datum[col.name] = r[i]; });
-    return datum;
-  });
-
-  return data;
+  return Object.values(result);
 }
 
 export async function getWidgetData(widget) {
@@ -260,20 +272,20 @@ export async function getWidgetData(widget) {
 }
 
 export async function publishToIPFS(jsonData) {
-  const rootCid = await web3Storage.put([{
-    name: ['ChainLook: ', jsonData.type, jsonData.title].filter(Boolean).join(' '),
-    stream: () => new ReadableStream({
-      start(controller) {
-        controller.enqueue(JSON.stringify(jsonData, null, 2));
-        controller.close();
-      },
-    }),
-  }]);
+  // const rootCid = await web3Storage.put([{
+  //   name: ['ChainLook: ', jsonData.type, jsonData.title].filter(Boolean).join(' '),
+  //   stream: () => new ReadableStream({
+  //     start(controller) {
+  //       controller.enqueue(JSON.stringify(jsonData, null, 2));
+  //       controller.close();
+  //     },
+  //   }),
+  // }]);
 
-  const res = await web3Storage.get(rootCid);
-  const files = await res.files();
+  // const res = await web3Storage.get(rootCid);
+  // const files = await res.files();
 
-  return files[0]?.cid;
+  // return files[0]?.cid;
 }
 
 async function getLocalDbCollection(collectionName) {
@@ -346,5 +358,3 @@ export async function getLocalDashboard() {
 
   return firstItem;
 }
-
-// web3Storage.get("").then(r => r.files()).then(console.log);
