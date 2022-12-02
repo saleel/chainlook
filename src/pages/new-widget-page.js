@@ -156,7 +156,7 @@ function NewWidgetPage() {
               theme="vs-light"
               value={widgetJson}
               options={{
-                fontSize: 15,
+                fontSize: 14,
                 minimap: {
                   enabled: false,
                 },
