@@ -19,7 +19,8 @@ function App() {
         </Route>
 
         <Route path="dashboard">
-          <Route path=":dashboardId" element={<DashboardPage />} />
+          <Route path=":id" element={<DashboardPage />} />
+          <Route path=":protocol/:id" element={<DashboardPage />} />
           <Route path="new" element={<NewDashboardPage />} />
         </Route>
 

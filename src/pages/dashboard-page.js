@@ -7,11 +7,11 @@ import usePromise from '../hooks/use-promise';
 
 function DashboardPage() {
   const navigate = useNavigate();
-  const { dashboardId } = useParams();
+  const { protocol, id } = useParams();
 
-  const [dashboard, { isFetching, error }] = usePromise(() => getDashboard(dashboardId), {
-    dependencies: [dashboardId],
-    conditions: [dashboardId],
+  const [dashboard, { isFetching, error }] = usePromise(() => getDashboard(protocol, id), {
+    dependencies: [protocol, id],
+    conditions: [id],
   });
 
   React.useEffect(() => {
@@ -52,11 +52,11 @@ function DashboardPage() {
         </h2>
 
         <div className="flex-row">
-          <a className="link view-source mr-2 pt-1" href={`https://ipfs.io/ipfs/${dashboardId}`} target="_blank" rel="noreferrer" title="View source">
+          <a className="link view-source mr-2 pt-1" href={`https://ipfs.io/${protocol ? `/${protocol}` : ''}/${id}`} target="_blank" rel="noreferrer" title="View source">
             <i className="icon-code" />
           </a>
 
-          <div role="button" tabIndex={0} className="icon-button pt-1" onClick={onForkClick} title="Copy this dashbord locally and edit">
+          <div role="button" tabIndex={0} className="icon-button pt-1" onClick={onForkClick} title="Copy this dashboard locally and edit">
             <i className="icon-clone" />
           </div>
         </div>
