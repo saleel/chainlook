@@ -1,0 +1,218 @@
+{
+  "$id": "/schemas/widget.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "title": { "type": "string" },
+    "type": {
+      "type": "string",
+      "enum": ["table", "chart", "pieChart", "metric", "text"]
+    },
+    "author": {
+      "type": "object",
+      "properties": {
+        "address": { "type": "string" },
+        "name": { "type": "string" }
+      },
+      "required": ["address", "name"],
+      "additionalProperties": true
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "source": { "$ref": "#/$defs/dataSource" },
+        "sources": {
+          "type": "object",
+          "patternProperties": {
+            "^[a-zA-Z0-9_-]+$": { "$ref": "#/$defs/dataSource" }
+          },
+          "minProperties": 1
+        },
+        "join": { "type": "object" },
+        "transforms": { "type": "object" },
+        "group": {
+          "type": "object",
+          "properties": {
+            "dataKey": { "type": "string" },
+            "aggregations": { "type": "object" }
+          },
+          "required": ["dataKey"],
+          "additionalProperties": false
+        }
+      },
+      "anyOf": [{ "required": ["source"] }, { "required": ["sources"] }],
+      "additionalProperties": false
+    },
+    "table": { "$ref": "#/$defs/widget-table" },
+    "chart": { "$ref": "#/$defs/widget-chart" },
+    "pieChart": { "$ref": "#/$defs/widget-pieChart" },
+    "metric": { "$ref": "#/$defs/widget-metric" },
+    "text": { "$ref": "#/$defs/widget-text" }
+  },
+  "required": ["title", "type", "data"],
+  "not": { "required": ["table", "chart", "pieChart", "metric", "text"] },
+  "allOf": [
+    {
+      "if": { "properties": { "type": { "const": "table" } } },
+      "then": { "required": ["table"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "chart" } } },
+      "then": { "required": ["chart"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "metric" } } },
+      "then": { "required": ["metric"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "text" } } },
+      "then": { "required": ["text"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "pieChart" } } },
+      "then": { "required": ["pieChart"] }
+    }
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "dataSource": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "type": "string",
+          "enum": ["graph", "ipfs", "tableland"]
+        },
+        "subgraphId": { "type": "string" },
+        "entity": { "type": "string" },
+        "orderDirection": { "type": "string" },
+        "orderBy": { "type": "string" },
+        "skip": { "type": "integer" },
+        "first": { "type": "integer" },
+        "filters": { "type": "object", "additionalProperties": true },
+        "cid": { "type": "string" },
+        "network": { "type": "string" },
+        "tableName": { "type": "string" }
+      },
+      "required": ["provider"],
+      "not": { "required": ["subgraphId", "entity", "cid", "network", "tableName"] },
+      "allOf": [
+        {
+          "if": { "properties": { "provider": { "const": "graph" } } },
+          "then": { "required": ["subgraphId", "entity"] }
+        },
+        {
+          "if": { "properties": { "provider": { "const": "ipfs" } } },
+          "then": { "required": ["cid"] }
+        },
+        {
+          "if": { "properties": { "provider": { "const": "tableland" } } },
+          "then": { "required": ["network", "tableName"] }
+        }
+      ]
+    },
+    "widget-table": {
+      "type": "object",
+      "properties": {
+        "columns": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "dataKey": { "type": "string" },
+                "label": { "type": "string" },
+                "format": { "type": "string" }
+              },
+              "required": ["dataKey"]
+            }
+          ],
+          "minItems": 1
+        }
+      },
+      "required": ["columns"]
+    },
+    "widget-chart": {
+      "type": "object",
+      "properties": {
+        "xAxis": {
+          "type": "object",
+          "properties": {
+            "dataKey": { "type": "string" },
+            "format": { "type": "string" }
+          },
+          "required": ["dataKey"]
+        },
+        "yAxis": {
+          "type": "object",
+          "properties": { "format": { "type": "string" } }
+        },
+        "lines": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "dataKey": { "type": "string" },
+                "label": { "type": "string" }
+              },
+              "required": ["dataKey", "label"]
+            }
+          ],
+          "minItems": 1
+        },
+        "bars": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "dataKey": { "type": "string" },
+                "label": { "type": "string" }
+              },
+              "required": ["dataKey", "label"]
+            }
+          ],
+          "minItems": 1
+        },
+        "area": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "dataKey": { "type": "string" },
+                "label": { "type": "string" }
+              },
+              "required": ["dataKey", "label"]
+            }
+          ],
+          "minItems": 1
+        }
+      },
+      "required": ["xAxis"],
+      "anyOf": [{ "required": ["area"] }, { "required": ["bars"] }, { "required": ["lines"] }]
+    },
+    "widget-pieChart": {
+      "type": "object",
+      "properties": {
+        "dataKey": { "type": "string" },
+        "nameKey": { "type": "string" },
+        "format": { "type": "string" }
+      },
+      "required": ["dataKey", "nameKey"]
+    },
+    "widget-metric": {
+      "type": "object",
+      "properties": {
+        "dataKey": { "type": "string" },
+        "format": { "type": "string" }
+      },
+      "required": ["dataKey"]
+    },
+    "widget-text": {
+      "type": "object",
+      "properties": { "message": { "type": "string" } },
+      "required": ["message"]
+    }
+  }
+}
