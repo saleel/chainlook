@@ -52,6 +52,8 @@ export async function fetchDataForWidget(widget, variables) {
   }
 
   if (!isSingleSource) {
+    if (!sources) { throw new Error('data.sources not defined in schema'); }
+
     // Fetch data from each data source and produce { sourceKey, items }[]
     const resultFromSources = await Promise.all(
       Object.entries(sources).map(async ([sourceKey, sourceConfig]) => {

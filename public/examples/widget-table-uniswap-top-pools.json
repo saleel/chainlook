@@ -2,15 +2,15 @@
   "title": "Top pools of the day",
   "type": "table",
   "data": {
-    "source": "graph",
-    "subgraphId": "messari/uniswap-v3-ethereum",
-    "entity": "liquidityPoolDailySnapshots",
-    "filters": {
+    "source": {
+      "provider": "graph",
+      "subgraphId": "messari/uniswap-v3-ethereum",
+      "entity": "liquidityPoolDailySnapshots",
       "orderDirection": "desc",
       "orderBy": "dailyVolumeUSD",
       "skip": 1,
       "first": 20,
-      "where": {
+      "filters": {
         "timestamp_gte": "$startOfDay"
       }
     },

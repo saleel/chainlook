@@ -29,7 +29,7 @@ export default async function fetchWidgetDataFromTableland(config, fieldsRequire
   }
 
   if (first) {
-    filtersQuery += ` FIRST ${first}`;
+    filtersQuery += ` LIMIT ${first}`;
   }
 
   if (skip) {

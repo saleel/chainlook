@@ -6,7 +6,7 @@ import { GRAPH_API_KEY, GRAPH_API_URL, GRAPH_HOSTED_SERVICE_URL } from '../../co
 
 export default async function fetchWidgetDataFromTheGraph(config, fieldsRequired, variables) {
   const {
-    subgraphId, entity, orderBy, orderDirection, skip, first, filters,
+    subgraphId, entity, orderBy, orderDirection, skip = 0, first, filters,
   } = config;
 
   // Assume hosted service if the subgraphId is has in author/name format

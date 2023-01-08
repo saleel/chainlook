@@ -2,8 +2,8 @@
   "title": "BTC Price History (data from IPFS)",
   "type": "chart",
   "data": {
-    "provider": {
-      "source": "ipfs",
+    "source": {
+      "provider": "ipfs",
       "cid": "bafkreifnyss54ouwluscy75qiitqox74g7do2cayq5af3qgqsyigj64sy4"
     }
   },
