@@ -1,8 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
-import './styles.scss';
-import './icons.css';
+import './styles/styles.scss';
 import Modal from 'react-modal';
 // import { CeramicClient } from '@ceramicnetwork/http-client';
 // import { DID } from 'dids';
