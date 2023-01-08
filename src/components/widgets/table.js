@@ -1,5 +1,4 @@
-import get from 'lodash/get';
-import Formatters from '../data/modifiers/formatters';
+import Formatters from '../../data/modifiers/formatters';
 
 function Table(props) {
   const {
@@ -24,11 +23,11 @@ function Table(props) {
           </thead>
 
           <tbody>
-            {data.map((d, i) => (
+            {data.map((datum, i) => (
               // eslint-disable-next-line react/no-array-index-key
               <tr key={i}>
                 {columns.map((column) => {
-                  let value = get(d, column.dataKey);
+                  let value = datum[column.dataKey];
 
                   if (column.format) {
                     value = Formatters[column.format](value);

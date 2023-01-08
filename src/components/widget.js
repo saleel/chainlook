@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { getWidget, fetchDataForWidget } from '../data/api';
 import { saveWidgetLocally } from '../data/store';
 import usePromise from '../hooks/use-promise';
-import Chart from './chart';
-import Table from './table';
-import Text from './text';
-import Metric from './metric';
-import PieChart from './pie-chart';
+import Chart from './widgets/chart';
+import Table from './widgets/table';
+import Text from './widgets/text';
+import Metric from './widgets/metric';
+import PieChart from './widgets/pie-chart';
 
 function Widget(props) {
   const { id, config: defaultConfig, enableFork } = props;

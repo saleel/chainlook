@@ -1,4 +1,4 @@
-import Formatters from '../data/modifiers/formatters';
+import Formatters from '../../data/modifiers/formatters';
 
 function Metric(props) {
   try {
