@@ -5,12 +5,7 @@ const popularDashboard = [
   {
     title: 'Uniswap v3',
     image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Uniswap_Logo_and_Wordmark.svg/640px-Uniswap_Logo_and_Wordmark.svg.png',
-    id: 'bafkreihrtacvuegqtfegyradaugnfwlqkk5hr2jxgv3e6sj5f6rnu5dyqi',
-  },
-  {
-    title: 'Dashboard with IPFS and Tableland data',
-    image: 'https://tableland.xyz/_nuxt/img/logo-black.4b9c4b1.svg',
-    id: 'bafkreienmpke565i56qtiphdwljfzaye7nbyfjv5xipooxkhnkjte3whni',
+    id: 'bafkreic2ibgmzwdjyyq5jqtrbtenzjyvrx6vyeoaacwstcu7k76el6cflu',
   },
 ];
 

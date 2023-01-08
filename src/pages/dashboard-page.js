@@ -53,7 +53,7 @@ function DashboardPage() {
         </h2>
 
         <div className="flex-row">
-          <a className="link view-source mr-2 pt-1" href={`https://ipfs.io/${protocol ? `/${protocol}` : ''}/${id}`} target="_blank" rel="noreferrer" title="View source">
+          <a className="link view-source mr-2 pt-1" href={`https://ipfs.io/${protocol ? `/${protocol}` : 'ipfs'}/${id}`} target="_blank" rel="noreferrer" title="View source">
             <i className="icon-code" />
           </a>
 

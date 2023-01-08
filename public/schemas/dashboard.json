@@ -20,10 +20,11 @@
             },
             "required": ["x", "y", "w", "h"]
           }
-        }
+        },
+        "required": ["widget", "layout"]
       },
       "minItems": 1
     }
   },
-  "required": ["title", "widgets", "layout"]
+  "required": ["title", "widgets"]
 }
