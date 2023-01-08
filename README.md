@@ -19,4 +19,9 @@ ChainLook is a general purpose visualization tool for decentralized data.
 - Add pagination for tables
 - Sign in with Ethereum
 - Auto reload data - Live dashboards
-
+- Interactive widget creator (without manual json)
+- Add voting on dashboards
+-	Improve theming for widgets
+- Build dashboards for common protocols
+- Allow users to provide own API keys to query graph decentralized network
+- Allow users to choose own IPFS gateway
