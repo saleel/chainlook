@@ -5,11 +5,11 @@
     "source": "tableland",
     "network": "testnet",
     "tableName": "rigs_5_28",
+    "orderBy": "id",
+    "orderDirection": "asc",
+    "first": 10,
+    "limit": 100,
     "filters": {
-      "orderBy": "id",
-      "orderDirection": "asc",
-      "first": 10,
-      "limit": 100
     }
   },
   "table": {

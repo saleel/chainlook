@@ -5,10 +5,10 @@ function timeToJSDate(date) {
   return Math.round(date.getTime() / 1000);
 }
 
-const variables = {
+const GlobalVariables = {
   $startOfDay: () => timeToJSDate(startOfDay(new Date())),
   $startOfLast7D: () => timeToJSDate(startOfDay(addDays(new Date(), -7))),
   $startOfLast30D: () => timeToJSDate(startOfDay(addDays(new Date(), -30))),
 };
 
-export default variables;
+export default GlobalVariables;

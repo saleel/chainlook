@@ -1,4 +1,4 @@
-import formatters from '../helpers/formatters';
+import Formatters from '../data/modifiers/formatters';
 
 function Metric(props) {
   try {
@@ -9,8 +9,8 @@ function Metric(props) {
     const { dataKey, unit, format } = config;
 
     let value = Array.isArray(data) ? data[0]?.[dataKey] : data[dataKey];
-    if (format && typeof formatters[format] === 'function') {
-      value = formatters[format](value);
+    if (format && typeof Formatters[format] === 'function') {
+      value = Formatters[format](value);
     }
 
     return (

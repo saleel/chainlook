@@ -1,7 +1,7 @@
 import {
   ResponsiveContainer, PieChart as RechartPieChart, Pie,
 } from 'recharts';
-import formatters from '../helpers/formatters';
+import Formatters from '../data/modifiers/formatters';
 
 const COLORS = ['var(--blue-500)', 'var(--green-300)', 'var(--yellow-500)'];
 
@@ -13,7 +13,7 @@ function PieChart(props) {
 
     const formattedData = data.map((d) => ({
       ...d,
-      [dataKey]: format ? Math.round(formatters[format](d[dataKey])) : Math.round(d[dataKey]),
+      [dataKey]: format ? Math.round(Formatters[format](d[dataKey])) : Math.round(d[dataKey]),
     }));
 
     return (

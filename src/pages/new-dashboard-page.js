@@ -4,10 +4,11 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Dashboard from '../components/dashboard';
 import Modal from '../components/modal';
-import {
-  getAllWidgets, getDashboard, getLocalDashboard, publishToIPFS, removeLocalDashboards, saveDashboardLocally,
-} from '../data-service';
 import usePromise from '../hooks/use-promise';
+import { getDashboard, publishToIPFS } from '../data/api';
+import {
+  getAllWidgets, getLocalDashboard, removeLocalDashboards, saveDashboardLocally,
+} from '../data/store';
 
 function NewDashboardPage() {
   const fromId = new URL(window.location.toString().replace('/#/', '/')).searchParams?.get('fromId');

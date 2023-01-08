@@ -2,7 +2,8 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Dashboard from '../components/dashboard';
-import { getDashboard, saveDashboardLocally } from '../data-service';
+import { getDashboard } from '../data/api';
+import { saveDashboardLocally } from '../data/store';
 import usePromise from '../hooks/use-promise';
 
 function DashboardPage() {

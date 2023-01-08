@@ -1,7 +1,8 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Widget from '../components/widget';
-import { getWidget, saveWidgetLocally } from '../data-service';
+import { getWidget } from '../data/api';
+import { saveWidgetLocally } from '../data/store';
 import usePromise from '../hooks/use-promise';
 
 function WidgetPage() {

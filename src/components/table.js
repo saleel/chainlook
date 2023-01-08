@@ -1,5 +1,5 @@
 import get from 'lodash/get';
-import formatters from '../helpers/formatters';
+import Formatters from '../data/modifiers/formatters';
 
 function Table(props) {
   const {
@@ -31,7 +31,7 @@ function Table(props) {
                   let value = get(d, column.dataKey);
 
                   if (column.format) {
-                    value = formatters[column.format](value);
+                    value = Formatters[column.format](value);
                   }
 
                   return (

@@ -2,7 +2,7 @@ import React from 'react';
 import {
   Line, ComposedChart, XAxis, YAxis, Tooltip, ResponsiveContainer, Bar, Area,
 } from 'recharts';
-import formatters from '../helpers/formatters';
+import Formatters from '../data/modifiers/formatters';
 
 const COLORS = ['var(--blue-500)', 'var(--green-300)', 'var(--yellow-500)'];
 
@@ -33,19 +33,18 @@ function Chart(props) {
         >
           <XAxis
             dataKey={xAxis.dataKey}
-            {...typeof formatters[xAxis.format] === 'function' && { tickFormatter: formatters[xAxis.format] }}
-            {...xAxis.format && { tickFormatter: formatters[xAxis.format] }}
+            {...Formatters[xAxis.format] && { tickFormatter: Formatters[xAxis.format] }}
           />
 
           <YAxis
-            {...typeof formatters[yAxis?.format] === 'function' && { tickFormatter: formatters[yAxis.format] }}
+            {...Formatters[yAxis?.format] && { tickFormatter: Formatters[yAxis.format] }}
             type="number"
             domain={[0, maxData * 1.1]}
           />
 
           <Tooltip
-            {...xAxis.format && { labelFormatter: formatters[xAxis.format] }}
-            {...yAxis?.format && { formatter: formatters[yAxis.format] }}
+            {...Formatters[xAxis.format] && { labelFormatter: Formatters[xAxis.format] }}
+            {...Formatters[yAxis?.format] && { formatter: Formatters[yAxis.format] }}
           />
 
           {areas.map((area, i) => (

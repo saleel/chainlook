@@ -33,10 +33,10 @@
         "group": {
           "type": "object",
           "properties": {
-            "dataKey": { "type": "string" },
+            "key": { "type": "string" },
             "aggregations": { "type": "object" }
           },
-          "required": ["dataKey"],
+          "required": ["key"],
           "additionalProperties": false
         }
       },
@@ -80,7 +80,8 @@
       "properties": {
         "provider": {
           "type": "string",
-          "enum": ["graph", "ipfs", "tableland"]
+          "enum": ["graph", "thegraph", "ipfs", "tableland"],
+          "default": "graph"
         },
         "subgraphId": { "type": "string" },
         "entity": { "type": "string" },
@@ -97,7 +98,7 @@
       "not": { "required": ["subgraphId", "entity", "cid", "network", "tableName"] },
       "allOf": [
         {
-          "if": { "properties": { "provider": { "const": "graph" } } },
+          "if": { "properties": { "provider": { "const": "subgraph" } } },
           "then": { "required": ["subgraphId", "entity"] }
         },
         {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getWidget, getWidgetData, saveWidgetLocally } from '../data-service';
+import { getWidget, fetchDataForWidget } from '../data/api';
+import { saveWidgetLocally } from '../data/store';
 import usePromise from '../hooks/use-promise';
 import Chart from './chart';
 import Table from './table';
@@ -25,7 +26,7 @@ function Widget(props) {
           widgetConfig = await getWidget(id);
         }
 
-        const widgetData = widgetConfig.data ? await getWidgetData(widgetConfig) : null;
+        const widgetData = widgetConfig.data ? await fetchDataForWidget(widgetConfig) : null;
 
         return { widgetConfig, widgetData };
       },

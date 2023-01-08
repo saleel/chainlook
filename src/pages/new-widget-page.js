@@ -6,14 +6,13 @@ import { useDebouncedCallback } from 'use-debounce';
 import { Link } from 'react-router-dom';
 import Widget from '../components/widget';
 import templateUniswapTopPoolsTable from '../examples/widget-table-uniswap-top-pools.json';
-import templateUniswapUsageLineChart from '../examples/widget-line-chart-uniswap-usage.json';
+import templateUniswapUsageLineChart from '../examples/schema-v1.json';
 import templateIPFS from '../examples/widget-bar-chart-ipfs.json';
 import templateTableland from '../examples/widget-table-tableland.json';
 import templateMetric from '../examples/widget-metric-uniswap-pools.json';
 import templateAreaChart from '../examples/widget-area-uniswap-daily-volume.json';
-import {
-  getAllWidgets, getWidget, publishToIPFS, saveWidgetLocally,
-} from '../data-service';
+import { getAllWidgets, saveWidgetLocally } from '../data/store';
+import { getWidget, publishToIPFS } from '../data/api';
 import usePromise from '../hooks/use-promise';
 import widgetSchema from '../schema/widget.json';
 

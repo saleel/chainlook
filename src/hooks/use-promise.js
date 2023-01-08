@@ -55,7 +55,7 @@ const cache = {
  * @template T
  * @param {(() => Promise<T>)} promise
  * @param {UsePromiseOptions} [options]
- * @returns {[T, { isFetching: boolean, fetchedAt: Date, reFetch: Function, error: Error }]}
+ * @returns {[T, { isFetching: boolean, fetchedAt: Date, reFetch: Function, error?: Error }]}
  */
 function usePromise(promise, options = {}) {
   const {
