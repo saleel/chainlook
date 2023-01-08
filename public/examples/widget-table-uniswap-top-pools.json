@@ -3,7 +3,7 @@
   "type": "table",
   "data": {
     "source": "graph",
-    "subGraphId": "messari/uniswap-v3-ethereum",
+    "subgraphId": "messari/uniswap-v3-ethereum",
     "entity": "liquidityPoolDailySnapshots",
     "filters": {
       "orderDirection": "desc",

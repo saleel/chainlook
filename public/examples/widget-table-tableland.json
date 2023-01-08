@@ -2,14 +2,15 @@
   "title": "Rigs (from Tableland)",
   "type": "table",
   "data": {
-    "source": "tableland",
-    "network": "testnet",
-    "tableName": "rigs_5_28",
-    "orderBy": "id",
-    "orderDirection": "asc",
-    "first": 10,
-    "limit": 100,
-    "filters": {
+    "source": {
+      "provider": "tableland",
+      "network": "testnet",
+      "tableName": "rigs_5_28",
+      "orderBy": "id",
+      "orderDirection": "asc",
+      "first": 10,
+      "skip": 100,
+      "filters": {}
     }
   },
   "table": {

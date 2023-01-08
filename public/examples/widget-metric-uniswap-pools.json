@@ -6,10 +6,10 @@
     "format": "number"
   },
   "data": {
-    "source": "graph",
-    "subGraphId": "messari/uniswap-v3-ethereum",
-    "entity": "usageMetricsDailySnapshots",
-    "filters": {
+    "source": {
+      "provider": "graph",
+      "subgraphId": "messari/uniswap-v3-ethereum",
+      "entity": "usageMetricsDailySnapshots",
       "orderDirection": "desc",
       "orderBy": "timestamp",
       "first": 1

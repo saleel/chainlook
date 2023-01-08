@@ -4,7 +4,7 @@
   "private": true,
   "homepage": "./",
   "dependencies": {
-    "@tableland/sdk": "^3.1.5",
+    "@tableland/sdk": "^2.0.2",
     "axios": "^1.2.2",
     "bulma": "^0.9.4",
     "date-fns": "^2.29.3",
@@ -19,8 +19,7 @@
     "react-monaco-editor": "^0.51.0",
     "react-router-dom": "^6.6.1",
     "recharts": "^2.2.0",
-    "use-debounce": "^9.0.2",
-    "web3.storage": "^4.4.0"
+    "use-debounce": "^9.0.2"
   },
   "scripts": {
     "start": "react-app-rewired start",
