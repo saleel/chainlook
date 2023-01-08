@@ -91,7 +91,7 @@ export async function fetchDataForWidget(widget, variables) {
   return result;
 }
 
-export async function publishToIPFS(jsonData) {
+export async function publishToIPFS() {
   // const rootCid = await web3Storage.put([{
   //   name: ['ChainLook: ', jsonData.type, jsonData.title].filter(Boolean).join(' '),
   //   stream: () => new ReadableStream({

@@ -172,14 +172,15 @@ function NewWidgetPage() {
                   editorWillMount={(monaco) => {
                     monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
                       validate: true,
+                      enableSchemaRequest: true,
                       schemas: [{
                         fileMatch: ['*'],
-                        schema: '/schemas/widget.json',
+                        uri: 'https://chainlook.xyz/schemas/widget.json',
                       }],
                     });
                   }}
                 />
-                <a className="view-schema link" href="/schema/widget.json" target="_blank">
+                <a className="view-schema link" href="/schemas/widget.json" target="_blank">
                   View Schema
                 </a>
               </div>
