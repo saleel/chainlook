@@ -31,7 +31,7 @@ export function getFieldNamesRequiredForWidget(widget) {
   }
 
   // Include all fields mentioned in join and group
-  const fieldsRequiredForJoin = Object.entries(widget.data?.join ?? {}).flat();
+  const fieldsRequiredForJoin = [...new Set(Object.entries(widget.data?.join ?? {}).flat())];
   const fieldsRequiredForGroup = widget.data.group?.dataKey ?? [];
 
   return [

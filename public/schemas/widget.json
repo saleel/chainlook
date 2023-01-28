@@ -11,10 +11,10 @@
     "author": {
       "type": "object",
       "properties": {
-        "address": { "type": "string" },
+        "id": { "type": "string" },
         "name": { "type": "string" }
       },
-      "required": ["address", "name"],
+      "required": ["id", "name"],
       "additionalProperties": true
     },
     "data": {
@@ -49,7 +49,7 @@
     "metric": { "$ref": "#/$defs/widget-metric" },
     "text": { "$ref": "#/$defs/widget-text" }
   },
-  "required": ["title", "type", "data"],
+  "required": ["title", "type"],
   "not": { "required": ["table", "chart", "pieChart", "metric", "text"] },
   "allOf": [
     {
@@ -95,7 +95,9 @@
         "tableName": { "type": "string" }
       },
       "required": ["provider"],
-      "not": { "required": ["subgraphId", "entity", "cid", "network", "tableName"] },
+      "not": {
+        "required": ["subgraphId", "entity", "cid", "network", "tableName"]
+      },
       "allOf": [
         {
           "if": { "properties": { "provider": { "const": "subgraph" } } },
@@ -116,17 +118,15 @@
       "properties": {
         "columns": {
           "type": "array",
-          "items": [
-            {
-              "type": "object",
-              "properties": {
-                "dataKey": { "type": "string" },
-                "label": { "type": "string" },
-                "format": { "type": "string" }
-              },
-              "required": ["dataKey"]
-            }
-          ],
+          "items": {
+            "type": "object",
+            "properties": {
+              "dataKey": { "type": "string" },
+              "label": { "type": "string" },
+              "format": { "type": "string" }
+            },
+            "required": ["dataKey"]
+          },
           "minItems": 1
         }
       },
@@ -149,49 +149,47 @@
         },
         "lines": {
           "type": "array",
-          "items": [
-            {
-              "type": "object",
-              "properties": {
-                "dataKey": { "type": "string" },
-                "label": { "type": "string" }
-              },
-              "required": ["dataKey", "label"]
-            }
-          ],
+          "items": {
+            "type": "object",
+            "properties": {
+              "dataKey": { "type": "string" },
+              "label": { "type": "string" }
+            },
+            "required": ["dataKey", "label"]
+          },
           "minItems": 1
         },
         "bars": {
           "type": "array",
-          "items": [
-            {
-              "type": "object",
-              "properties": {
-                "dataKey": { "type": "string" },
-                "label": { "type": "string" }
-              },
-              "required": ["dataKey", "label"]
-            }
-          ],
+          "items": {
+            "type": "object",
+            "properties": {
+              "dataKey": { "type": "string" },
+              "label": { "type": "string" }
+            },
+            "required": ["dataKey", "label"]
+          },
           "minItems": 1
         },
-        "area": {
+        "areas": {
           "type": "array",
-          "items": [
-            {
-              "type": "object",
-              "properties": {
-                "dataKey": { "type": "string" },
-                "label": { "type": "string" }
-              },
-              "required": ["dataKey", "label"]
-            }
-          ],
+          "items": {
+            "type": "object",
+            "properties": {
+              "dataKey": { "type": "string" },
+              "label": { "type": "string" }
+            },
+            "required": ["dataKey", "label"]
+          },
           "minItems": 1
         }
       },
       "required": ["xAxis"],
-      "anyOf": [{ "required": ["area"] }, { "required": ["bars"] }, { "required": ["lines"] }]
+      "anyOf": [
+        { "required": ["areas"] },
+        { "required": ["bars"] },
+        { "required": ["lines"] }
+      ]
     },
     "widget-pieChart": {
       "type": "object",

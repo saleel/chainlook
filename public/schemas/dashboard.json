@@ -4,6 +4,15 @@
   "type": "object",
   "properties": {
     "title": { "type": "string" },
+    "author": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" }
+      },
+      "required": ["id", "name"],
+      "additionalProperties": true
+    },
     "widgets": {
       "type": "array",
       "items": {
@@ -26,5 +35,5 @@
       "minItems": 1
     }
   },
-  "required": ["title", "widgets"]
+  "required": ["author", "title", "widgets"]
 }
