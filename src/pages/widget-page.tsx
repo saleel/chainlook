@@ -9,7 +9,7 @@ function WidgetPage() {
   const navigate = useNavigate();
   const { widgetId } = useParams();
 
-  const [widget, { isFetching, error }] = usePromise(() => getWidget(widgetId), {
+  const [widget, { isFetching, error }] = usePromise(() => getWidget(widgetId as string), {
     dependencies: [widgetId],
     conditions: [widgetId],
   });
@@ -21,8 +21,6 @@ function WidgetPage() {
   }, [widget]);
 
   const onForkClick = React.useCallback(async () => {
-    await saveWidgetLocally(widget);
-    navigate('/widget/new'); // TODO: a hack for now - new widget page will load the most recent local widget
   }, [widget]);
 
   if (isFetching) {
@@ -37,19 +35,18 @@ function WidgetPage() {
     <div className="page widget-page">
 
       <div className="widget-actions">
-        <div />
         <div className="flex-row">
-          <a className="link view-source mr-2 pt-1" href={`https://ipfs.io/ipfs/${widgetId}`} target="_blank" rel="noreferrer" title="View source">
-            <i className="icon-code" />
-          </a>
-
-          <div role="button" tabIndex={0} className="icon-button pt-1" onClick={onForkClick} title="Copy this dashbord locally and edit">
+          <div role="button" tabIndex={0} className="icon-button pt-1" onClick={onForkClick} title="Make a copy of this widget and edit">
             <i className="icon-clone" />
           </div>
         </div>
       </div>
 
       <WidgetView widget={widget} />
+
+      <a className="link view-source mr-2 pt-1" title="View source">
+            View Source
+          </a>
 
     </div>
   );

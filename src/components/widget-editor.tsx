@@ -109,7 +109,7 @@ function WidgetEditor(props: { definition: object, onChange: (d: object) => void
         </a>
       </div>
 
-      <Modal isOpen={examplesModalOpen} title="Load an example" height="200px" onRequestClose={() => setExamplesModalOpen(true)}>
+      <Modal isOpen={examplesModalOpen} title="Load an example" height="200px" onRequestClose={() => setExamplesModalOpen(false)}>
         <div className="new-widget-example mb-4">
           <label htmlFor="example" className="mr-3">Example:</label>
 

@@ -38,6 +38,10 @@ body {
   padding: 0;
 }
 
+button {
+  font-family: "Fira Code", monospace;
+}
+
 #root {
   display: flex;
   height: 100%;
@@ -74,6 +78,8 @@ body {
   font-size: 1.1rem;
   font-weight: 500;
   color: var(--text-color);
+  background-color: transparent;
+  border: 0;
 
   &:hover {
     color: var(--text-color);
@@ -367,12 +373,16 @@ body {
   }
 }
 
-.view-schema {
+.widget-editor-links {
   position: absolute;
   top: 0.5rem;
   right: 1.5rem;
-  font-size: 1rem;
-  font-weight: 400;
+
+  .link {
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 400;
+  }
 }
 
 .button {

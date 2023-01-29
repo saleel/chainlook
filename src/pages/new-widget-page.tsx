@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import WidgetView from '../components/widget-view';
 import { newWidget } from '../data/api';
 import WidgetEditor from '../components/widget-editor';
+import Widget from '../domain/widget';
 
-const defaultDefinition = {
+const DEFAULT_DEFINITION = {
   type: 'table',
   data: {
     source: {
@@ -32,24 +33,34 @@ const defaultDefinition = {
 function NewWidgetPage() {
   const navigate = useNavigate();
 
-  const [widgetTitle, setWidgetTitle] = React.useState('');
-  const [widgetTags, setWidgetTags] = React.useState([]);
-  const [widgetDefinition, setWidgetDefinition] = React.useState(defaultDefinition);
+  const [widget, setWidget] = React.useState(new Widget({
+    title: '',
+    tags: [],
+    definition: DEFAULT_DEFINITION,
+    version: 1,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  }))
 
   React.useEffect(() => {
     document.title = 'New Widget - ChainLook';
   }, []);
 
-  async function onSaveClick(e) {
-    e.target.disabled = true;
+  function updateWidget(key: string, value: string | object) {
+    setWidget(existing => ({ ...existing, [key]: value }));
+  }
 
+  async function onSaveClick(e: any) {
     try {
-      const created = await newWidget({ title: widgetTitle, tags: widgetTags.split(',').filter(Boolean), definition: widgetDefinition });
+      e.target.disabled = true;
+      const created = await newWidget(widget);
       navigate(`/widget/${created.id}`);
     } finally {
       e.target.disabled = false;
     }
   }
+
+  const { definition, title, tags } = widget;
 
   return (
     <div className="page create-widget-page">
@@ -59,38 +70,37 @@ function NewWidgetPage() {
 
       <div className="create-widget-container">
         <div className="create-widget-section">
-          <WidgetEditor onChange={setWidgetDefinition} definition={widgetDefinition} />
+          <WidgetEditor onChange={d => updateWidget('definition', d)} definition={definition} />
 
-          <div className="create-widget-helper">
-            <form>
-              <div className="field">
-                <label className="label">Title</label>
-                <div className="control">
-                  <input
-                    type="text"
-                    className="input"
-                    placeholder="Enter widget title"
-                    value={widgetTitle}
-                    onChange={(e) => setWidgetTitle(e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="field">
-                <label className="label">Tags</label>
+          <form className="create-widget-helper">
+            <div className="field">
+              <label className="label">Title</label>
+              <div className="control">
                 <input
                   type="text"
                   className="input"
-                  placeholder="Enter tags separated by comma"
-                  value={widgetTags}
-                  onChange={(e) => setWidgetTags(e.target.value)}
+                  placeholder="Enter widget title"
+                  value={title}
+                  onChange={(e) => updateWidget('title', e.target.value)}
                 />
               </div>
-              <hr />
-              <button type="button" onClick={onSaveClick} className="button">
-                Save
-              </button>
-            </form>
-          </div>
+            </div>
+            <div className="field">
+              <label className="label">Tags</label>
+              <input
+                type="text"
+                className="input"
+                placeholder="Enter tags separated by comma"
+                value={tags}
+                onChange={(e) => updateWidget('tags', e.target.value.split(','))}
+              />
+            </div>
+            <hr />
+            <button type="button" onClick={onSaveClick} className="button">
+              Save
+            </button>
+          </form>
+          
         </div>
 
         <hr />
@@ -100,7 +110,7 @@ function NewWidgetPage() {
             Preview
           </div>
 
-          <WidgetView title={widgetTitle} definition={widgetDefinition} />
+          <WidgetView widget={widget} />
         </div>
 
       </div>
