@@ -20,6 +20,12 @@ export default async function fetchWidgetDataFromTheGraph(config, fieldsRequired
   };
   queryFilters = applyVariables(queryFilters, variables);
 
+  Object.keys(queryFilters).forEach((k) => {
+    if (queryFilters[k] === undefined) {
+      delete queryFilters[k];
+    }
+  });
+
   const queryObj = {
     query: {
       [entity]: {

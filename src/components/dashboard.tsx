@@ -1,7 +1,7 @@
 import React from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
-import Widget from './widget';
+import WidgetView from './widget-view';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -37,7 +37,7 @@ export default function Dashboard(props) {
       >
         {widgets.map((widget, index) => (
           <div key={widget.id || index} data-grid={{ ...widget.layout }}>
-            <Widget id={widget.cid} config={widget.widget} enableFork={!isEditable} />
+            <WidgetView id={widget.cid} title={widget.title} definition={widget.widget} enableFork={!isEditable} />
 
             {isEditable && (
               <button type="button" className="new-dashboard-widget-delete" onClick={() => onRemoveWidgetClick(widget)}>

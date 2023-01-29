@@ -7,7 +7,7 @@ export function getWidgetDataFromProvider(sourceConfig, fieldsRequiredFromProvid
     throw new Error('No fields to fetch for dataSource');
   }
 
-  const { provider, ...restConfig } = sourceConfig;
+  const { provider = 'graph', ...restConfig } = sourceConfig;
 
   let fieldNames = fieldsRequiredFromProvider;
 

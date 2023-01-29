@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { groupItems, flattenAndTransformItem } from './modifiers/helpers';
 import { getWidgetDataFromProvider } from './providers/helpers';
 import { fetchDataFromIPFS } from './utils/network';
@@ -17,7 +18,8 @@ export async function getDashboard(protocol, id) {
 }
 
 export async function getWidget(widgetId) {
-  return fetchDataFromIPFS(widgetId);
+  const response = await axios.get(`http://localhost:9000/widgets/${widgetId}`);
+  return response.data;
 }
 
 export async function fetchDataForWidget(widget, variables) {
@@ -25,7 +27,7 @@ export async function fetchDataForWidget(widget, variables) {
     source, sources, group, join, transforms,
   } = widget.data;
 
-  const isSingleSource = typeof source === 'object' && source.provider;
+  const isSingleSource = typeof source === 'object';
 
   // Get fields required to be queries from all providers
   const fieldsRequiredForWidget = getFieldNamesRequiredForWidget(widget);
@@ -91,8 +93,22 @@ export async function fetchDataForWidget(widget, variables) {
   return result;
 }
 
+export async function newWidget({
+  title, definition, tags,
+}) {
+  const response = await axios.post('http://localhost:9000/widget', {
+    title,
+    definition,
+    tags,
+  });
+
+  return response.data;
+}
+
 export async function publishToIPFS() {
-  // const rootCid = await web3Storage.put([{
+  // const client = new Web3Storage({ token: API_TOKEN });
+
+  // const rootCid = await client.put([{
   //   name: ['ChainLook: ', jsonData.type, jsonData.title].filter(Boolean).join(' '),
   //   stream: () => new ReadableStream({
   //     start(controller) {
@@ -102,7 +118,7 @@ export async function publishToIPFS() {
   //   }),
   // }]);
 
-  // const res = await web3Storage.get(rootCid);
+  // const res = await client.get(rootCid);
   // const files = await res.files();
 
   // return files[0]?.cid;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Widget from '../components/widget';
+import WidgetView from '../components/widget-view';
 import { getWidget } from '../data/api';
 import { saveWidgetLocally } from '../data/store';
 import usePromise from '../hooks/use-promise';
@@ -9,21 +9,21 @@ function WidgetPage() {
   const navigate = useNavigate();
   const { widgetId } = useParams();
 
-  const [widgetConfig, { isFetching, error }] = usePromise(() => getWidget(widgetId), {
+  const [widget, { isFetching, error }] = usePromise(() => getWidget(widgetId), {
     dependencies: [widgetId],
     conditions: [widgetId],
   });
 
   React.useEffect(() => {
-    if (widgetConfig) {
-      document.title = `${widgetConfig.title} - ChainLook`;
+    if (widget) {
+      document.title = `${widget.title} - ChainLook`;
     }
-  }, [widgetConfig]);
+  }, [widget]);
 
   const onForkClick = React.useCallback(async () => {
-    await saveWidgetLocally(widgetConfig);
+    await saveWidgetLocally(widget);
     navigate('/widget/new'); // TODO: a hack for now - new widget page will load the most recent local widget
-  }, [widgetConfig]);
+  }, [widget]);
 
   if (isFetching) {
     return (<div>Loading</div>);
@@ -49,7 +49,7 @@ function WidgetPage() {
         </div>
       </div>
 
-      <Widget config={widgetConfig} />
+      <WidgetView definition={widget.definition} title="hello" />
 
     </div>
   );

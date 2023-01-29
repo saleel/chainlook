@@ -1,46 +1,39 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { getWidget, fetchDataForWidget } from '../data/api';
-import { saveWidgetLocally } from '../data/store';
 import usePromise from '../hooks/use-promise';
 import Chart from './widgets/chart';
 import Table from './widgets/table';
 import Text from './widgets/text';
 import Metric from './widgets/metric';
 import PieChart from './widgets/pie-chart';
+import Widget from '../domain/widget';
 
-function Widget(props) {
-  const { id, config: defaultConfig, enableFork } = props;
-
-  const navigate = useNavigate();
+function WidgetView(props : { widget: WidgetView }) {
+  const { widget } = props;
 
   try {
     const [
-      { widgetConfig: config, widgetData: data } = {},
+      { widgetDefinition: config, widgetData: data } = {},
       { isFetching: isFetchingData, error: errorData },
     ] = usePromise(
       async () => {
-        let widgetConfig = defaultConfig;
+        let widgetDefinition = defaultDefinition;
 
-        if (!widgetConfig) {
-          widgetConfig = await getWidget(id);
+        if (!widgetDefinition) {
+          const widget = await getWidget(id);
+          widgetDefinition = widget.definition;
         }
 
-        const widgetData = widgetConfig.data ? await fetchDataForWidget(widgetConfig) : null;
+        const widgetData = widgetDefinition.data ? await fetchDataForWidget(widgetDefinition) : null;
 
-        return { widgetConfig, widgetData };
+        return { widgetDefinition, widgetData };
       },
       {
-        dependencies: [id, defaultConfig],
-        conditions: [id || defaultConfig],
+        dependencies: [id, defaultDefinition],
+        conditions: [id || defaultDefinition],
       // cacheKey: JSON.stringify(config.data),
       },
     );
-
-    const onForkClick = React.useCallback(async () => {
-      await saveWidgetLocally(config);
-      navigate('/widget/new'); // TODO: a hack for now - new widget page will load the most recent local widget
-    }, [config]);
 
     if (errorData) {
       throw errorData;
@@ -108,15 +101,9 @@ function Widget(props) {
     }
 
     return (
-      <div className={`widget widget-${config.type}`}>
+      <div className={`widget widget-${config?.type}`}>
         <h4 className="widget-title">
-          {config.title}
-
-          {enableFork && (
-            <div role="button" tabIndex={0} className="icon-button" onClick={onForkClick} title="Copy this widget locally and edit">
-              <i className="icon-clone" />
-            </div>
-          )}
+          {title || 'Untitled'}
         </h4>
 
         <div className="widget-body">
@@ -131,8 +118,9 @@ function Widget(props) {
     return (
       <div className="widget">
         <h4 className="widget-title">
-          {defaultConfig?.title ?? id}
+          {title || 'Untitled'}
         </h4>
+
         <div className="widget-body p-4">
           <div>Error rendering Widget</div>
           {error.message}
@@ -142,4 +130,4 @@ function Widget(props) {
   }
 }
 
-export default Widget;
+export default WidgetView;
