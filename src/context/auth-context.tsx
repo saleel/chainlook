@@ -29,11 +29,6 @@ const { chains, provider, webSocketProvider } = configureChains(
   [publicProvider()]
 );
 
-const { wallets: defaultWallets } = getDefaultWallets({
-  appName: "My RainbowKit App",
-  chains,
-});
-
 const connectors = connectorsForWallets([
   {
     groupName: "Wallets",
@@ -64,19 +59,11 @@ export const AuthContext = React.createContext<AuthContextParams>({
 
 const Disclaimer = () => (
   <div style={{ lineHeight: '1.5rem', margin: '0 -5px' }}>
-    You can sign-in to ChainLook using your Ethereum Wallet.
-    This don't create a transaction nor incur any gas fee.
-
-    <br />
-    <br />
-
-    Powered by <a
-      href="https://eips.ethereum.org/EIPS/eip-4361"
-      target="blank"
-      rel="no-referer"
-    >
-      Sign In With Ethereum
-    </a>
+    <h4 className="paragraph-title">Sign in with Ethereum</h4>
+    <div>
+      You can use your Ethereum Wallet to sign in to ChainLook.
+      This don't create a transaction <u>nor incur any gas fee</u>.
+    </div>
   </div>
 );
 
