@@ -452,7 +452,7 @@ button {
 .widget-actions {
   margin-bottom: 2rem;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
 
   .button {

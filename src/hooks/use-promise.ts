@@ -41,29 +41,23 @@ const cache = {
   },
 };
 
-/**
- * @typedef UsePromiseOptions
- * @property [defaultValue] {any}
- * @property [dependencies = []] {Array}
- * @property [conditions = []] {Array}
- * @property [cacheKey] {string}
- * @property [updateWithRevalidated = false] {boolean}
- * @property [cachePeriodInSecs = 10] {number}
- */
+type UsePromiseOptions = {
+  defaultValue?: any;
+  dependencies?: any[];
+  conditions?: any[];
+  cacheKey?: string;
+  updateWithRevalidated?: boolean;
+  cachePeriodInSecs?: number;
+}
 
-/**
- * @template T
- * @param {(() => Promise<T>)} promise
- * @param {UsePromiseOptions} [options]
- * @returns {[T, { isFetching: boolean, fetchedAt: Date, reFetch: Function, error?: Error }]}
- */
-function usePromise(promise, options = {}) {
+
+function usePromise<T>(promise: () => Promise<T>, options: UsePromiseOptions = {}) {
   const {
     defaultValue, dependencies = [], cacheKey, updateWithRevalidated = true, cachePeriodInSecs = 10,
     conditions = [],
   } = options;
 
-  let cachedData;
+  let cachedData: any;
   if (cacheKey) {
     cachedData = cache.get(cacheKey);
   }
@@ -73,10 +67,10 @@ function usePromise(promise, options = {}) {
     return !!condition;
   });
 
-  const [result, setResult] = React.useState(cachedData ? cachedData.data : defaultValue);
-  const [fetchedAt, setFetchedAt] = React.useState(cachedData ? cachedData.storedAt : undefined);
-  const [isFetching, setIsFetching] = React.useState(allConditionsValid && !(cachedData && cachedData.data));
-  const [error, setError] = React.useState();
+  const [result, setResult] = React.useState<T>(cachedData ? cachedData.data : defaultValue);
+  const [fetchedAt, setFetchedAt] = React.useState<Date>(cachedData ? cachedData.storedAt : undefined);
+  const [isFetching, setIsFetching] = React.useState<boolean>(allConditionsValid && !(cachedData && cachedData.data));
+  const [error, setError] = React.useState<Error>();
 
   let didCancel = false;
 
@@ -112,7 +106,7 @@ function usePromise(promise, options = {}) {
       if (!didCancel) {
         // eslint-disable-next-line no-console
         console.error('Error on fetching data', e);
-        setError(e);
+        setError(e as Error);
         // if (cacheKey) {
         //   cache.delete(cacheKey);
         // }
@@ -143,7 +137,7 @@ function usePromise(promise, options = {}) {
 
   return [result, {
     isFetching, fetchedAt, reFetch, error,
-  }];
+  }] as [T, { isFetching: boolean, fetchedAt: Date, reFetch: () => void, error: Error }];
 }
 
 export default usePromise;

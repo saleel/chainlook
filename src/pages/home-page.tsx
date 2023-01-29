@@ -33,7 +33,7 @@ function HomePage() {
         <br />
         <br />
 
-        Start by browsing popular dashboards below, or by <Link to="/widget/new">creating your own Widget</Link> from existing samples.
+        Start by browsing popular dashboards below, or by <Link to="/widgets/new">creating your own Widget</Link> from existing samples.
 
       </div>
 

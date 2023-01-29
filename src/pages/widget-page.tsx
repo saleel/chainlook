@@ -1,18 +1,20 @@
-import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import WidgetView from '../components/widget-view';
-import { getWidget } from '../data/api';
-import { saveWidgetLocally } from '../data/store';
-import usePromise from '../hooks/use-promise';
+import React from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import WidgetView from "../components/widget-view";
+import { getWidget } from "../data/api";
+import { saveWidgetLocally } from "../data/store";
+import usePromise from "../hooks/use-promise";
 
 function WidgetPage() {
-  const navigate = useNavigate();
   const { widgetId } = useParams();
 
-  const [widget, { isFetching, error }] = usePromise(() => getWidget(widgetId as string), {
-    dependencies: [widgetId],
-    conditions: [widgetId],
-  });
+  const [widget, { isFetching, error }] = usePromise(
+    () => getWidget(widgetId as string),
+    {
+      dependencies: [widgetId],
+      conditions: [widgetId],
+    }
+  );
 
   React.useEffect(() => {
     if (widget) {
@@ -20,34 +22,49 @@ function WidgetPage() {
     }
   }, [widget]);
 
-  const onForkClick = React.useCallback(async () => {
-  }, [widget]);
+  const onForkClick = React.useCallback(async () => {}, [widget]);
 
   if (isFetching) {
-    return (<div>Loading</div>);
+    return <div>Loading</div>;
   }
 
   if (error) {
-    return (<div>{error.message}</div>);
+    return <div>{error.message}</div>;
   }
 
   return (
     <div className="page widget-page">
-
+      
       <div className="widget-actions">
         <div className="flex-row">
-          <div role="button" tabIndex={0} className="icon-button pt-1" onClick={onForkClick} title="Make a copy of this widget and edit">
-            <i className="icon-clone" />
-          </div>
+      
+          <button
+            role="button"
+            tabIndex={0}
+            className="button is-small"
+            onClick={onForkClick}
+            title="Make a copy of this widget and edit"
+          >
+            Fork
+          </button>
+
+          <Link
+            className="button is-small"
+            onClick={onForkClick}
+            to={`/widgets/${widget.id}/edit`}
+            title="Edit the widget"
+          >
+            Edit
+          </Link>
+
         </div>
       </div>
 
       <WidgetView widget={widget} />
 
       <a className="link view-source mr-2 pt-1" title="View source">
-            View Source
-          </a>
-
+        View Source
+      </a>
     </div>
   );
 }

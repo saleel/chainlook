@@ -12,7 +12,7 @@ export default function Layout() {
         </h1>
 
         <div className="menu">
-          <Link to="/widget/new">
+          <Link to="/widgets/new">
             <div className="menu-item">
               New Widget
             </div>

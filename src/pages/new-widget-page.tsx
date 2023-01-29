@@ -54,7 +54,7 @@ function NewWidgetPage() {
     try {
       e.target.disabled = true;
       const created = await newWidget(widget);
-      navigate(`/widget/${created.id}`);
+      navigate(`/widgets/${created.id}`);
     } finally {
       e.target.disabled = false;
     }
