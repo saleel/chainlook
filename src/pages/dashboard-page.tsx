@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Dashboard from '../components/dashboard';
-import { getDashboard } from '../data/api';
+import API from '../data/api';
 import { saveDashboardLocally } from '../data/store';
 import usePromise from '../hooks/use-promise';
 
@@ -10,7 +10,7 @@ function DashboardPage() {
   const navigate = useNavigate();
   const { protocol, id } = useParams();
 
-  const [dashboard, { isFetching, error }] = usePromise(() => getDashboard(protocol, id), {
+  const [dashboard, { isFetching, error }] = usePromise(() => API.getDashboard(protocol, id), {
     dependencies: [protocol, id],
     conditions: [id],
   });

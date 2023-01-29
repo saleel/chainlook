@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import WidgetView from '../components/widget-view';
-import { newWidget } from '../data/api';
+import API from '../data/api';
 import WidgetEditor from '../components/widget-editor';
 import Widget from '../domain/widget';
 
@@ -53,7 +53,7 @@ function NewWidgetPage() {
   async function onSaveClick(e: any) {
     try {
       e.target.disabled = true;
-      const created = await newWidget(widget);
+      const created = await API.createWidget(widget);
       navigate(`/widgets/${created.id}`);
     } finally {
       e.target.disabled = false;

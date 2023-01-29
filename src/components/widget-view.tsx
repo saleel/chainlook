@@ -1,4 +1,4 @@
-import { fetchDataForWidget } from "../data/api";
+import API from "../data/api";
 import usePromise from "../hooks/use-promise";
 import Chart from "./widgets/chart";
 import Table from "./widgets/table";
@@ -11,7 +11,7 @@ function WidgetView(props: { widget: Widget }) {
   const { widget } = props;
 
   const [data, { isFetching, error }] = usePromise(
-    () => fetchDataForWidget(widget.definition, {}),
+    () => API.fetchDataForWidget(widget.definition, {}),
     {
       dependencies: [widget.definition],
       conditions: [widget && widget.definition],

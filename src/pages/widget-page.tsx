@@ -1,15 +1,14 @@
 import React from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import WidgetView from "../components/widget-view";
-import { getWidget } from "../data/api";
-import { saveWidgetLocally } from "../data/store";
+import API from "../data/api";
 import usePromise from "../hooks/use-promise";
 
 function WidgetPage() {
   const { widgetId } = useParams();
 
   const [widget, { isFetching, error }] = usePromise(
-    () => getWidget(widgetId as string),
+    () => API.getWidget(widgetId as string),
     {
       dependencies: [widgetId],
       conditions: [widgetId],

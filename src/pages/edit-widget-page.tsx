@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import WidgetView from "../components/widget-view";
-import { getWidget, newWidget, publishToIPFS as saveWidget } from "../data/api";
+import API from "../data/api";
 import usePromise from "../hooks/use-promise";
 import WidgetEditor from "../components/widget-editor";
 import Widget from "../domain/widget";
@@ -12,7 +12,7 @@ function EditWidgetPage() {
   const [editingWidget, setEditingWidget] = React.useState<Widget | null>(null);
 
   const [widget, { isFetching, error }] = usePromise<Widget>(
-    () => getWidget(widgetId as string),
+    () => API.getWidget(widgetId as string),
     {
       dependencies: [widgetId],
       conditions: [widgetId],
@@ -34,7 +34,7 @@ function EditWidgetPage() {
     e.target.disabled = true;
 
     try {
-      await newWidget(widget);
+      await API.editWidget(widget);
     } finally {
       e.target.disabled = false;
     }

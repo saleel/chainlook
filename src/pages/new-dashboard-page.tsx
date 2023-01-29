@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Dashboard from '../components/dashboard';
 import Modal from '../components/modal';
 import usePromise from '../hooks/use-promise';
-import { getDashboard, publishToIPFS } from '../data/api';
+import API from '../data/api';
 import {
   getAllWidgets, getLocalDashboard, removeLocalDashboards, saveDashboardLocally,
 } from '../data/store';
@@ -24,7 +24,7 @@ function NewDashboardPage() {
 
   const [fromDashboardConfig, { isFetching, error }] = usePromise(async () => {
     if (fromId) {
-      return getDashboard(fromId);
+      return API.getDashboard(fromId);
     }
 
     const localDashboard = await getLocalDashboard();
@@ -63,7 +63,7 @@ function NewDashboardPage() {
   async function onPublishToIPFSClick(e) {
     e.target.disabled = true;
 
-    const widgetCID = await publishToIPFS(dashboardConfig);
+    // const widgetCID = await API.publishToIPFS(dashboardConfig);
     await removeLocalDashboards(); // Remove local draft
 
     e.target.disabled = false;
@@ -72,7 +72,7 @@ function NewDashboardPage() {
     window.alert('Dashboard published successfully. You will be redirected shortly.');
 
     // Redirect to new dashboard
-    navigate(`/dashboard/${widgetCID}`);
+    // navigate(`/dashboard/${widgetCID}`);
   }
 
   function onSelectWidget(widgetConfig) {
