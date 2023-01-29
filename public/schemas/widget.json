@@ -3,7 +3,6 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
-    "title": { "type": "string" },
     "type": {
       "type": "string",
       "enum": ["table", "chart", "pieChart", "metric", "text"]
@@ -49,7 +48,7 @@
     "metric": { "$ref": "#/$defs/widget-metric" },
     "text": { "$ref": "#/$defs/widget-text" }
   },
-  "required": ["title", "type"],
+  "required": ["type"],
   "not": { "required": ["table", "chart", "pieChart", "metric", "text"] },
   "allOf": [
     {

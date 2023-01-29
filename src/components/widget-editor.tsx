@@ -1,6 +1,23 @@
 import React from 'react';
 import MonacoEditor from 'react-monaco-editor';
+import * as monaco from 'monaco-editor';
+import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
+import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
 import { useDebouncedCallback } from 'use-debounce';
+import Modal from './modal';
+import { fetchDataFromHTTP } from '../data/utils/network';
+
+// @ts-ignore
+self.MonacoEnvironment = {
+	getWorker(_: any, label: string) {
+		if (label === 'json') {
+			return new jsonWorker();
+		}
+		return new editorWorker();
+	}
+};
+
+monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
 
 const examples = [{
   title: 'Line Chart - Uniswap usage trend',
@@ -22,27 +39,12 @@ const examples = [{
   url: '../examples/widget-table-tableland.json',
 }];
 
-  // async function onChangeExample(url) {
-  //   setIsFetchingExample(true);
 
-  //   try {
-  //     const config = await fetchDataFromHTTP({ url });
-  //     if (config) {
-  //       setValidWidgetConfig(config);
-  //       setWidgetJson(JSON.stringify(config, null, 2));
-  //     }
-  //   } catch (e) {
-  //     // eslint-disable-next-line no-console
-  //     console.error(e);
-  //   }
-
-  //   setIsFetchingExample(false);
-  // }
-
-function WidgetEditor(props) {
+function WidgetEditor(props: { definition: object, onChange: (d: object) => void}) {
   const { definition, onChange } = props;
 
-  const [widgetJson, setWidgetJson] = React.useState();
+  const [widgetJson, setWidgetJson] = React.useState<string>();
+  const [examplesModalOpen, setExamplesModalOpen] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     setWidgetJson(JSON.stringify(definition, null, 2));
@@ -58,6 +60,15 @@ function WidgetEditor(props) {
     },
     500,
   );
+
+  async function onChangeExample(url: string) {
+      const definition = await fetchDataFromHTTP({ url });
+      if (definition) {
+        onChange(definition);
+      }
+      setExamplesModalOpen(false)
+  }
+
 
   return (
     <div className="create-widget-editor">
@@ -83,14 +94,38 @@ function WidgetEditor(props) {
             enableSchemaRequest: true,
             schemas: [{
               fileMatch: ['*'],
-              uri: 'https://chainlook.xyz/schemas/widget.json',
+              uri: `${window.origin}/schemas/widget.json`,
             }],
           });
         }}
       />
-      <a className="view-schema link" href="/schemas/widget.json" target="_blank">
-        View Schema
-      </a>
+
+      <div className='widget-editor-links'>
+        <button className="link mr-3" onClick={() => setExamplesModalOpen(true)}>
+          Load Example
+        </button>
+        <a className="link" href="/schemas/widget.json" target="_blank">
+          View Schema
+        </a>
+      </div>
+
+      <Modal isOpen={examplesModalOpen} title="Load an example" height="200px" onRequestClose={() => setExamplesModalOpen(true)}>
+        <div className="new-widget-example mb-4">
+          <label htmlFor="example" className="mr-3">Example:</label>
+
+          <select
+            name="example"
+            id="example"
+            onChange={(e) => onChangeExample(e.target.value)}
+          >
+            <option value="select">Select</option>
+            {examples.map((example) => (
+              <option key={example.title} value={example.url}>{example.title}</option>
+            ))}
+          </select>
+        </div>
+      </Modal>
+
     </div>
   );
 }

@@ -9,11 +9,11 @@ type WidgetDefinition = {
 }
 
 type CreateWidgetInput = {
-  id: string;
+  id?: string;
   title: string;
   definition: WidgetDefinition;
-  authorId: string;
-  authorName: string;
+  authorId?: string;
+  authorName?: string;
   tags: string[];
   version: number;
   forkId?: string;
@@ -23,7 +23,7 @@ type CreateWidgetInput = {
 }
 
 export default class Widget {
-  id: string;
+  id?: string;
 
   title: string;
 
@@ -31,9 +31,9 @@ export default class Widget {
 
   tags: string[];
 
-  authorId: string;
+  authorId?: string;
 
-  authorName: string;
+  authorName?: string;
 
   version: number;
 

@@ -3,7 +3,7 @@ import ReactModal from 'react-modal';
 
 function Modal(props) {
   const {
-    isOpen, onRequestClose, title, children,
+    isOpen, onRequestClose, title, children, height
   } = props;
 
   return (
@@ -16,7 +16,7 @@ function Modal(props) {
           left: '50%',
           marginRight: '-50%',
           transform: 'translate(-50%, -50%)',
-          height: '400px',
+          height: height || '400px',
           width: '600px',
         },
       }}
