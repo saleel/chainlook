@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { SiweMessage } from 'siwe';
 import Widget from '../domain/widget';
 import { groupItems, flattenAndTransformItem } from './modifiers/helpers';
 import { getWidgetDataFromProvider } from './providers/helpers';
@@ -6,6 +7,19 @@ import { fetchDataFromIPFS } from './utils/network';
 import { applyVariables, getFieldNamesRequiredForWidget } from './utils/widget-parsing';
 
 export default class API {
+  static async getNonce() {
+    const response = await axios.get('http://localhost:9000/nonce');
+    return response.data;
+  }
+
+  static async signIn({ message, signature } : { message: SiweMessage, signature: string }) {
+    const response = await axios.post('http://localhost:9000/sign-in', {
+      message, signature
+    });
+  
+    return response.data;
+  }
+
   static async getDashboard(protocol, id) {
     if (protocol === 'ipfs') {
       return fetchDataFromIPFS(id);
@@ -97,6 +111,16 @@ export default class API {
   
   static async createWidget(widget: Partial<Widget>) {
     const response = await axios.post('http://localhost:9000/widget', {
+      title: widget.title,
+      definition: widget.definition,
+      tags: widget.tags,
+    });
+  
+    return response.data;
+  }
+
+  static async editWidget(widget: Widget) {
+    const response = await axios.patch('http://localhost:9000/widget/' + widget.id, {
       title: widget.title,
       definition: widget.definition,
       tags: widget.tags,

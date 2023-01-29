@@ -77,7 +77,9 @@ function WidgetView(props: { widget: Widget }) {
       <div className="widget-header">
         <h4 className="widget-title">{title || 'Untitled'}</h4>
         <div className="is-flex">
-          <div className="widget-tags">{tags?.join(', ')}</div>
+          <div className="widget-tags">
+            <i className="icon icon-tags" title={tags?.join(', ')}></i>
+          </div>
         </div>
       </div>
       

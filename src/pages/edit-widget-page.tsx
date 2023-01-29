@@ -9,7 +9,7 @@ import Widget from "../domain/widget";
 function EditWidgetPage() {
   const { widgetId } = useParams();
 
-  const [editingWidget, setEditingWidget] = React.useState<Widget | null>(null);
+  const [editingWidget, setEditingWidget] = React.useState<Widget>();
 
   const [widget, { isFetching, error }] = usePromise<Widget>(
     () => API.getWidget(widgetId as string),
@@ -23,7 +23,7 @@ function EditWidgetPage() {
     if (!widget) return;
 
     setEditingWidget(widget);
-    document.title = `Edit Widget ${widget.title} - ChainLook`;
+    document.title = `Edit ${widget.title} - ChainLook`;
   }, [widget]);
 
   function updateWidget(key: string, value: string | object) {
@@ -34,7 +34,7 @@ function EditWidgetPage() {
     e.target.disabled = true;
 
     try {
-      await API.editWidget(widget);
+      await API.editWidget(editingWidget as Widget);
     } finally {
       e.target.disabled = false;
     }

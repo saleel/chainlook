@@ -91,6 +91,7 @@ button {
   @extend .link;
   margin: 1rem 1.5rem;
   padding-top: 0.5rem;
+  cursor: pointer;
 
   &:last-child {
     margin-right: 0;

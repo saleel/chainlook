@@ -1,29 +1,29 @@
-import React from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { ConnectButton, useConnectModal } from "@rainbow-me/rainbowkit";
+import React from "react";
+import { Link, Outlet } from "react-router-dom";
+import { AuthContext } from "../context/auth-context";
 
 export default function Layout() {
+  const { openConnectModal } = useConnectModal();
+
   return (
     <>
       <div className="header wrapper">
         <h1 className="logo">
-          <Link to="/">
-            ChainLook
-          </Link>
+          <Link to="/">ChainLook</Link>
         </h1>
 
         <div className="menu">
           <Link to="/widgets/new">
-            <div className="menu-item">
-              New Widget
-            </div>
+            <div className="menu-item">New Widget</div>
           </Link>
           <Link to="/dashboard/new">
-            <div className="menu-item">
-              New Dashboard
-            </div>
+            <div className="menu-item">New Dashboard</div>
           </Link>
+          <button type="button" className="menu-item" onClick={openConnectModal}>
+            Sign In
+          </button>
         </div>
-
       </div>
 
       <div className="main wrapper">
@@ -32,13 +32,8 @@ export default function Layout() {
       </div>
 
       <div className="footer wrapper">
-        <div className="mb-1">
-          Copyright &copy;2022 ChainLook.
-          Deployed on IPFS using <a target="_blank" rel="noreferrer" href="https://fleek.co/">Fleek</a>
-        </div>
-        <div>
-          Disclaimer: ChainLook don&lsquo;t guarantee accuracy of the data. Project still in alpha stage and schema might change.
-        </div>
+        Disclaimer: ChainLook don&lsquo;t guarantee accuracy of the data.
+        Project still in alpha stage and schema might change.
       </div>
     </>
   );
