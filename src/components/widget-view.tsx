@@ -1,133 +1,89 @@
-import React from 'react';
-import { getWidget, fetchDataForWidget } from '../data/api';
-import usePromise from '../hooks/use-promise';
-import Chart from './widgets/chart';
-import Table from './widgets/table';
-import Text from './widgets/text';
-import Metric from './widgets/metric';
-import PieChart from './widgets/pie-chart';
-import Widget from '../domain/widget';
+import { fetchDataForWidget } from "../data/api";
+import usePromise from "../hooks/use-promise";
+import Chart from "./widgets/chart";
+import Table from "./widgets/table";
+import Text from "./widgets/text";
+import Metric from "./widgets/metric";
+import PieChart from "./widgets/pie-chart";
+import Widget from "../domain/widget";
 
-function WidgetView(props : { widget: WidgetView }) {
+function WidgetView(props: { widget: Widget }) {
   const { widget } = props;
 
-  try {
-    const [
-      { widgetDefinition: config, widgetData: data } = {},
-      { isFetching: isFetchingData, error: errorData },
-    ] = usePromise(
-      async () => {
-        let widgetDefinition = defaultDefinition;
-
-        if (!widgetDefinition) {
-          const widget = await getWidget(id);
-          widgetDefinition = widget.definition;
-        }
-
-        const widgetData = widgetDefinition.data ? await fetchDataForWidget(widgetDefinition) : null;
-
-        return { widgetDefinition, widgetData };
-      },
-      {
-        dependencies: [id, defaultDefinition],
-        conditions: [id || defaultDefinition],
-      // cacheKey: JSON.stringify(config.data),
-      },
-    );
-
-    if (errorData) {
-      throw errorData;
+  const [data, { isFetching, error }] = usePromise(
+    () => fetchDataForWidget(widget.definition, {}),
+    {
+      dependencies: [widget.definition],
+      conditions: [widget && widget.definition],
     }
+  );
 
-    if (isFetchingData) {
-      return <div className="widget p-4">Loading</div>;
-    }
+  if (isFetching) {
+    return <div className="widget p-4">Loading</div>;
+  }
 
-    if (config?.data && !data) {
-      return <div className="widget p-4">No data</div>;
-    }
+  if (error) {
+    return <div className="widget p-4">Error while fetching data: {error.message}</div>;
+  }
 
-    // eslint-disable-next-line no-inner-declarations
-    function renderWidget() {
-      if (config.type === 'text') {
-        return (
-          <Text
-            config={config.text}
-          />
-        );
+  if (widget?.definition?.data && !data) {
+    return <div className="widget p-4">No data</div>;
+  }
+
+  const { title, definition, tags } = widget || {};
+
+  // eslint-disable-next-line no-inner-declarations
+  function renderWidget() {
+    try {
+      if (error) throw error;
+
+      if (definition.type === "text") {
+        return <Text config={definition.text} />;
       }
 
-      if (config.type === 'chart') {
-        return (
-          <Chart
-            data={data}
-            config={config.chart}
-          />
-        );
+      if (definition.type === "chart") {
+        return <Chart data={data} config={definition.chart} />;
       }
 
-      if (config.type === 'pieChart') {
-        return (
-          <PieChart
-            data={data}
-            config={config.pieChart}
-          />
-        );
+      if (definition.type === "pieChart") {
+        return <PieChart data={data} config={definition.pieChart} />;
       }
 
-      if (config.type === 'table') {
-        return (
-          <Table
-            data={data}
-            config={config.table}
-          />
-        );
+      if (definition.type === "table") {
+        return <Table data={data} config={definition.table} />;
       }
 
-      if (config.type === 'metric') {
-        return (
-          <Metric
-            data={data}
-            config={config.metric}
-          />
-        );
+      if (definition.type === "metric") {
+        return <Metric data={data} config={definition.metric} />;
       }
 
       return null;
-    }
-
-    if (!config) {
-      return null;
-    }
-
-    return (
-      <div className={`widget widget-${config?.type}`}>
-        <h4 className="widget-title">
-          {title || 'Untitled'}
-        </h4>
-
-        <div className="widget-body">
-          {renderWidget()}
-        </div>
-      </div>
-    );
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error(error);
-
-    return (
-      <div className="widget">
-        <h4 className="widget-title">
-          {title || 'Untitled'}
-        </h4>
-
-        <div className="widget-body p-4">
+    } catch {
+      return (
+        <>
           <div>Error rendering Widget</div>
           {error.message}
+        </>
+      );
+    }
+  }
+
+  if (!definition) {
+    return null;
+  }
+
+  return (
+    <div className={`widget widget-${definition.type}`}>
+      <div className="widget-header">
+        <h4 className="widget-title">{title}</h4>
+        <div className="is-flex">
+          <div className="widget-tags">{tags?.join(', ')}</div>
         </div>
       </div>
-    );
-  }
+      
+      <div className="widget-body">{renderWidget()}</div>
+    </div>
+  );
 }
 
 export default WidgetView;

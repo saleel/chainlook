@@ -49,7 +49,7 @@ function WidgetPage() {
         </div>
       </div>
 
-      <WidgetView definition={widget.definition} title="hello" />
+      <WidgetView widget={widget} />
 
     </div>
   );

@@ -191,11 +191,8 @@ body {
   }
 }
 
-.widget-title {
-  font-weight: 600;
-  padding-left: 1rem;
-  padding-right: 0.5rem;
-  height: 2.5rem;
+.widget-header {
+  padding: 0.5rem 0.5rem 0.5rem 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -211,6 +208,10 @@ body {
   }
 }
 
+.widget-title {
+  font-weight: 600;
+}
+
 .icon-button {
   cursor: pointer;
   background: none;
@@ -218,7 +219,7 @@ body {
   margin: 0;
 }
 
-.widget-title {
+.widget-header {
   border-bottom: 1px solid var(--text-color);
 }
 
@@ -229,7 +230,7 @@ body {
 .widget-chart {
   width: 100%;
 
-  .widget-title {
+  .widget-header {
     margin-bottom: 0.5rem;
   }
 
@@ -314,7 +315,7 @@ body {
   flex-direction: column;
   height: auto !important;
 
-  .widget-title {
+  .widget-header {
     border-bottom: none;
   }
 }
@@ -432,7 +433,7 @@ body {
 }
 
 .new-dashboard-page {
-  .widget-title {
+  .widget-header {
     cursor: move;
   }
 }

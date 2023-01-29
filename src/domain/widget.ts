@@ -1,7 +1,17 @@
+type WidgetDefinition = {
+  type: string;
+  data: object;
+  chart?: object;
+  table?: object;
+  metric?: object;
+  text?: object;
+  pieChart?: object;
+}
+
 type CreateWidgetInput = {
   id: string;
   title: string;
-  definition: object;
+  definition: WidgetDefinition;
   authorId: string;
   authorName: string;
   tags: string[];
@@ -17,7 +27,7 @@ export default class Widget {
 
   title: string;
 
-  definition: object;
+  definition: WidgetDefinition;
 
   tags: string[];
 

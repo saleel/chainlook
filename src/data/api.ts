@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Widget from '../domain/widget';
 import { groupItems, flattenAndTransformItem } from './modifiers/helpers';
 import { getWidgetDataFromProvider } from './providers/helpers';
 import { fetchDataFromIPFS } from './utils/network';
@@ -17,9 +18,9 @@ export async function getDashboard(protocol, id) {
   return fetchDataFromIPFS(id);
 }
 
-export async function getWidget(widgetId) {
+export async function getWidget(widgetId: string) {
   const response = await axios.get(`http://localhost:9000/widgets/${widgetId}`);
-  return response.data;
+  return new Widget(response.data);
 }
 
 export async function fetchDataForWidget(widget, variables) {
