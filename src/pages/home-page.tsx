@@ -5,7 +5,7 @@ const popularDashboard = [
   {
     title: 'Uniswap v3',
     image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Uniswap_Logo_and_Wordmark.svg/640px-Uniswap_Logo_and_Wordmark.svg.png',
-    id: 'bafkreic2ibgmzwdjyyq5jqtrbtenzjyvrx6vyeoaacwstcu7k76el6cflu',
+    id: 'ipfs:bafkreic2ibgmzwdjyyq5jqtrbtenzjyvrx6vyeoaacwstcu7k76el6cflu',
   },
 ];
 

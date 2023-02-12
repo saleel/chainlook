@@ -53,7 +53,7 @@ function DashboardPage() {
             )}
 
             {dashboard.tags?.map((tag: string) => (
-              <span className="tag mr-2">#{tag}</span>
+              <span key={tag} className="tag mr-2">#{tag}</span>
             ))}
           </div>
         </div>

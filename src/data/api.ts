@@ -140,19 +140,27 @@ export default class API {
   }
 
   static async getDashboard(id: string) {
-    const [protocolOrAuthor] = id.split(':');
+    const [protocolOrAuthor, dashboardId] = id.split(':');
 
     if (protocolOrAuthor === 'ipfs') {
-      return fetchDataFromIPFS(id);
+      const data = await fetchDataFromIPFS(dashboardId);
+      return {
+        definition: data,
+        title: data?.title
+      } as Dashboard;
     }
   
     if (protocolOrAuthor === 'ipns') {
-      return fetchDataFromIPNS(id);
+      const data = await  fetchDataFromIPNS(dashboardId);
+      return {
+        definition: data,
+        title: data?.title
+      } as Dashboard;
     }
   
     // Fetch from API
     const response = await apiInstance.get(`/dashboards/${id}`);
-    return response.data;
+    return new Dashboard(response.data);
   }
 
   static async createDashboard(dashboard: Partial<Dashboard>) : Promise<Dashboard> {
