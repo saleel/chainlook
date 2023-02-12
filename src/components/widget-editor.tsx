@@ -49,7 +49,11 @@ function WidgetEditor(props: { definition: object, onChange: (d: object) => void
   const [examplesModalOpen, setExamplesModalOpen] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    setWidgetJson(JSON.stringify(definition, null, 2));
+    const wj = JSON.stringify(definition, null, 2);
+
+    if (widgetJson !== wj) {
+      setWidgetJson(wj);
+    }
   }, [definition]);
 
   const debounced = useDebouncedCallback(

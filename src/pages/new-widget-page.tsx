@@ -7,8 +7,10 @@ import Widget from '../domain/widget';
 import { AuthContext } from '../context/auth-context';
 import User from '../domain/user';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
+import Store from '../data/store';
+import { useDebouncedCallback } from 'use-debounce';
 
-const DEFAULT_DEFINITION = {
+const DEFAULT_DEFINITION : Widget["definition"] = {
   type: 'table',
   data: {
     source: {
@@ -40,7 +42,7 @@ function NewWidgetPage() {
 
   const { openConnectModal } = useConnectModal();
 
-  const [widget, setWidget] = React.useState(new Widget({
+  const [widget, setWidget] = React.useState(Store.getWidgetDraft() || new Widget({
     id: '',
     title: '',
     tags: [],
@@ -54,6 +56,12 @@ function NewWidgetPage() {
   React.useEffect(() => {
     document.title = 'New Widget - ChainLook';
   }, []);
+
+  const saveDraft = useDebouncedCallback(w => Store.saveWidgetDraft(w), 1000);
+
+  React.useEffect(() => {
+    saveDraft(widget);
+  }, [widget]);
 
   function updateWidget(key: string, value: string | object) {
     setWidget(existing => ({ ...existing, [key]: value }));
@@ -71,6 +79,8 @@ function NewWidgetPage() {
     try {
       submitButton.disabled = true;
       const created = await API.createWidget(widget);
+      
+      Store.deleteWidgetDraft();
       navigate(`/widgets/${created.id}`);
     } finally {
       submitButton.disabled = false;

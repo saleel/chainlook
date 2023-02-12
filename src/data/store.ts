@@ -1,88 +1,38 @@
-import Loki from 'lokijs';
-import LokiIndexedAdapter from 'lokijs/src/loki-indexed-adapter';
+import Dashboard from "../domain/dashboard";
+import Widget from "../domain/widget";
 
-const adapter = new LokiIndexedAdapter();
-let dbReady = false;
-
-const db = new Loki('chainlook.db', {
-  adapter,
-  autoload: true,
-  autosave: true,
-  autosaveInterval: 1000,
-  autoloadCallback: (err) => {
-    if (!err) {
-      dbReady = true;
+export default class Store {
+  static saveWidgetDraft(widget: Widget) {
+    window.localStorage.setItem('widgetDraft', JSON.stringify(widget));
+  }
+  
+  static getWidgetDraft() {
+    try {
+      const widgetJson = window.localStorage.getItem('widgetDraft');
+      return widgetJson ? new Widget(JSON.parse(widgetJson)) : null;    
+    } catch (error) {
+      return null;
     }
-  },
-});
-
-async function getLocalDbCollection(collectionName) {
-  if (!dbReady) {
-    await new Promise((resolve) => {
-      const interval = setInterval(() => {
-        if (dbReady) {
-          resolve();
-          clearInterval(interval);
-        }
-      });
-    });
   }
 
-  let collection = db.getCollection(collectionName);
-
-  if (collection === null) {
-    db.addCollection(collectionName);
-    collection = db.getCollection(collectionName);
+  static deleteWidgetDraft() {
+    window.localStorage.removeItem('widgetDraft');
   }
 
-  return collection;
-}
-
-export async function saveWidgetLocally(widgetConfig) {
-  const widgetsDb = await getLocalDbCollection('widgets');
-
-  // Remove existing one - TODO: improve the logic
-  widgetsDb.findAndRemove({ title: widgetConfig.title, type: widgetConfig.type });
-
-  widgetsDb.insert({ ...widgetConfig, createdAt: new Date().getTime() });
-}
-
-export async function getAllWidgets() {
-  const widgetsDb = await getLocalDbCollection('widgets');
-
-  return widgetsDb.find({}).map((w) => ({
-    ...w,
-    createdAt: undefined,
-    $loki: undefined,
-    meta: undefined,
-  }));
-}
-
-export async function removeLocalDashboards() {
-  const dashboardDb = await getLocalDbCollection('dashboard');
-
-  dashboardDb.findAndRemove({}); // clear everything - using as singleton
-}
-
-export async function saveDashboardLocally(dashboardConfig) {
-  await removeLocalDashboards(); // clear everything - using as singleton
-
-  const dashboardDb = await getLocalDbCollection('dashboard');
-  dashboardDb.insert({ ...dashboardConfig, createdAt: new Date().getTime() });
-}
-
-export async function getLocalDashboard() {
-  const dashboardDb = await getLocalDbCollection('dashboard');
-  const firstItem = dashboardDb.find({})?.map((w) => ({
-    ...w,
-    createdAt: undefined,
-    $loki: undefined,
-    meta: undefined,
-  }))?.[0];
-
-  if (!firstItem) {
-    return null;
+  static saveDashboardDraft(dashboard: Dashboard) {
+    window.localStorage.setItem('dashboardDraft', JSON.stringify(dashboard));
+  }
+  
+  static getDashboardDraft() {
+    try {
+      const dashboardJson = window.localStorage.getItem('dashboardDraft');
+      return dashboardJson ? new Dashboard(JSON.parse(dashboardJson)) : null;    
+    } catch (error) {
+      return null;
+    }
   }
 
-  return firstItem;
+  static deleteDashboardDraft() {
+    window.localStorage.removeItem('dashboardDraft');
+  }
 }
