@@ -469,15 +469,20 @@ button {
 }
 
 .dashboard-header {
-  margin: 1rem 0;
+  margin-bottom: 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
+.dashboard-info {
+  font-size: 0.8rem;
+  color: var(--gray-500);
+  font-weight: normal;
+}
+
 .dashboard-actions,
 .widget-actions {
-  margin-bottom: 2rem;
   display: flex;
   justify-content: flex-end;
   align-items: center;
