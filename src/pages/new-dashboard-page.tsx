@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import DashboardView from "../components/dashboard-view";
 import Modal from "../components/modal";
 import usePromise from "../hooks/use-promise";
@@ -45,13 +45,18 @@ function NewDashboardPage() {
   const [isAddWidgetModalOpen, setIsAddWidgetModalOpen] = React.useState(false);
   const [isAddTextModalOpen, setIsAddTextModalOpen] = React.useState(false);
   const [isPublishModalOpen, setIsPublishModalOpen] = React.useState(false);
-  const [dashboard, setDashboard] = React.useState<Dashboard>(Store.getDashboardDraft() || DEFAULT_DASHBOARD);
+  const [dashboard, setDashboard] = React.useState<Dashboard>(
+    Store.getDashboardDraft() || DEFAULT_DASHBOARD
+  );
 
   React.useEffect(() => {
     document.title = "New Dashboard - ChainLook";
   }, []);
 
-  const saveDraft = useDebouncedCallback(d => Store.saveDashboardDraft(d), 1000);
+  const saveDraft = useDebouncedCallback(
+    (d) => Store.saveDashboardDraft(d),
+    1000
+  );
 
   React.useEffect(() => {
     saveDraft(dashboard);
@@ -82,7 +87,7 @@ function NewDashboardPage() {
 
       Store.deleteDashboardDraft();
       setIsPublishModalOpen(false);
-      navigate(`/dashboard/${created.user.username}/${created.slug}`);
+      navigate(`/dashboard/${created.user.username}:${created.slug}`);
     } finally {
       submitButton.disabled = false;
     }
@@ -207,41 +212,50 @@ function NewDashboardPage() {
 
   return (
     <div className="page new-dashboard-page">
-      <div className="dashboard-actions">
-        <button
-          type="button"
-          className="button is-normal"
-          disabled={dashboard.definition.elements.length === 0}
-          onClick={() => {
-            if (window.confirm("Are you sure you want to clear all the items from the dashboard?")) {
-              setDashboard(DEFAULT_DASHBOARD);
-            }
-          }}
-        >
-          Reset
-        </button>
-        <button
-          type="button"
-          className="button is-normal"
-          onClick={() => setIsAddTextModalOpen(true)}
-        >
-          Add Text
-        </button>
-        <button
-          type="button"
-          className="button is-normal"
-          onClick={() => setIsAddWidgetModalOpen(true)}
-        >
-          Add Widget
-        </button>
-        <button
-          type="button"
-          className="button is-normal"
-          disabled={dashboard.definition.elements.length === 0}
-          onClick={() => setIsPublishModalOpen(true)}
-        >
-          Save
-        </button>
+
+      <div className="dashboard-header">
+        <div></div>
+
+        <div className="dashboard-actions">
+          <button
+            type="button"
+            className="button is-normal"
+            disabled={dashboard.definition.elements.length === 0}
+            onClick={() => {
+              if (
+                window.confirm(
+                  "Are you sure you want to clear all the items from the dashboard?"
+                )
+              ) {
+                setDashboard(DEFAULT_DASHBOARD);
+              }
+            }}
+          >
+            Reset
+          </button>
+          <button
+            type="button"
+            className="button is-normal"
+            onClick={() => setIsAddTextModalOpen(true)}
+          >
+            Add Text
+          </button>
+          <button
+            type="button"
+            className="button is-normal"
+            onClick={() => setIsAddWidgetModalOpen(true)}
+          >
+            Add Widget
+          </button>
+          <button
+            type="button"
+            className="button is-normal"
+            disabled={dashboard.definition.elements.length === 0}
+            onClick={() => setIsPublishModalOpen(true)}
+          >
+            Save
+          </button>
+        </div>
       </div>
 
       {elements.length > 0 ? (
@@ -315,7 +329,6 @@ function NewDashboardPage() {
         onRequestClose={() => setIsPublishModalOpen(false)}
       >
         <form onSubmit={onPublishFormSubmit}>
-
           <div className="field">
             <label className="label">Title</label>
             <div className="control">
@@ -326,14 +339,14 @@ function NewDashboardPage() {
                 required
                 value={cleanString(dashboard.title)}
                 onChange={(e) => {
-                  setDashboard((ex) => ({ 
-                    ...ex, 
+                  setDashboard((ex) => ({
+                    ...ex,
                     title: e.target.value,
                     slug: slugify(e.target.value),
                     definition: {
                       ...ex.definition,
                       title: e.target.value,
-                    }
+                    },
                   }));
                 }}
               />
@@ -350,7 +363,9 @@ function NewDashboardPage() {
                 required
                 value={dashboard.slug}
                 pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$"
-                onChange={(e) => setDashboard((ex) => ({ ...ex, slug: e.target.value }))}
+                onChange={(e) =>
+                  setDashboard((ex) => ({ ...ex, slug: e.target.value }))
+                }
               />
             </div>
           </div>
@@ -363,17 +378,20 @@ function NewDashboardPage() {
               placeholder="Enter tags separated by comma"
               value={dashboard.tags}
               required
-              onChange={(e) => setDashboard((ex) => ({ ...ex, tags: e.target.value.split(',') }))}
+              onChange={(e) =>
+                setDashboard((ex) => ({
+                  ...ex,
+                  tags: e.target.value.split(","),
+                }))
+              }
             />
           </div>
 
           <button type="submit" className="button mt-4">
             Publish
           </button>
-
         </form>
       </Modal>
-
     </div>
   );
 }

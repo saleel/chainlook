@@ -1,5 +1,5 @@
 @import "../../node_modules/bulma/bulma.sass";
-@import "./icons.css";
+@import "../../node_modules/@creativebulma/bulma-tooltip/dist/bulma-tooltip.css";
 @import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap");
 
 // Colors from Chakra UI https://chakra-ui.com/docs/theming/theme
@@ -237,6 +237,18 @@ button {
   border-bottom: 1px solid var(--text-color);
 }
 
+.widget-info-item {
+  visibility: hidden;
+}
+
+.widget {
+  &:hover {
+    .widget-info-item {
+      visibility: visible;
+    }
+  }
+}
+
 .widget-body {
   height: calc(100% - 3rem); // Subtract widget title
 }
@@ -454,6 +466,13 @@ button {
   .widget-header {
     cursor: move;
   }
+}
+
+.dashboard-header {
+  margin: 1rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .dashboard-actions,

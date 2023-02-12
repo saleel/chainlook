@@ -5,7 +5,7 @@ import Widget from '../domain/widget';
 import { getToken } from './auth';
 import { groupItems, flattenAndTransformItem } from './modifiers/helpers';
 import { getWidgetDataFromProvider } from './providers/helpers';
-import { fetchDataFromIPFS } from './utils/network';
+import { fetchDataFromIPFS, fetchDataFromIPNS } from './utils/network';
 import { applyVariables, getFieldNamesRequiredForWidget } from './utils/widget-parsing';
 
 
@@ -33,19 +33,6 @@ export default class API {
 
     const { token, user } = response.data;
     return { token, user };
-  }
-
-  static async getDashboard(protocol, id) {
-    if (protocol === 'ipfs') {
-      return fetchDataFromIPFS(id);
-    }
-  
-    if (protocol === 'ipns') {
-      return fetchDataFromIPFS(id);
-    }
-  
-    // Raw ID assumed to be IPFS CID for the time being
-    return fetchDataFromIPFS(id);
   }
   
   static async getWidget(widgetId: string) {
@@ -144,20 +131,28 @@ export default class API {
     return response.data;
   }
 
-  static async editProfile(params: { username: string }) {
-    const response = await apiInstance.patch('/profile', {
-      username: params.username,
-    });
-
-    return response.data;
-  }
-
   static async getWidgetsForUser(userId: string) {
     const response = await apiInstance.get('/widgets/', {
       params: { userId },
     });
   
     return response.data?.map((w: any) => new Widget(w));
+  }
+
+  static async getDashboard(id: string) {
+    const [protocolOrAuthor] = id.split(':');
+
+    if (protocolOrAuthor === 'ipfs') {
+      return fetchDataFromIPFS(id);
+    }
+  
+    if (protocolOrAuthor === 'ipns') {
+      return fetchDataFromIPNS(id);
+    }
+  
+    // Fetch from API
+    const response = await apiInstance.get(`/dashboards/${id}`);
+    return response.data;
   }
 
   static async createDashboard(dashboard: Partial<Dashboard>) : Promise<Dashboard> {
@@ -167,6 +162,24 @@ export default class API {
       tags: dashboard.tags,
     });
   
+    return response.data;
+  }
+
+  static async editDashboard(dashboard: Partial<Dashboard>) : Promise<Dashboard> {
+    const response = await apiInstance.post('/dashboards/' + dashboard.id, {
+      title: dashboard.title,
+      definition: dashboard.definition,
+      tags: dashboard.tags,
+    });
+  
+    return response.data;
+  }
+
+  static async editProfile(params: { username: string }) {
+    const response = await apiInstance.patch('/profile', {
+      username: params.username,
+    });
+
     return response.data;
   }
 }

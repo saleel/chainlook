@@ -25,7 +25,6 @@ function App() {
 
           <Route path="dashboard">
             <Route path=":id" element={<DashboardPage />} />
-            <Route path=":protocol/:id" element={<DashboardPage />} />
             <Route path="new" element={<NewDashboardPage />} />
           </Route>
         </Route>

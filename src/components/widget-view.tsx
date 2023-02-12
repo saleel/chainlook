@@ -6,6 +6,11 @@ import Metric from "./widgets/metric";
 import PieChart from "./widgets/pie-chart";
 import Widget from "../domain/widget";
 import { Link } from "react-router-dom";
+import {
+  IoPersonOutline,
+  IoPricetagOutline,
+  IoOpenOutline,
+} from "react-icons/io5";
 
 function WidgetView(props: { widget: Widget }) {
   const { widget } = props;
@@ -23,7 +28,11 @@ function WidgetView(props: { widget: Widget }) {
   }
 
   if (error) {
-    return <div className="widget p-4">Error while fetching data: {error.message}</div>;
+    return (
+      <div className="widget p-4">
+        Error while fetching data: {error.message}
+      </div>
+    );
   }
 
   if (widget?.definition?.data && !data) {
@@ -68,23 +77,52 @@ function WidgetView(props: { widget: Widget }) {
     return null;
   }
 
-  const author = widget?.user?.username || '';
+  const author = widget?.user?.username || "";
+  const isWidgetPage = window.location.toString().includes(widget.id);
 
   return (
     <div className={`widget widget-${definition.type}`}>
       <div className="widget-header">
-        <h4 className="widget-title">
-          <Link to={`/users/${widget?.user?.username}`}>{author ? `@${author}` + ' / ' : ''}</Link>
-          <span>{widget?.title || 'Untitled'}</span>
-        </h4>
-      
+
         <div className="is-flex">
-          <div className="widget-tags">
-            <i className="icon icon-tags" title={tags?.join(', ')}></i>
-          </div>
+          <h4 className="widget-title">
+            <span>{widget?.title || "Untitled"}</span>
+          </h4>
+
+          {!isWidgetPage && (
+            <Link
+              to={`/widgets/${widget?.id}`}
+              target="_blank"
+              className="ml-3 widget-info-item"
+              data-tooltip="Open the widget in a new page"
+            >
+              <IoOpenOutline size={18} />
+            </Link>
+          )}
         </div>
+
+        <div className="is-flex">
+          {tags?.length > 0 && (
+            <div
+              data-tooltip={`Tags: ${tags.join(", ")}`}
+              className="mr-3 widget-info-item"
+            >
+              <IoPricetagOutline size={18} />
+            </div>
+          )}
+
+          {author && (
+            <div
+              data-tooltip={`Created by ${author}`}
+              className="mr-1 widget-info-item"
+            >
+              <IoPersonOutline size={18} />
+            </div>
+          )}
+        </div>
+
       </div>
-      
+
       <div className="widget-body">{renderWidget()}</div>
     </div>
   );
