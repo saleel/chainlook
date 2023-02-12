@@ -1,15 +1,20 @@
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import WidgetView from "../components/widget-view";
 import API from "../data/api";
 import usePromise from "../hooks/use-promise";
 import WidgetEditor from "../components/widget-editor";
 import Widget from "../domain/widget";
+import { AuthContext } from "../context/auth-context";
 
 function EditWidgetPage() {
   const { widgetId } = useParams();
 
+  const navigate = useNavigate();
+
   const [editingWidget, setEditingWidget] = React.useState<Widget>();
+
+  const { user } = React.useContext(AuthContext);
 
   const [widget, { isFetching, error }] = usePromise<Widget>(
     () => API.getWidget(widgetId as string),
@@ -31,12 +36,16 @@ function EditWidgetPage() {
   }
 
   async function onSaveClick(e: any) {
-    e.target.disabled = true;
+    e.preventDefault();
+    
+    const submitButton = e.target.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
 
     try {
       await API.editWidget(editingWidget as Widget);
+      navigate(`/widgets/${widgetId}`);
     } finally {
-      e.target.disabled = false;
+      submitButton.disabled = false;
     }
   }
 
@@ -50,6 +59,16 @@ function EditWidgetPage() {
 
   const { definition, title, tags } = editingWidget;
 
+  const isWidgetOwner = widget.user.id === user?.id;
+
+  if (!isWidgetOwner) {
+    return (
+      <div className="message text-center">
+        You are not allowed to edit this widget.
+      </div>
+    );
+  }
+
   return (
     <div className="page create-widget-page">
       <h2 className="section-title">Create new widget</h2>
@@ -61,7 +80,7 @@ function EditWidgetPage() {
             definition={definition}
           />
 
-          <form className="create-widget-helper">
+          <form className="create-widget-helper" onSubmit={onSaveClick}>
             <div className="field">
               <label className="label">Title</label>
               <div className="control">
@@ -69,6 +88,7 @@ function EditWidgetPage() {
                   type="text"
                   className="input"
                   placeholder="Enter widget title"
+                  required
                   value={title}
                   onChange={(e) => updateWidget("title", e.target.value)}
                 />
@@ -81,13 +101,14 @@ function EditWidgetPage() {
                 className="input"
                 placeholder="Enter tags separated by comma"
                 value={tags}
+                required
                 onChange={(e) =>
                   updateWidget("tags", e.target.value.split(","))
                 }
               />
             </div>
             <hr />
-            <button type="button" onClick={onSaveClick} className="button">
+            <button type="submit" className="button">
               Save
             </button>
           </form>
@@ -97,9 +118,8 @@ function EditWidgetPage() {
 
         <div className="create-widget-preview">
           <div className="section-title">Preview</div>
-          <WidgetView widget={widget} />
+          <WidgetView widget={editingWidget} />
         </div>
-
       </div>
     </div>
   );

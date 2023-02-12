@@ -4,6 +4,9 @@ import WidgetView from '../components/widget-view';
 import API from '../data/api';
 import WidgetEditor from '../components/widget-editor';
 import Widget from '../domain/widget';
+import { AuthContext } from '../context/auth-context';
+import User from '../domain/user';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 
 const DEFAULT_DEFINITION = {
   type: 'table',
@@ -33,11 +36,17 @@ const DEFAULT_DEFINITION = {
 function NewWidgetPage() {
   const navigate = useNavigate();
 
+  const { user, isAuthenticated } = React.useContext(AuthContext);
+
+  const { openConnectModal } = useConnectModal();
+
   const [widget, setWidget] = React.useState(new Widget({
+    id: '',
     title: '',
     tags: [],
     definition: DEFAULT_DEFINITION,
     version: 1,
+    user: user || new User({ id: '', address: '' }),
     createdAt: new Date(),
     updatedAt: new Date(),
   }))
@@ -50,13 +59,21 @@ function NewWidgetPage() {
     setWidget(existing => ({ ...existing, [key]: value }));
   }
 
-  async function onSaveClick(e: any) {
+  async function onFormSubmit(e: any) {
+    e.preventDefault();
+
+    if (!isAuthenticated) {
+      openConnectModal && openConnectModal();
+      return;
+    }
+    const submitButton = e.target.querySelector('button[type="submit"]');
+
     try {
-      e.target.disabled = true;
+      submitButton.disabled = true;
       const created = await API.createWidget(widget);
       navigate(`/widgets/${created.id}`);
     } finally {
-      e.target.disabled = false;
+      submitButton.disabled = false;
     }
   }
 
@@ -72,7 +89,7 @@ function NewWidgetPage() {
         <div className="create-widget-section">
           <WidgetEditor onChange={d => updateWidget('definition', d)} definition={definition} />
 
-          <form className="create-widget-helper">
+          <form className="create-widget-helper" onSubmit={onFormSubmit}>
             <div className="field">
               <label className="label">Title</label>
               <div className="control">
@@ -81,6 +98,7 @@ function NewWidgetPage() {
                   className="input"
                   placeholder="Enter widget title"
                   value={title}
+                  required
                   onChange={(e) => updateWidget('title', e.target.value)}
                 />
               </div>
@@ -92,11 +110,12 @@ function NewWidgetPage() {
                 className="input"
                 placeholder="Enter tags separated by comma"
                 value={tags}
+                required
                 onChange={(e) => updateWidget('tags', e.target.value.split(','))}
               />
             </div>
             <hr />
-            <button type="button" onClick={onSaveClick} className="button">
+            <button type="submit" className="button">
               Save
             </button>
           </form>

@@ -6,6 +6,7 @@ import Text from "./widgets/text";
 import Metric from "./widgets/metric";
 import PieChart from "./widgets/pie-chart";
 import Widget from "../domain/widget";
+import { Link } from "react-router-dom";
 
 function WidgetView(props: { widget: Widget }) {
   const { widget } = props;
@@ -72,10 +73,16 @@ function WidgetView(props: { widget: Widget }) {
     return null;
   }
 
+  const author = widget?.user?.username || '';
+
   return (
     <div className={`widget widget-${definition.type}`}>
       <div className="widget-header">
-        <h4 className="widget-title">{title || 'Untitled'}</h4>
+        <h4 className="widget-title">
+          <Link to={`/users/${widget?.user?.username}`}>{author ? `@${author}` + ' / ' : ''}</Link>
+          <span>{widget?.title || 'Untitled'}</span>
+        </h4>
+      
         <div className="is-flex">
           <div className="widget-tags">
             <i className="icon icon-tags" title={tags?.join(', ')}></i>

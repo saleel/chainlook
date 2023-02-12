@@ -1,3 +1,5 @@
+import User from './user';
+
 type WidgetDefinition = {
   type: string;
   data: object;
@@ -8,22 +10,21 @@ type WidgetDefinition = {
   pieChart?: object;
 }
 
-type CreateWidgetInput = {
-  id?: string;
+type IWidget = {
+  id: string;
   title: string;
   definition: WidgetDefinition;
-  authorId?: string;
-  authorName?: string;
   tags: string[];
   version: number;
   forkId?: string;
   forkVersion?: number;
+  user: User;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 export default class Widget {
-  id?: string;
+  id: string;
 
   title: string;
 
@@ -31,9 +32,7 @@ export default class Widget {
 
   tags: string[];
 
-  authorId?: string;
-
-  authorName?: string;
+  user: User;
 
   version: number;
 
@@ -45,13 +44,12 @@ export default class Widget {
 
   updatedAt: Date;
 
-  constructor(input: CreateWidgetInput) {
+  constructor(input: IWidget) {
     this.id = input.id;
     this.title = input.title;
     this.definition = input.definition;
-    this.tags = input.tags;
-    this.authorId = input.authorId;
-    this.authorName = input.authorName;
+    this.tags = input.tags?.filter(Boolean);
+    this.user = input.user;
     this.version = input.version;
     this.forkId = input.forkId;
     this.forkVersion = input.forkVersion;

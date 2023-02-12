@@ -1,13 +1,11 @@
 import {
   connectorsForWallets,
   lightTheme,
-  useConnectModal,
 } from "@rainbow-me/rainbowkit";
 import React, { ReactNode } from "react";
 import {
   AuthenticationStatus,
   createAuthenticationAdapter,
-  getDefaultWallets,
   RainbowKitAuthenticationProvider,
   RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
@@ -23,6 +21,8 @@ import { mainnet } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 import { SiweMessage } from "siwe";
 import API from "../data/api";
+import { deleteTokenAndUser, getUser, isTokenValid, saveTokenAndUser } from "../data/auth";
+import User from "../domain/user";
 
 const { chains, provider, webSocketProvider } = configureChains(
   [mainnet],
@@ -50,11 +50,13 @@ const wagmiClient = createClient({
 });
 
 type AuthContextParams = {
-  authStatus: AuthenticationStatus;
+  isAuthenticated: boolean;
+  user: User | null;
 };
 
 export const AuthContext = React.createContext<AuthContextParams>({
-  authStatus: "loading",
+  isAuthenticated: isTokenValid(),
+  user: getUser(),
 });
 
 const Disclaimer = () => (
@@ -72,39 +74,14 @@ customTheme.radii.modal = "10px";
 
 export function AuthContextProvider(props: { children: ReactNode }) {
   const { children } = props;
-  const fetchingStatusRef = React.useRef(false);
   const verifyingRef = React.useRef(false);
 
-  const [authStatus, setAuthStatus] =
-    React.useState<AuthenticationStatus>("loading");
+  const [user, setUser] = React.useState<User | null>(getUser());
 
-  // Fetch user when:
+  const [authStatus, setAuthStatus] = React.useState<AuthenticationStatus>("loading");
+
   React.useEffect(() => {
-    const fetchStatus = async () => {
-      if (fetchingStatusRef.current || verifyingRef.current) {
-        return;
-      }
-
-      fetchingStatusRef.current = true;
-
-      try {
-        // const response = await fetch('/api/me');
-        // const json = await response.json();
-        // setAuthStatus(json.address ? 'authenticated' : 'unauthenticated');
-        setAuthStatus("unauthenticated");
-      } catch (_error) {
-        setAuthStatus("unauthenticated");
-      } finally {
-        fetchingStatusRef.current = false;
-      }
-    };
-
-    // 1. page loads
-    fetchStatus();
-
-    // 2. window is focused (in case user logs out of another window)
-    window.addEventListener("focus", fetchStatus);
-    return () => window.removeEventListener("focus", fetchStatus);
+    setAuthStatus(isTokenValid() ? "authenticated" : "unauthenticated");
   }, []);
 
   const authAdapter = React.useMemo(() => {
@@ -133,12 +110,29 @@ export function AuthContextProvider(props: { children: ReactNode }) {
         verifyingRef.current = true;
 
         try {
-          const authenticated = await API.signIn({ message, signature });
-          if (authenticated) {
-            setAuthStatus(authenticated ? "authenticated" : "unauthenticated");
+          const { user, token } = await API.signIn({ message, signature });
+
+          saveTokenAndUser(token, user);
+          
+          if (!user.username) {
+            const username = window.prompt("Enter a username for your account");
+            if (username) {
+              await API.editProfile({ username });
+              user.username = username;
+              saveTokenAndUser(token, user);
+            }
+            else {
+              alert("You need a username to continue");
+              return false;
+            }
           }
-          return authenticated;
+
+          setAuthStatus(token ? "authenticated" : "unauthenticated");
+          setUser(user);
+
+          return true;
         } catch (error) {
+          console.error(error)
           return false;
         } finally {
           verifyingRef.current = false;
@@ -146,14 +140,15 @@ export function AuthContextProvider(props: { children: ReactNode }) {
       },
 
       signOut: async () => {
+        console.log("SIGN OUT")
         setAuthStatus("unauthenticated");
-        await fetch("/api/logout");
+        deleteTokenAndUser();
       },
     });
   }, []);
 
   return (
-    <AuthContext.Provider value={{ authStatus }}>
+    <AuthContext.Provider value={{ isAuthenticated: authStatus === "authenticated" || isTokenValid(), user }}>
       <WagmiConfig client={wagmiClient}>
         <RainbowKitAuthenticationProvider
           adapter={authAdapter}

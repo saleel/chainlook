@@ -42,7 +42,7 @@ button {
   font-family: "Fira Code", monospace;
 }
 
-#root {
+#root, [data-rk] {
   display: flex;
   height: 100%;
   flex-direction: column;
@@ -51,6 +51,7 @@ button {
 .main {
   flex-grow: 1;
   align-self: stretch;
+  justify-content: stretch;
 }
 
 .wrapper {
@@ -237,7 +238,7 @@ button {
 }
 
 .widget-body {
-  height: calc(100% - 2.5rem); // Subtract widget title
+  height: calc(100% - 3rem); // Subtract widget title
 }
 
 .widget-chart {
@@ -495,6 +496,10 @@ button {
 
 .message {
   padding: 1rem;
+}
+
+.text-center {
+  text-align: center;
 }
 
 .delay {

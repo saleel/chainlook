@@ -1,23 +1,37 @@
-import axios from 'axios';
+import axios, { AxiosHeaders } from 'axios';
 import { SiweMessage } from 'siwe';
 import Widget from '../domain/widget';
+import { getToken } from './auth';
 import { groupItems, flattenAndTransformItem } from './modifiers/helpers';
 import { getWidgetDataFromProvider } from './providers/helpers';
 import { fetchDataFromIPFS } from './utils/network';
 import { applyVariables, getFieldNamesRequiredForWidget } from './utils/widget-parsing';
 
+
+let apiInstance = axios.create({ 
+  baseURL: 'http://localhost:9000', 
+});
+
+apiInstance.interceptors.request.use((config) => {
+  const token = getToken();
+
+  (config.headers as AxiosHeaders).set('Authorization', `Bearer ${token}`);
+  return config;
+});
+
 export default class API {
   static async getNonce() {
-    const response = await axios.get('http://localhost:9000/nonce');
+    const response = await apiInstance.get('/nonce');
     return response.data;
   }
 
   static async signIn({ message, signature } : { message: SiweMessage, signature: string }) {
-    const response = await axios.post('http://localhost:9000/sign-in', {
+    const response = await apiInstance.post('/sign-in', {
       message, signature
     });
-  
-    return response.data;
+
+    const { token, user } = response.data;
+    return { token, user };
   }
 
   static async getDashboard(protocol, id) {
@@ -34,7 +48,7 @@ export default class API {
   }
   
   static async getWidget(widgetId: string) {
-    const response = await axios.get(`http://localhost:9000/widgets/${widgetId}`);
+    const response = await apiInstance.get(`/widgets/${widgetId}`);
     return new Widget(response.data);
   }
   
@@ -110,7 +124,7 @@ export default class API {
   }
   
   static async createWidget(widget: Partial<Widget>) {
-    const response = await axios.post('http://localhost:9000/widget', {
+    const response = await apiInstance.post('/widget', {
       title: widget.title,
       definition: widget.definition,
       tags: widget.tags,
@@ -120,12 +134,20 @@ export default class API {
   }
 
   static async editWidget(widget: Widget) {
-    const response = await axios.patch('http://localhost:9000/widget/' + widget.id, {
+    const response = await apiInstance.patch('/widget/' + widget.id, {
       title: widget.title,
       definition: widget.definition,
       tags: widget.tags,
     });
   
+    return response.data;
+  }
+
+  static async editProfile(params: { username: string }) {
+    const response = await apiInstance.patch('/profile', {
+      username: params.username,
+    });
+
     return response.data;
   }
 }

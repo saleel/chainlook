@@ -7,6 +7,8 @@ import { useDebouncedCallback } from 'use-debounce';
 import Modal from './modal';
 import { fetchDataFromHTTP } from '../data/utils/network';
 
+const SCHEMA_URL = window.origin + '/schemas/widget.json';
+
 // @ts-ignore
 self.MonacoEnvironment = {
 	getWorker(_: any, label: string) {
@@ -79,7 +81,7 @@ function WidgetEditor(props: { definition: object, onChange: (d: object) => void
         theme="vs-light"
         value={widgetJson}
         options={{
-          fontSize: 14,
+          fontSize: 13,
           minimap: {
             enabled: false,
           },
@@ -94,7 +96,7 @@ function WidgetEditor(props: { definition: object, onChange: (d: object) => void
             enableSchemaRequest: true,
             schemas: [{
               fileMatch: ['*'],
-              uri: `${window.origin}/schemas/widget.json`,
+              uri: SCHEMA_URL,
             }],
           });
         }}
@@ -104,7 +106,7 @@ function WidgetEditor(props: { definition: object, onChange: (d: object) => void
         <button className="link mr-3" onClick={() => setExamplesModalOpen(true)}>
           Load Example
         </button>
-        <a className="link" href="/schemas/widget.json" target="_blank">
+        <a className="link" href={SCHEMA_URL} target="_blank">
           View Schema
         </a>
       </div>

@@ -1,10 +1,15 @@
-import { ConnectButton, useConnectModal } from "@rainbow-me/rainbowkit";
+import { ConnectButton, useConnectModal, useAccountModal } from "@rainbow-me/rainbowkit";
 import React from "react";
 import { Link, Outlet } from "react-router-dom";
 import { AuthContext } from "../context/auth-context";
 
 export default function Layout() {
   const { openConnectModal } = useConnectModal();
+  const { openAccountModal } = useAccountModal();
+
+  const { isAuthenticated, user } = React.useContext(AuthContext);
+
+  console.log(isAuthenticated, user)
 
   return (
     <>
@@ -17,12 +22,28 @@ export default function Layout() {
           <Link to="/widgets/new">
             <div className="menu-item">New Widget</div>
           </Link>
+
           <Link to="/dashboard/new">
             <div className="menu-item">New Dashboard</div>
           </Link>
-          <button type="button" className="menu-item" onClick={openConnectModal}>
-            Sign In
-          </button>
+
+          {!isAuthenticated ? (
+            <button
+              type="button"
+              className="menu-item"
+              onClick={openConnectModal}
+            >
+              Sign In
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="menu-item"
+              onClick={openAccountModal}
+            >
+              {user?.username}
+            </button>
+          )}
         </div>
       </div>
 

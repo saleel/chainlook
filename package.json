@@ -4,7 +4,7 @@
   "private": true,
   "homepage": "./",
   "scripts": {
-    "start": "vite",
+    "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --fix",
     "analyze": "source-map-explorer 'build/static/js/*.js'"
