@@ -3,7 +3,6 @@ import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import DashboardView from '../components/dashboard-view';
 import API from '../data/api';
-import { saveDashboardLocally } from '../data/store';
 import usePromise from '../hooks/use-promise';
 
 function DashboardPage() {
@@ -22,7 +21,7 @@ function DashboardPage() {
   }, [dashboard]);
 
   const onForkClick = React.useCallback(async () => {
-    await saveDashboardLocally(dashboard);
+    // await saveDashboardLocally(dashboard);
     navigate('/dashboard/new'); // TODO: a hack for now - new widget page will load the most recent local widget
   }, [dashboard]);
 

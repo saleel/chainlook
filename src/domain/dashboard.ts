@@ -21,6 +21,7 @@ type IDashboard = {
   starred: number;
   createdAt: Date;
   updatedAt: Date;
+  version: number;
 };
 
 export default class Dashboard {
@@ -40,6 +41,8 @@ export default class Dashboard {
 
   starred: number;
 
+  version: number;
+
   createdAt: Date;
 
   updatedAt: Date;
@@ -53,6 +56,7 @@ export default class Dashboard {
     this.user = input.user;
     this.definition = input.definition;
     this.starred = input.starred;
+    this.version = input.version;
     this.createdAt = input.createdAt;
     this.updatedAt = input.updatedAt;
   }

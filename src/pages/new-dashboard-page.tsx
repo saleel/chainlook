@@ -1,21 +1,17 @@
-/* eslint-disable react/jsx-no-bind */
-/* eslint-disable react/no-array-index-key */
-import React, { ReactEventHandler } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 import DashboardView from "../components/dashboard-view";
 import Modal from "../components/modal";
 import usePromise from "../hooks/use-promise";
 import API from "../data/api";
-import {
-  getAllWidgets,
-  getLocalDashboard,
-  removeLocalDashboards,
-  saveDashboardLocally,
-} from "../data/store";
+import Store from "../data/store";
 import { AuthContext } from "../context/auth-context";
 import Dashboard, { DashboardDefinition } from "../domain/dashboard";
-import Widget, { WidgetDefinition } from "../domain/widget";
+import Widget from "../domain/widget";
 import User from "../domain/user";
+import { cleanString, slugify } from "../utils";
+import { useDebouncedCallback } from "use-debounce";
 
 type Element = DashboardDefinition["elements"][0];
 
@@ -26,35 +22,39 @@ const minDimensions = {
   metric: { width: 2, height: 1 },
 };
 
+const DEFAULT_DASHBOARD: Dashboard = new Dashboard({
+  id: "",
+  title: "",
+  slug: "",
+  definition: { title: "", elements: [] },
+  tags: [],
+  starred: 0,
+  version: 1,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  user: new User({ id: "", username: "", address: "" }),
+});
+
 function NewDashboardPage() {
   const navigate = useNavigate();
 
-  const { user } = React.useContext(AuthContext);
+  const { openConnectModal } = useConnectModal();
 
-  const [isNewWidgetModalOpen, setIsNewWidgetModalOpen] = React.useState(false);
-  const [isNewTextModalOpen, setIsNewTextModalOpen] = React.useState(false);
-  const [dashboard, setDashboard] = React.useState<Dashboard>(
-    new Dashboard({
-      id: "",
-      title: "",
-      slug: "",
-      definition: { title: "", elements: [] },
-      tags: [],
-      starred: 0,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      user: user || new User({ id: "", username: "", address: "" }),
-    })
-  );
+  const { user, isAuthenticated } = React.useContext(AuthContext);
+
+  const [isAddWidgetModalOpen, setIsAddWidgetModalOpen] = React.useState(false);
+  const [isAddTextModalOpen, setIsAddTextModalOpen] = React.useState(false);
+  const [isPublishModalOpen, setIsPublishModalOpen] = React.useState(false);
+  const [dashboard, setDashboard] = React.useState<Dashboard>(Store.getDashboardDraft() || DEFAULT_DASHBOARD);
 
   React.useEffect(() => {
     document.title = "New Dashboard - ChainLook";
   }, []);
 
+  const saveDraft = useDebouncedCallback(d => Store.saveDashboardDraft(d), 1000);
+
   React.useEffect(() => {
-    if (dashboard) {
-      saveDashboardLocally(dashboard);
-    }
+    saveDraft(dashboard);
   }, [dashboard]);
 
   const [widgetOfUser] = usePromise<Widget[]>(
@@ -65,23 +65,26 @@ function NewDashboardPage() {
     }
   );
 
-  async function onPublishClick(e) {
-    if (!dashboard.title) {
-      onEditTitleClick();
+  async function onPublishFormSubmit(e: any) {
+    e.preventDefault();
 
-      if (!dashboard.title) {
-        return;
-      }
+    if (!isAuthenticated) {
+      openConnectModal && openConnectModal();
+      return;
     }
 
+    const submitButton = e.target.querySelector("button[type=submit]");
+
     try {
-      e.target.disabled = true;
-      await removeLocalDashboards(); // Remove local draft
+      submitButton.disabled = true;
 
       const created = await API.createDashboard(dashboard);
-      navigate(`/dashboard/${created.id}`);
+
+      Store.deleteDashboardDraft();
+      setIsPublishModalOpen(false);
+      navigate(`/dashboard/${created.user.username}/${created.slug}`);
     } finally {
-      e.target.disabled = false;
+      submitButton.disabled = false;
     }
   }
 
@@ -113,7 +116,14 @@ function NewDashboardPage() {
     updateElements((existing) => [
       ...existing,
       {
-        widget,
+        widget: {
+          definition,
+          id: widget.id,
+          title: widget.title,
+          tags: widget.tags,
+          user: widget.user,
+          version: widget.version,
+        },
         layout: {
           i: existing.length,
           x: 0,
@@ -124,7 +134,7 @@ function NewDashboardPage() {
       },
     ]);
 
-    setIsNewWidgetModalOpen(false);
+    setIsAddWidgetModalOpen(false);
   }
 
   function onLayoutChange(allLayouts: any[]) {
@@ -190,18 +200,7 @@ function NewDashboardPage() {
       },
     ]);
 
-    setIsNewTextModalOpen(false);
-  }
-
-  function onEditTitleClick() {
-    // eslint-disable-next-line no-alert
-    const newTitle = window.prompt(
-      "Enter the title for the dashboard",
-      dashboard?.title
-    );
-    if (newTitle) {
-      setDashboard((ex) => ({ ...ex, title: newTitle }));
-    }
+    setIsAddTextModalOpen(false);
   }
 
   const { elements } = dashboard.definition;
@@ -209,56 +208,58 @@ function NewDashboardPage() {
   return (
     <div className="page new-dashboard-page">
       <div className="dashboard-actions">
-        <h2 className="dashboard-title">{dashboard.title || 'Untitled Dashboard'}</h2>
-
-        <div>
-          <button
-            type="button"
-            className="button is-normal"
-            onClick={onEditTitleClick}
-          >
-            Edit Title
-          </button>
-          <button
-            type="button"
-            className="button is-normal"
-            onClick={() => setIsNewTextModalOpen(true)}
-          >
-            Add Text
-          </button>
-          <button
-            type="button"
-            className="button is-normal"
-            onClick={() => setIsNewWidgetModalOpen(true)}
-          >
-            Add Widget
-          </button>
-          <button
-            type="button"
-            className="button is-normal"
-            onClick={onPublishClick}
-          >
-            Publish
-          </button>
-        </div>
+        <button
+          type="button"
+          className="button is-normal"
+          disabled={dashboard.definition.elements.length === 0}
+          onClick={() => {
+            if (window.confirm("Are you sure you want to clear all the items from the dashboard?")) {
+              setDashboard(DEFAULT_DASHBOARD);
+            }
+          }}
+        >
+          Reset
+        </button>
+        <button
+          type="button"
+          className="button is-normal"
+          onClick={() => setIsAddTextModalOpen(true)}
+        >
+          Add Text
+        </button>
+        <button
+          type="button"
+          className="button is-normal"
+          onClick={() => setIsAddWidgetModalOpen(true)}
+        >
+          Add Widget
+        </button>
+        <button
+          type="button"
+          className="button is-normal"
+          disabled={dashboard.definition.elements.length === 0}
+          onClick={() => setIsPublishModalOpen(true)}
+        >
+          Save
+        </button>
       </div>
 
-      {elements.length > 0 && (
+      {elements.length > 0 ? (
         <DashboardView
           dashboard={dashboard}
           isEditable
           onLayoutChange={onLayoutChange}
           onRemoveWidgetClick={onRemoveElement}
         />
-      )}
-
-      {elements.length === 0 && (
-        <div className="mt-4">Start creating dashboard by Adding Widgets</div>
+      ) : (
+        <div className="mt-5 text-center message">
+          Start creating dashboard by adding Widgets
+        </div>
       )}
 
       <Modal
-        isOpen={isNewWidgetModalOpen}
-        onRequestClose={() => setIsNewWidgetModalOpen(false)}
+        isOpen={isAddWidgetModalOpen}
+        onRequestClose={() => setIsAddWidgetModalOpen(false)}
         title="Add Widget"
       >
         <div>
@@ -278,15 +279,15 @@ function NewDashboardPage() {
             <div>
               {user
                 ? "You have not created any widgets yet."
-                : "You need to login to see your created widgets."}
+                : "You need to sign in to see your created widgets."}
             </div>
           )}
         </div>
       </Modal>
 
       <Modal
-        isOpen={isNewTextModalOpen}
-        onRequestClose={() => setIsNewTextModalOpen(false)}
+        isOpen={isAddTextModalOpen}
+        onRequestClose={() => setIsAddTextModalOpen(false)}
         title="Add Text"
       >
         <form onSubmit={onNewTextFormSubmit}>
@@ -307,6 +308,72 @@ function NewDashboardPage() {
           </button>
         </form>
       </Modal>
+
+      <Modal
+        title="Publish Dashboard"
+        isOpen={isPublishModalOpen}
+        onRequestClose={() => setIsPublishModalOpen(false)}
+      >
+        <form onSubmit={onPublishFormSubmit}>
+
+          <div className="field">
+            <label className="label">Title</label>
+            <div className="control">
+              <input
+                type="text"
+                className="input"
+                placeholder="Enter widget title"
+                required
+                value={cleanString(dashboard.title)}
+                onChange={(e) => {
+                  setDashboard((ex) => ({ 
+                    ...ex, 
+                    title: e.target.value,
+                    slug: slugify(e.target.value),
+                    definition: {
+                      ...ex.definition,
+                      title: e.target.value,
+                    }
+                  }));
+                }}
+              />
+            </div>
+          </div>
+
+          <div className="field">
+            <label className="label">Slug</label>
+            <div className="control">
+              <input
+                type="text"
+                className="input"
+                placeholder="Enter slug to be used in the URL for the dashboard"
+                required
+                value={dashboard.slug}
+                pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$"
+                onChange={(e) => setDashboard((ex) => ({ ...ex, slug: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          <div className="field">
+            <label className="label">Tags</label>
+            <input
+              type="text"
+              className="input"
+              placeholder="Enter tags separated by comma"
+              value={dashboard.tags}
+              required
+              onChange={(e) => setDashboard((ex) => ({ ...ex, tags: e.target.value.split(',') }))}
+            />
+          </div>
+
+          <button type="submit" className="button mt-4">
+            Publish
+          </button>
+
+        </form>
+      </Modal>
+
     </div>
   );
 }

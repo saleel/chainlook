@@ -9,7 +9,18 @@
       "items": {
         "type": "object",
         "properties": {
-          "widget": { "$ref": "/schemas/widget.json" },
+          "widget": { 
+            "type": "object",
+            "additionalProperties": true,
+            "required": ["definition", "title"],
+            "properties": {
+              "definition": { "$ref": "/schemas/widget.json" },
+              "title": { "type": "string" },
+              "tags": { "type": "array", "items": { "type": "string" } },
+              "id": { "type": "string" },
+              "version": { "type": "number" }
+            }
+          },
           "text": { 
             "type": "object",
             "properties": {

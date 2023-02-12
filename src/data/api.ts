@@ -125,7 +125,7 @@ export default class API {
   }
   
   static async createWidget(widget: Partial<Widget>) {
-    const response = await apiInstance.post('/widget', {
+    const response = await apiInstance.post('/widgets', {
       title: widget.title,
       definition: widget.definition,
       tags: widget.tags,
@@ -135,7 +135,7 @@ export default class API {
   }
 
   static async editWidget(widget: Widget) {
-    const response = await apiInstance.patch('/widget/' + widget.id, {
+    const response = await apiInstance.patch('/widgets/' + widget.id, {
       title: widget.title,
       definition: widget.definition,
       tags: widget.tags,
@@ -161,7 +161,7 @@ export default class API {
   }
 
   static async createDashboard(dashboard: Partial<Dashboard>) : Promise<Dashboard> {
-    const response = await apiInstance.post('/dashboard', {
+    const response = await apiInstance.post('/dashboards', {
       title: dashboard.title,
       definition: dashboard.definition,
       tags: dashboard.tags,
