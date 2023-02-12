@@ -1,217 +1,259 @@
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable react/no-array-index-key */
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import Dashboard from '../components/dashboard';
-import Modal from '../components/modal';
-import usePromise from '../hooks/use-promise';
-import API from '../data/api';
+import React, { ReactEventHandler } from "react";
+import { useNavigate } from "react-router-dom";
+import DashboardView from "../components/dashboard-view";
+import Modal from "../components/modal";
+import usePromise from "../hooks/use-promise";
+import API from "../data/api";
 import {
-  getAllWidgets, getLocalDashboard, removeLocalDashboards, saveDashboardLocally,
-} from '../data/store';
+  getAllWidgets,
+  getLocalDashboard,
+  removeLocalDashboards,
+  saveDashboardLocally,
+} from "../data/store";
+import { AuthContext } from "../context/auth-context";
+import Dashboard, { DashboardDefinition } from "../domain/dashboard";
+import Widget, { WidgetDefinition } from "../domain/widget";
+import User from "../domain/user";
+
+type Element = DashboardDefinition["elements"][0];
+
+const minDimensions = {
+  table: { width: 4, height: 3 },
+  chart: { width: 2, height: 2 },
+  pieChart: { width: 2, height: 2 },
+  metric: { width: 2, height: 1 },
+};
 
 function NewDashboardPage() {
-  const fromId = new URL(window.location.toString().replace('/#/', '/')).searchParams?.get('fromId');
-
   const navigate = useNavigate();
+
+  const { user } = React.useContext(AuthContext);
+
   const [isNewWidgetModalOpen, setIsNewWidgetModalOpen] = React.useState(false);
   const [isNewTextModalOpen, setIsNewTextModalOpen] = React.useState(false);
-  const [dashboardConfig, setDashboardConfig] = React.useState();
+  const [dashboard, setDashboard] = React.useState<Dashboard>(
+    new Dashboard({
+      id: "",
+      title: "",
+      slug: "",
+      definition: { title: "", elements: [] },
+      tags: [],
+      starred: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      user: user || new User({ id: "", username: "", address: "" }),
+    })
+  );
 
   React.useEffect(() => {
-    document.title = 'New Dashboard - ChainLook';
+    document.title = "New Dashboard - ChainLook";
   }, []);
 
-  const [fromDashboardConfig, { isFetching, error }] = usePromise(async () => {
-    if (fromId) {
-      return API.getDashboard(fromId);
-    }
-
-    const localDashboard = await getLocalDashboard();
-    if (localDashboard) {
-      return {
-        title: localDashboard.title,
-        widgets: localDashboard.widgets || [],
-      };
-    }
-
-    return {
-      title: 'New Dashboard',
-      widgets: [],
-    };
-  }, {
-    dependencies: [fromId],
-    conditions: [],
-  });
-
   React.useEffect(() => {
-    setDashboardConfig(fromDashboardConfig);
-  }, [fromDashboardConfig]);
-
-  React.useEffect(() => {
-    if (dashboardConfig) {
-      saveDashboardLocally(dashboardConfig);
+    if (dashboard) {
+      saveDashboardLocally(dashboard);
     }
-  }, [dashboardConfig]);
+  }, [dashboard]);
 
-  const [allLocalWidgets] = usePromise(() => getAllWidgets(), {
-    dependencies: [isNewWidgetModalOpen],
-    conditions: [isNewWidgetModalOpen],
-    defaultValue: [],
-  });
+  const [widgetOfUser] = usePromise<Widget[]>(
+    () => API.getWidgetsForUser(user?.id as string),
+    {
+      conditions: [user?.id],
+      defaultValue: [],
+    }
+  );
 
-  async function onPublishToIPFSClick(e) {
-    e.target.disabled = true;
+  async function onPublishClick(e) {
+    if (!dashboard.title) {
+      onEditTitleClick();
 
-    // const widgetCID = await API.publishToIPFS(dashboardConfig);
-    await removeLocalDashboards(); // Remove local draft
+      if (!dashboard.title) {
+        return;
+      }
+    }
 
-    e.target.disabled = false;
+    try {
+      e.target.disabled = true;
+      await removeLocalDashboards(); // Remove local draft
 
-    // eslint-disable-next-line no-alert
-    window.alert('Dashboard published successfully. You will be redirected shortly.');
-
-    // Redirect to new dashboard
-    // navigate(`/dashboard/${widgetCID}`);
+      const created = await API.createDashboard(dashboard);
+      navigate(`/dashboard/${created.id}`);
+    } finally {
+      e.target.disabled = false;
+    }
   }
 
-  function onSelectWidget(widgetConfig) {
+  function updateElements(fn: (ex: Element[]) => Element[]) {
+    setDashboard((ex) => {
+      const newElements = fn(ex.definition.elements);
+
+      return {
+        ...ex,
+        definition: {
+          ...ex.definition,
+          elements: newElements,
+        },
+      };
+    });
+  }
+
+  function onAddWidget(widget: Widget) {
+    const { definition } = widget;
+
     let width = 4;
     let height = 4;
-    let minWidth = 1;
-    let minHeight = 1;
 
-    if (widgetConfig?.type === 'metric') {
+    if (definition?.type === "metric") {
       width = 1;
       height = 1;
     }
 
-    if (widgetConfig?.type === 'table') {
-      minWidth = 4;
-      minHeight = 3;
-    }
-
-    if (widgetConfig?.type === 'chart' || widgetConfig?.type === 'pieChart') {
-      minWidth = 2;
-      minHeight = 2;
-    }
-
-    setDashboardConfig((ex) => ({
-      ...ex,
-      widgets: [...ex.widgets, {
-        widget: widgetConfig,
+    updateElements((existing) => [
+      ...existing,
+      {
+        widget,
         layout: {
-          i: ex.widgets.length, x: 0, y: 0, w: width, h: height, minW: minWidth, minH: minHeight,
+          i: existing.length,
+          x: 0,
+          y: 0,
+          w: width,
+          h: height,
         },
-      }],
-    }));
+      },
+    ]);
 
     setIsNewWidgetModalOpen(false);
   }
 
-  function onLayoutChange(allLayouts) {
-    setDashboardConfig((ex) => ({
-      ...ex,
-      widgets: ex.widgets.map((wi, index) => {
+  function onLayoutChange(allLayouts: any[]) {
+    updateElements((existing) =>
+      existing.map((el, index) => {
         const layout = allLayouts.find((l) => l.i === index.toString());
-        const {
-          i, x, y, w, h,
-        } = layout;
+        const { i, x, y, w, h } = layout;
+
+        if (el.widget) {
+          const minDimensionForWidget =
+            minDimensions[el.widget!.definition!.type];
+
+          if (w < minDimensionForWidget.width) {
+            layout.w = minDimensionForWidget.width;
+          }
+
+          if (h < minDimensionForWidget.height) {
+            layout.h = minDimensionForWidget.height;
+          }
+        }
 
         return {
-          ...wi,
+          ...el,
           layout: {
-            i, x, y, w, h,
+            i,
+            x,
+            y,
+            w,
+            h,
           },
         };
-      }),
-    }));
+      })
+    );
   }
 
-  function onRemoveWidgetClick(removedWidget) {
-    setDashboardConfig((ex) => ({
-      ...ex,
-      widgets: ex.widgets.filter((w) => w.layout.i !== removedWidget.layout.i),
-    }));
+  function onRemoveElement(removedWidget: Element) {
+    updateElements((existing) =>
+      existing.filter((w) => w.layout.i !== removedWidget.layout.i)
+    );
   }
 
-  function onEditTitleClick() {
-    // eslint-disable-next-line no-alert
-    const newTitle = window.prompt('Enter the title for the dashboard', dashboardConfig?.title);
-    if (newTitle) {
-      setDashboardConfig((ex) => ({ ...ex, title: newTitle }));
-    }
-  }
-
-  function onNewTextFormSubmit(e) {
+  function onNewTextFormSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    const formData = new FormData(e.target);
-    const title = formData.get('title');
-    const message = formData.get('message');
+    const formData = new FormData(e.target as HTMLFormElement);
+    const title = formData.get("title") as string;
+    const message = formData.get("message") as string;
 
-    setDashboardConfig((ex) => ({
-      ...ex,
-      widgets: [...ex.widgets, {
-        widget: {
-          type: 'text',
+    updateElements((existing) => [
+      ...existing,
+      {
+        text: {
           title,
-          text: { message },
+          message,
         },
         layout: {
-          i: ex.widgets.length, x: 0, y: 0, w: 2, h: 1,
+          i: existing.length,
+          x: 0,
+          y: 0,
+          w: 2,
+          h: 1,
         },
-      }],
-    }));
+      },
+    ]);
 
     setIsNewTextModalOpen(false);
   }
 
-  if (!dashboardConfig || isFetching) {
-    return (<div>Loading</div>);
+  function onEditTitleClick() {
+    // eslint-disable-next-line no-alert
+    const newTitle = window.prompt(
+      "Enter the title for the dashboard",
+      dashboard?.title
+    );
+    if (newTitle) {
+      setDashboard((ex) => ({ ...ex, title: newTitle }));
+    }
   }
 
-  if (error) {
-    return (<div>{error.message}</div>);
-  }
+  const { elements } = dashboard.definition;
 
   return (
     <div className="page new-dashboard-page">
-
       <div className="dashboard-actions">
-        <h2 className="dashboard-title">
-          {dashboardConfig?.title}
-        </h2>
+        <h2 className="dashboard-title">{dashboard.title || 'Untitled Dashboard'}</h2>
 
         <div>
-          <button type="button" className="button btn-add-widget" onClick={onEditTitleClick}>
+          <button
+            type="button"
+            className="button is-normal"
+            onClick={onEditTitleClick}
+          >
             Edit Title
           </button>
-          <button type="button" className="button btn-add-widget" onClick={() => setIsNewTextModalOpen(true)}>
-            Add Text Widget
+          <button
+            type="button"
+            className="button is-normal"
+            onClick={() => setIsNewTextModalOpen(true)}
+          >
+            Add Text
           </button>
-          <button type="button" className="button btn-add-widget" onClick={() => setIsNewWidgetModalOpen(true)}>
+          <button
+            type="button"
+            className="button is-normal"
+            onClick={() => setIsNewWidgetModalOpen(true)}
+          >
             Add Widget
           </button>
-          <button type="button" className="button btn-add-widget" onClick={onPublishToIPFSClick}>
+          <button
+            type="button"
+            className="button is-normal"
+            onClick={onPublishClick}
+          >
             Publish
           </button>
         </div>
       </div>
 
-      {dashboardConfig && dashboardConfig.widgets.length > 0 && (
-        <Dashboard
-          config={dashboardConfig}
+      {elements.length > 0 && (
+        <DashboardView
+          dashboard={dashboard}
           isEditable
           onLayoutChange={onLayoutChange}
-          onRemoveWidgetClick={onRemoveWidgetClick}
+          onRemoveWidgetClick={onRemoveElement}
         />
       )}
 
-      {dashboardConfig && dashboardConfig.widgets.length === 0 && (
-        <div className="mt-4">
-          Start creating dashboard by Adding Widgets
-        </div>
+      {elements.length === 0 && (
+        <div className="mt-4">Start creating dashboard by Adding Widgets</div>
       )}
 
       <Modal
@@ -220,13 +262,23 @@ function NewDashboardPage() {
         title="Add Widget"
       >
         <div>
-          {allLocalWidgets.length > 0 ? allLocalWidgets.map((widget) => (
-            <div key={widget.title} tabIndex={0} role="button" className="add-widget-item" onClick={() => onSelectWidget(widget)}>
-              {widget.type} - {widget.title}
-            </div>
-          )) : (
+          {widgetOfUser.length > 0 ? (
+            widgetOfUser.map((widget) => (
+              <div
+                key={widget.id}
+                tabIndex={0}
+                role="button"
+                className="add-widget-item"
+                onClick={() => onAddWidget(widget)}
+              >
+                {widget.definition?.type} - {widget.title}
+              </div>
+            ))
+          ) : (
             <div>
-              No widgets found. Use `New Widget` page to create a new widget.
+              {user
+                ? "You have not created any widgets yet."
+                : "You need to login to see your created widgets."}
             </div>
           )}
         </div>
@@ -235,16 +287,26 @@ function NewDashboardPage() {
       <Modal
         isOpen={isNewTextModalOpen}
         onRequestClose={() => setIsNewTextModalOpen(false)}
-        title="Add Text Widget"
+        title="Add Text"
       >
         <form onSubmit={onNewTextFormSubmit}>
-          <input name="title" className="form-input" type="text" placeholder="Title" />
-          <textarea name="message" className="form-input" type="text" placeholder="Message" />
+          <input
+            name="title"
+            className="form-input"
+            type="text"
+            placeholder="Title"
+          />
+          <textarea
+            name="message"
+            className="form-input"
+            placeholder="Message"
+          />
 
-          <button className="button mt-4" type="submit">Submit</button>
+          <button className="button mt-4" type="submit">
+            Submit
+          </button>
         </form>
       </Modal>
-
     </div>
   );
 }

@@ -140,7 +140,6 @@ export function AuthContextProvider(props: { children: ReactNode }) {
       },
 
       signOut: async () => {
-        console.log("SIGN OUT")
         setAuthStatus("unauthenticated");
         deleteTokenAndUser();
       },

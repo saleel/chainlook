@@ -2,7 +2,6 @@ import API from "../data/api";
 import usePromise from "../hooks/use-promise";
 import Chart from "./widgets/chart";
 import Table from "./widgets/table";
-import Text from "./widgets/text";
 import Metric from "./widgets/metric";
 import PieChart from "./widgets/pie-chart";
 import Widget from "../domain/widget";
@@ -37,10 +36,6 @@ function WidgetView(props: { widget: Widget }) {
   function renderWidget() {
     try {
       if (error) throw error;
-
-      if (definition.type === "text") {
-        return <Text config={definition.text} />;
-      }
 
       if (definition.type === "chart") {
         return <Chart data={data} config={definition.chart} />;

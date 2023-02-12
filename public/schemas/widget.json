@@ -7,15 +7,6 @@
       "type": "string",
       "enum": ["table", "chart", "pieChart", "metric", "text"]
     },
-    "author": {
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "name": { "type": "string" }
-      },
-      "required": ["id", "name"],
-      "additionalProperties": true
-    },
     "data": {
       "type": "object",
       "properties": {
@@ -99,7 +90,9 @@
       },
       "allOf": [
         {
-          "if": { "properties": { "provider": { "const": "subgraph" } } },
+          "if": {
+            "properties": { "provider": { "const": "graph" } }
+          },
           "then": { "required": ["subgraphId", "entity"] }
         },
         {
@@ -107,7 +100,9 @@
           "then": { "required": ["cid"] }
         },
         {
-          "if": { "properties": { "provider": { "const": "tableland" } } },
+          "if": {
+            "properties": { "provider": { "const": "tableland" } }
+          },
           "then": { "required": ["network", "tableName"] }
         }
       ]

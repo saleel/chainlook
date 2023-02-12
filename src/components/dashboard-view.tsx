@@ -1,16 +1,25 @@
-import React from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
+import Dashboard from '../domain/dashboard';
+import Widget from '../domain/widget';
+import TextView from './text-view';
 import WidgetView from './widget-view';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-export default function Dashboard(props) {
+type Props = {
+  dashboard: Dashboard;
+  isEditable?: boolean;
+  onLayoutChange?: (layouts: any) => void;
+  onRemoveWidgetClick?: (widget: any) => void;
+}
+
+export default function DashboardView(props: Props) {
   const {
-    config, isEditable = false, onLayoutChange, onRemoveWidgetClick,
+    dashboard, isEditable = false, onLayoutChange, onRemoveWidgetClick,
   } = props;
 
-  const { widgets } = config;
+  const { elements = [] } = dashboard.definition;
 
   return (
     <div className="dashboard">
@@ -31,16 +40,23 @@ export default function Dashboard(props) {
         isResizable={isEditable}
         compactType={null}
         preventCollision
-        draggableHandle=".widget-title"
+        draggableHandle=".widget-header"
         {...onLayoutChange && { onLayoutChange }}
         onDragStart={(e) => e.dataTransfer?.setData('text/plain', '')}
       >
-        {widgets.map((widget, index) => (
-          <div key={widget.id || index} data-grid={{ ...widget.layout }}>
-            <WidgetView id={widget.cid} title={widget.title} definition={widget.widget} enableFork={!isEditable} />
+        {elements.map((element, index) => (
+          <div key={index} data-grid={{ ...element.layout }}>
+
+            {element.widget && (
+              <WidgetView widget={element.widget as Widget} />
+            )}
+
+            {element.text && (
+              <TextView text={element.text} />
+            )}
 
             {isEditable && (
-              <button type="button" className="new-dashboard-widget-delete" onClick={() => onRemoveWidgetClick(widget)}>
+              <button type="button" className="new-dashboard-widget-delete" onClick={() => onRemoveWidgetClick?.(element)}>
                 +
               </button>
             )}

@@ -9,7 +9,6 @@ export default function Layout() {
 
   const { isAuthenticated, user } = React.useContext(AuthContext);
 
-  console.log(isAuthenticated, user)
 
   return (
     <>

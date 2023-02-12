@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Dashboard from '../components/dashboard';
+import DashboardView from '../components/dashboard-view';
 import API from '../data/api';
 import { saveDashboardLocally } from '../data/store';
 import usePromise from '../hooks/use-promise';
@@ -63,7 +63,7 @@ function DashboardPage() {
         </div>
       </div>
 
-      <Dashboard config={dashboard} />
+      <DashboardView config={dashboard} />
 
     </div>
   );

@@ -42,7 +42,7 @@ button {
   font-family: "Fira Code", monospace;
 }
 
-#root, [data-rk] {
+#root, #root [data-rk] {
   display: flex;
   height: 100%;
   flex-direction: column;

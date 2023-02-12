@@ -1,5 +1,6 @@
 import axios, { AxiosHeaders } from 'axios';
 import { SiweMessage } from 'siwe';
+import Dashboard from '../domain/dashboard';
 import Widget from '../domain/widget';
 import { getToken } from './auth';
 import { groupItems, flattenAndTransformItem } from './modifiers/helpers';
@@ -148,6 +149,24 @@ export default class API {
       username: params.username,
     });
 
+    return response.data;
+  }
+
+  static async getWidgetsForUser(userId: string) {
+    const response = await apiInstance.get('/widgets/', {
+      params: { userId },
+    });
+  
+    return response.data?.map((w: any) => new Widget(w));
+  }
+
+  static async createDashboard(dashboard: Partial<Dashboard>) : Promise<Dashboard> {
+    const response = await apiInstance.post('/dashboard', {
+      title: dashboard.title,
+      definition: dashboard.definition,
+      tags: dashboard.tags,
+    });
+  
     return response.data;
   }
 }
