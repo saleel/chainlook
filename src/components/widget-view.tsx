@@ -126,12 +126,12 @@ function WidgetView(props: { widget: Widget; showActions?: boolean }) {
         </div>
 
         {showActions && (
-          <div className="is-flex">
+          <div className="is-flex pl-1">
             <button
               type="button"
               onClick={onForkClick}
               data-tooltip={`Fork - Make a copy of this widget and customize it`}
-              className="mr-3 icon-button"
+              className="icon-button"
             >
               <IoGitNetworkOutline size={17} />
             </button>
@@ -139,7 +139,7 @@ function WidgetView(props: { widget: Widget; showActions?: boolean }) {
             {author && (
               <div
                 data-tooltip={`Created by ${author}`}
-                className="mr-1 widget-info-item"
+                className="ml-3 widget-info-item"
               >
                 <IoPersonOutline size={18} />
               </div>

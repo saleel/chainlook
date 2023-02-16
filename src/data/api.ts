@@ -3,7 +3,7 @@ import { SiweMessage } from 'siwe';
 import Dashboard from '../domain/dashboard';
 import Widget from '../domain/widget';
 import { getToken } from './auth';
-import { groupItems, flattenAndTransformItem } from './modifiers/helpers';
+import { groupItems, flattenAndTransformItem, computeDynamicFields } from './modifiers/helpers';
 import { getWidgetDataFromProvider } from './providers/helpers';
 import { fetchDataFromIPFS, fetchDataFromIPNS } from './utils/network';
 import { applyVariables, getFieldNamesRequiredForWidget } from './utils/widget-parsing';
@@ -42,7 +42,7 @@ export default class API {
   
   static async fetchDataForWidget(widget, variables) {
     const {
-      source, sources, group, join, transforms,
+      source, sources, group, join, transforms, dynamicFields
     } = widget.data;
   
     const isSingleSource = typeof source === 'object';
@@ -84,7 +84,7 @@ export default class API {
       );
   
       // Apply transformations and join
-      for (const { sourceKey, items } of resultFromSources) {
+      for (const { sourceKey, items = [] } of resultFromSources) {
         for (const item of items) {
           const cleanItem = flattenAndTransformItem(item, transforms, sourceKey);
   
@@ -106,6 +106,11 @@ export default class API {
     // Apply grouping and aggregation
     if (group && group.key) {
       result = groupItems(group.key, result, group.aggregations);
+    }
+
+    // Compute dynamic fields
+    if (dynamicFields) {
+      result = computeDynamicFields(result, dynamicFields);
     }
   
     return result;

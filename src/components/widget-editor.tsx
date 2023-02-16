@@ -51,7 +51,7 @@ function WidgetEditor(props: { definition: object, onChange: (d: object) => void
   React.useEffect(() => {
     const wj = JSON.stringify(definition, null, 2);
 
-    if (widgetJson !== wj) {
+    if (!widgetJson) {
       setWidgetJson(wj);
     }
   }, [definition]);

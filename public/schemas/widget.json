@@ -28,6 +28,18 @@
           },
           "required": ["key"],
           "additionalProperties": false
+        },
+        "dynamicFields": {
+          "type": "object",
+          "patternProperties": {
+            "^[a-zA-Z0-9_-]+$": {
+              "type": "object",
+              "properties": {
+                "operation": { "type": "string" },
+                "fields": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          }
         }
       },
       "anyOf": [{ "required": ["source"] }, { "required": ["sources"] }],

@@ -74,3 +74,24 @@ export function groupItems(groupKey, items, aggregations = {}) {
 
   return result;
 }
+
+
+export function computeDynamicFields(items, dynamicFields) {
+  for (const item of items) {
+    for (const [key, config] of Object.entries(dynamicFields)) {
+      const { operation, fields } = config as { operation: string, fields: string[] };
+
+      if (operation === 'sum') {
+        item[key] = fields.reduce((acc, field) => acc + Number(item[field]), 0);
+      }
+      if (operation === 'subtract') {
+        item[key] = fields.reduce((acc, field) => acc - Number(item[field]), 0);
+      }
+      if (operation === 'multiply') {
+        item[key] = fields.reduce((acc, field) => acc * Number(item[field]), 1);
+      }
+    }
+  }
+
+  return items;
+}
