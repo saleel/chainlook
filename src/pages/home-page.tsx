@@ -5,7 +5,7 @@ const popularDashboard = [
   {
     title: 'Uniswap v3',
     image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Uniswap_Logo_and_Wordmark.svg/640px-Uniswap_Logo_and_Wordmark.svg.png',
-    id: 'ipfs:bafkreic2ibgmzwdjyyq5jqtrbtenzjyvrx6vyeoaacwstcu7k76el6cflu',
+    id: 'saleel:uniswap-v3',
   },
 ];
 
@@ -42,7 +42,7 @@ function HomePage() {
 
         <div className="columns">
           {popularDashboard.map((d) => (
-            <Link to={`/dashboard/${d.id}`} key={d.id} className="column is-12-mobile is-6-tablet is-3-desktop">
+            <Link to={`/dashboards/${d.id}`} key={d.id} className="column is-12-mobile is-6-tablet is-3-desktop">
               <div className="popular-dashboard">
                 <div className="popular-dashboard-image">
                   <img src={d.image} alt={d.title} />

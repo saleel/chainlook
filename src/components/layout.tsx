@@ -22,7 +22,7 @@ export default function Layout() {
             <div className="menu-item">New Widget</div>
           </Link>
 
-          <Link to="/dashboard/new">
+          <Link to="/dashboards/new">
             <div className="menu-item">New Dashboard</div>
           </Link>
 

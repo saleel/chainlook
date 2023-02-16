@@ -168,13 +168,14 @@ export default class API {
       title: dashboard.title,
       definition: dashboard.definition,
       tags: dashboard.tags,
+      slug: dashboard.slug,
     });
   
     return response.data;
   }
 
   static async editDashboard(dashboard: Partial<Dashboard>) : Promise<Dashboard> {
-    const response = await apiInstance.post('/dashboards/' + dashboard.id, {
+    const response = await apiInstance.patch('/dashboards/' + dashboard.id, {
       title: dashboard.title,
       definition: dashboard.definition,
       tags: dashboard.tags,

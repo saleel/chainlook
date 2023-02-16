@@ -39,7 +39,6 @@ export default function DashboardView(props: Props) {
         isDraggable={isEditable}
         isResizable={isEditable}
         compactType={null}
-        preventCollision
         draggableHandle=".widget-header"
         {...onLayoutChange && { onLayoutChange }}
         onDragStart={(e) => e.dataTransfer?.setData('text/plain', '')}

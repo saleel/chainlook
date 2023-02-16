@@ -26,9 +26,9 @@ export default class Store {
   static getDashboardDraft() {
     try {
       const dashboardJson = window.localStorage.getItem('dashboardDraft');
-      return dashboardJson ? new Dashboard(JSON.parse(dashboardJson)) : null;    
+      return dashboardJson ? new Dashboard(JSON.parse(dashboardJson)) : undefined;    
     } catch (error) {
-      return null;
+      return undefined;
     }
   }
 

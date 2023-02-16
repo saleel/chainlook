@@ -5,7 +5,7 @@ function TextView(props: { text: { title: string, message: string } }) {
     <div className={`widget widget-text`}>
       <div className="widget-header">
         <h4 className="widget-title">
-          <span>{text.message}</span>
+          <span>{text.title}</span>
         </h4>
       </div>
 

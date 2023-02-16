@@ -22,13 +22,13 @@ function DashboardPage() {
 
   React.useEffect(() => {
     if (dashboard) {
-      document.title = `${dashboard.title} - ChainLook`;
+      document.title = `${dashboard.title} by ${dashboard.user.username} - ChainLook`;
     }
   }, [dashboard]);
 
   // const onForkClick = React.useCallback(async () => {
   //   // await saveDashboardLocally(dashboard);
-  //   navigate('/dashboard/new'); // TODO: a hack for now - new widget page will load the most recent local widget
+  //   navigate('/dashboards/new'); // TODO: a hack for now - new widget page will load the most recent local widget
   // }, [dashboard]);
 
   if (isFetching) {

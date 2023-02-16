@@ -1,19 +1,22 @@
 import API from "../data/api";
+import Store from "../data/store";
 import usePromise from "../hooks/use-promise";
 import Chart from "./widgets/chart";
 import Table from "./widgets/table";
 import Metric from "./widgets/metric";
 import PieChart from "./widgets/pie-chart";
 import Widget from "../domain/widget";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   IoPersonOutline,
-  IoPricetagOutline,
   IoOpenOutline,
+  IoGitNetworkOutline,
 } from "react-icons/io5";
 
-function WidgetView(props: { widget: Widget }) {
-  const { widget } = props;
+function WidgetView(props: { widget: Widget; showActions?: boolean }) {
+  const { widget, showActions = true } = props;
+
+  const navigate = useNavigate();
 
   const [data, { isFetching, error }] = usePromise(
     () => API.fetchDataForWidget(widget.definition, {}),
@@ -39,7 +42,29 @@ function WidgetView(props: { widget: Widget }) {
     return <div className="widget p-4">No data</div>;
   }
 
-  const { title, definition, tags } = widget || {};
+  function onForkClick() {
+    if (Store.getWidgetDraft()) {
+      if (
+        !confirm(
+          "You already have an unsaved widget that is being edited. Forking this will discard your changes. Would you like to continue?"
+        )
+      ) {
+        return;
+      }
+    }
+
+    Store.saveWidgetDraft({
+      ...widget,
+      forkId: widget.id,
+      forkVersion: widget.version,
+      id: "",
+      user: { id: "", address: "" },
+    });
+
+    navigate("/widgets/new");
+  }
+
+  const { definition } = widget || {};
 
   // eslint-disable-next-line no-inner-declarations
   function renderWidget() {
@@ -83,13 +108,12 @@ function WidgetView(props: { widget: Widget }) {
   return (
     <div className={`widget widget-${definition.type}`}>
       <div className="widget-header">
-
         <div className="is-flex">
           <h4 className="widget-title">
             <span>{widget?.title || "Untitled"}</span>
           </h4>
 
-          {!isWidgetPage && (
+          {!isWidgetPage && widget?.id && (
             <Link
               to={`/widgets/${widget?.id}`}
               target="_blank"
@@ -101,26 +125,27 @@ function WidgetView(props: { widget: Widget }) {
           )}
         </div>
 
-        <div className="is-flex">
-          {tags?.length > 0 && (
-            <div
-              data-tooltip={`Tags: ${tags.join(", ")}`}
-              className="mr-3 widget-info-item"
+        {showActions && (
+          <div className="is-flex">
+            <button
+              type="button"
+              onClick={onForkClick}
+              data-tooltip={`Fork - Make a copy of this widget and customize it`}
+              className="mr-3 icon-button"
             >
-              <IoPricetagOutline size={18} />
-            </div>
-          )}
+              <IoGitNetworkOutline size={17} />
+            </button>
 
-          {author && (
-            <div
-              data-tooltip={`Created by ${author}`}
-              className="mr-1 widget-info-item"
-            >
-              <IoPersonOutline size={18} />
-            </div>
-          )}
-        </div>
-
+            {author && (
+              <div
+                data-tooltip={`Created by ${author}`}
+                className="mr-1 widget-info-item"
+              >
+                <IoPersonOutline size={18} />
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="widget-body">{renderWidget()}</div>

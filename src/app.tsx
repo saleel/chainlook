@@ -9,6 +9,7 @@ import NewWidgetPage from "./pages/new-widget-page";
 import WidgetPage from "./pages/widget-page";
 import NewDashboardPage from "./pages/new-dashboard-page";
 import { AuthContextProvider } from "./context/auth-context";
+import EditDashboardPage from "./pages/edit-dashboard-page";
 
 function App() {
   return (
@@ -23,8 +24,9 @@ function App() {
             <Route path=":widgetId" element={<WidgetPage />} />
           </Route>
 
-          <Route path="dashboard">
+          <Route path="dashboards">
             <Route path=":id" element={<DashboardPage />} />
+            <Route path=":id/edit" element={<EditDashboardPage />} />
             <Route path="new" element={<NewDashboardPage />} />
           </Route>
         </Route>
