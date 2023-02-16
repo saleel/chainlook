@@ -47,7 +47,7 @@ function DashboardEditor(props: DashboardEditorProps) {
   const [dashboard, setDashboard] = React.useState<Dashboard>(props.dashboard || DEFAULT_DASHBOARD);
 
   const [widgetOfUser] = usePromise<Widget[]>(
-    () => API.getWidgetsForUser(user?.id as string),
+    () => API.getWidgetsByUser(user?.id as string),
     {
       conditions: [user?.id],
       defaultValue: [],

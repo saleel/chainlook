@@ -3,6 +3,7 @@ import { jsonToGraphQLQuery } from 'json-to-graphql-query';
 import { fetchDataFromHTTP } from '../utils/network';
 import { applyVariables } from '../utils/widget-parsing';
 import { GRAPH_API_KEY, GRAPH_API_URL, GRAPH_HOSTED_SERVICE_URL } from '../../constants';
+import Store from '../store';
 
 export default async function fetchWidgetDataFromTheGraph(config, fieldsRequired, variables) {
   const {
@@ -36,7 +37,9 @@ export default async function fetchWidgetDataFromTheGraph(config, fieldsRequired
   };
   const query = jsonToGraphQLQuery(queryObj, { pretty: true });
 
-  let url = `${GRAPH_API_URL}/${GRAPH_API_KEY}/subgraphs/id/${subgraphId}`;
+  const apiKey = Store.getTheGraphAPIKey() || GRAPH_API_KEY;
+
+  let url = `${GRAPH_API_URL}/${apiKey}/subgraphs/id/${subgraphId}`;
   if (isHostedService) {
     url = `${GRAPH_HOSTED_SERVICE_URL}/${subgraphId}`;
   }

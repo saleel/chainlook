@@ -35,4 +35,12 @@ export default class Store {
   static deleteDashboardDraft() {
     window.localStorage.removeItem('dashboardDraft');
   }
+
+  static setTheGraphAPIKey(key: string) {
+    window.localStorage.setItem('theGraphAPIKey', key);
+  }
+
+  static getTheGraphAPIKey() {
+    return window.localStorage.getItem('theGraphAPIKey');
+  }
 }

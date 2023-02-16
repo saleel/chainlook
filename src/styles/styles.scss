@@ -1,6 +1,7 @@
 @import "../../node_modules/bulma/bulma.sass";
 @import "../../node_modules/@creativebulma/bulma-tooltip/dist/bulma-tooltip.css";
 @import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap");
+@import "./element-list.scss";
 
 // Colors from Chakra UI https://chakra-ui.com/docs/theming/theme
 :root {
@@ -23,6 +24,7 @@
   --blue-600: #2b6cb0;
   --blue-700: #2c5282;
   --yellow-500: #d69e2e;
+  --border-color: #718096;
   font-size: 14px;
 }
 
@@ -134,6 +136,11 @@ button {
   font-size: 1.15rem;
   font-weight: 600;
   margin-bottom: 1rem;
+}
+
+.section {
+  border: 1px solid var(--border-color);
+  padding: 1rem;
 }
 
 .section-title {
@@ -535,6 +542,10 @@ button {
 .flex-row {
   display: flex;
   flex-direction: row;
+}
+
+.div-link {
+  color: var(--text-color);
 }
 
 @keyframes appear {

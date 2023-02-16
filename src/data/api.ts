@@ -136,7 +136,7 @@ export default class API {
     return response.data;
   }
 
-  static async getWidgetsForUser(userId: string) {
+  static async getWidgetsByUser(userId: string) {
     const response = await apiInstance.get('/widgets/', {
       params: { userId },
     });
@@ -187,6 +187,14 @@ export default class API {
     });
   
     return response.data;
+  }
+
+  static async getDashboardsByUser(userId: string) {
+    const response = await apiInstance.get('/dashboards/', {
+      params: { userId },
+    });
+  
+    return response.data?.map((w: any) => new Dashboard(w));
   }
 
   static async editProfile(params: { username: string }) {

@@ -35,13 +35,9 @@ export default function Layout() {
               Sign In
             </button>
           ) : (
-            <button
-              type="button"
-              className="menu-item"
-              onClick={openAccountModal}
-            >
-              {user?.username}
-            </button>
+            <Link to={`/users/${user!.username}`}>
+              <div className="menu-item">{user?.username}</div>
+            </Link>
           )}
         </div>
       </div>

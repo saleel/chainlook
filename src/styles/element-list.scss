@@ -1,0 +1,40 @@
+.element-list {
+  width: 100%;
+  max-width: 650px;
+}
+
+.element-list-title {
+  padding-left: 0.25rem;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+}
+
+.element-list-items {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+}
+
+.element-list-item {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background-color: var(--gray-200);
+    cursor: pointer;
+  }
+}
+
+.element-list-item-title {
+  font-weight: 500;
+  font-size: 1.25rem;
+}
+
+.element-list-item-info {
+  font-size: 0.9rem;
+  font-weight: 300;
+}
