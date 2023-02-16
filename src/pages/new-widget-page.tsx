@@ -115,14 +115,7 @@ function NewWidgetPage() {
                   value={cleanString(title)}
                   required
                   onChange={(e) => {
-                    setWidget((existing) => ({
-                      ...existing,
-                      title: e.target.value,
-                      definition: {
-                        ...existing.definition,
-                        title: e.target.value,
-                      },
-                    }));
+                    updateWidget("title", e.target.value)
                   }}
                 />
               </div>

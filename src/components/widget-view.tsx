@@ -113,7 +113,7 @@ function WidgetView(props: { widget: Widget; showActions?: boolean }) {
             <span>{widget?.title || "Untitled"}</span>
           </h4>
 
-          {!isWidgetPage && widget?.id && (
+          {showActions && !isWidgetPage && widget?.id && (
             <Link
               to={`/widgets/${widget?.id}`}
               target="_blank"

@@ -14,8 +14,8 @@ type Element = DashboardDefinition["elements"][0];
 
 const minDimensions = {
   table: { width: 4, height: 3 },
-  chart: { width: 2, height: 2 },
-  pieChart: { width: 2, height: 2 },
+  chart: { width: 4, height: 3 },
+  pieChart: { width: 4, height: 4 },
   metric: { width: 2, height: 1 },
 };
 
@@ -120,18 +120,19 @@ function DashboardEditor(props: DashboardEditorProps) {
     updateElements((existing) =>
       existing.map((el, index) => {
         const layout = allLayouts.find((l) => l.i === index.toString());
-        const { i, x, y, w, h } = layout;
+        let { i, x, y, w, h } = layout;
+
+        let minDimensionForWidget;
 
         if (el.widget) {
-          const minDimensionForWidget =
-            minDimensions[el.widget!.definition!.type];
+          minDimensionForWidget = minDimensions[el.widget!.definition!.type];
 
           if (w < minDimensionForWidget.width) {
-            layout.w = minDimensionForWidget.width;
+            w = minDimensionForWidget.width;
           }
 
           if (h < minDimensionForWidget.height) {
-            layout.h = minDimensionForWidget.height;
+            h = minDimensionForWidget.height;
           }
         }
 
@@ -143,6 +144,8 @@ function DashboardEditor(props: DashboardEditorProps) {
             y,
             w,
             h,
+            minH: minDimensionForWidget?.height,
+            minW: minDimensionForWidget?.width,
           },
         };
       })
