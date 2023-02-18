@@ -63,9 +63,6 @@ function HomePage() {
         drag-and-drop editor to build beautiful <strong>dashboards</strong> from
         your widgets.
         <br />
-        <br />
-        Explore. Build. Share.
-        <br />
         <Link to="/widgets/new" className="button mt-5">
           Create your first widget
         </Link>

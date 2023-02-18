@@ -11,14 +11,18 @@ import {
   IoPersonOutline,
   IoOpenOutline,
   IoGitNetworkOutline,
+  IoRefresh,
 } from "react-icons/io5";
+import React from "react";
 
 function WidgetView(props: { widget: Widget; showActions?: boolean }) {
   const { widget, showActions = true } = props;
 
   const navigate = useNavigate();
 
-  const [data, { isFetching, error }] = usePromise(
+  const [isAutoRefreshEnabled, setIsAutoRefreshEnabled] = React.useState(false);
+
+  const [data, { isFetching, error, reFetch }] = usePromise(
     () => API.fetchDataForWidget(widget.definition, {}),
     {
       dependencies: [widget.definition],
@@ -26,7 +30,21 @@ function WidgetView(props: { widget: Widget; showActions?: boolean }) {
     }
   );
 
-  if (isFetching) {
+  React.useEffect(() => {
+    let interval: NodeJS.Timer;
+
+    if (isAutoRefreshEnabled) {
+      interval = setInterval(() => {
+        reFetch();
+      }, 10000);
+    }
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [isAutoRefreshEnabled]);
+
+  if (isFetching && !isAutoRefreshEnabled) {
     return <div className="widget p-4">Loading</div>;
   }
 
@@ -117,7 +135,7 @@ function WidgetView(props: { widget: Widget; showActions?: boolean }) {
             <Link
               to={`/widgets/${widget?.id}`}
               target="_blank"
-              className="ml-3 widget-info-item"
+              className="ml-3 widget-action-item"
               data-tooltip="Open the widget in a new page"
             >
               <IoOpenOutline size={18} />
@@ -131,7 +149,7 @@ function WidgetView(props: { widget: Widget; showActions?: boolean }) {
               type="button"
               onClick={onForkClick}
               data-tooltip={`Fork - Make a copy of this widget and customize it`}
-              className="icon-button"
+              className="ml-4 icon-button widget-action-item"
             >
               <IoGitNetworkOutline size={17} />
             </button>
@@ -139,11 +157,25 @@ function WidgetView(props: { widget: Widget; showActions?: boolean }) {
             {author && (
               <div
                 data-tooltip={`Created by ${author}`}
-                className="ml-3 widget-info-item"
+                className="ml-4 widget-action-item"
               >
                 <IoPersonOutline size={18} />
               </div>
             )}
+
+            <button
+              type="button"
+              onClick={() => setIsAutoRefreshEnabled((e) => !e)}
+              data-tooltip={`Auto refresh this widget every 10 seconds`}
+              className="ml-4 icon-button widget-action-item"
+              style={{ width: "15px" }}
+            >
+              {isAutoRefreshEnabled ? (
+                <div className="blink-dot mb-1"></div>
+              ) : (
+                <IoRefresh size={17} />
+              )}
+            </button>
           </div>
         )}
       </div>

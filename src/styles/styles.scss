@@ -217,16 +217,6 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  .icon-button {
-    display: none;
-  }
-
-  &:hover {
-    .icon-button {
-      display: block;
-    }
-  }
 }
 
 .widget-title {
@@ -245,13 +235,13 @@ button {
   border-bottom: 1px solid var(--text-color);
 }
 
-.widget-info-item {
+.widget-action-item {
   visibility: hidden;
 }
 
 .widget {
   &:hover {
-    .widget-info-item {
+    .widget-action-item {
       visibility: visible;
     }
   }
@@ -582,4 +572,18 @@ button {
   border-width: 2px !important;
   width: 8px !important;
   height: 8px !important;
+}
+
+.blink-dot {
+  background-color: var(--green-300);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
 }
