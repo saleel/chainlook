@@ -11,6 +11,7 @@ import NewDashboardPage from "./pages/new-dashboard-page";
 import { AuthContextProvider } from "./context/auth-context";
 import EditDashboardPage from "./pages/edit-dashboard-page";
 import UserPage from "./pages/user-page";
+import SettingsPage from "./pages/settings-page";
 
 function App() {
   return (
@@ -34,6 +35,8 @@ function App() {
           <Route path="users">
             <Route path=":id" element={<UserPage />} />
           </Route>
+
+          <Route path="settings" element={<SettingsPage />} />
 
         </Route>
       </Routes>

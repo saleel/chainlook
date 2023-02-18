@@ -1,5 +1,10 @@
-import { ConnectButton, useConnectModal, useAccountModal } from "@rainbow-me/rainbowkit";
+import {
+  ConnectButton,
+  useConnectModal,
+  useAccountModal,
+} from "@rainbow-me/rainbowkit";
 import React from "react";
+import { IoPersonCircleOutline, IoSettings, IoSettingsOutline } from "react-icons/io5";
 import { Link, Outlet } from "react-router-dom";
 import { AuthContext } from "../context/auth-context";
 
@@ -8,7 +13,6 @@ export default function Layout() {
   const { openAccountModal } = useAccountModal();
 
   const { isAuthenticated, user } = React.useContext(AuthContext);
-
 
   return (
     <>
@@ -36,9 +40,17 @@ export default function Layout() {
             </button>
           ) : (
             <Link to={`/users/${user!.username}`}>
-              <div className="menu-item">{user?.username}</div>
+              <div className="menu-item">
+                <IoPersonCircleOutline size={20} />
+              </div>
             </Link>
           )}
+
+          <Link to="/settings">
+            <div className="menu-item">
+              <IoSettingsOutline size={20} />
+            </div>
+          </Link>
         </div>
       </div>
 
