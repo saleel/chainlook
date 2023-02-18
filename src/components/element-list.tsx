@@ -5,22 +5,27 @@ import { formatDate } from "../utils";
 
 type Props = {
   title: string;
-  elements: Widget[] | Dashboard[];
+  elements: Partial<Widget>[] | Partial<Dashboard>[];
   type: "widget" | "dashboard";
+  loading? : boolean;
 };
 
 function ElementList(props: Props) {
-  const { title, elements, type } = props;
+  const { title, elements, type, loading } = props;
 
   return (
     <div className="element-list">
       <div className="element-list-title">{title}</div>
 
-      {elements.length === 0 && (
+      {loading && (
+        <div className="element-list-items p-4">Loading...</div>
+      )}
+
+      {!loading && elements.length === 0 && (
         <div className="element-list-items p-4">No items found</div>
       )}
 
-      {elements.length > 0 && (
+      {!loading && elements.length > 0 && (
         <div className="element-list-items">
           {elements.map((element) => {
             let url = "";
@@ -28,7 +33,6 @@ function ElementList(props: Props) {
               url = "/widgets/" + element.id;
             }
             if (type === "dashboard") {
-              console.log(element);
               url =
                 "/dashboards/" +
                 element.user?.username +
@@ -48,9 +52,11 @@ function ElementList(props: Props) {
                   {element.user && (
                     <span>Created by @{element.user!.username}</span>
                   )}
-                  <span className="ml-2">
-                    on {formatDate(element.createdAt)}
-                  </span>
+                  {element.createdAt && (
+                    <span className="ml-2">
+                      on {formatDate(element.createdAt)}
+                    </span>
+                  )}
                 </div>
               </Link>
             );

@@ -1,6 +1,5 @@
 .element-list {
   width: 100%;
-  max-width: 650px;
 }
 
 .element-list-title {
@@ -37,4 +36,5 @@
 .element-list-item-info {
   font-size: 0.9rem;
   font-weight: 300;
+  color: var(--gray-500);
 }

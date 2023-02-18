@@ -197,6 +197,16 @@ export default class API {
     return response.data?.map((w: any) => new Dashboard(w));
   }
 
+  static async getRecentDashboards() {
+    const response = await apiInstance.get('/dashboards/?sort=createdAt&order=desc&limit=10');
+    return response.data?.map((w: any) => new Dashboard(w));
+  }
+
+  static async getRecentWidgets() {
+    const response = await apiInstance.get('/widgets/?sort=createdAt&order=desc&limit=10');
+    return response.data?.map((w: any) => new Widget(w));
+  }
+
   static async editProfile(params: { username: string }) {
     const response = await apiInstance.patch('/profile', {
       username: params.username,
