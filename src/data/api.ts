@@ -199,14 +199,14 @@ export default class API {
 
   static async getRecentDashboards() {
     const response = await apiInstance.get('/dashboards/', {
-      params: { sort: 'createdAt', order: 'desc', limit: 10 }
+      params: { sort: 'createdOn', order: 'desc', limit: 10 }
     });
     return response.data?.map((w: any) => new Dashboard(w));
   }
 
   static async getRecentWidgets() {
     const response = await apiInstance.get('/widgets/', {
-      params: { sort: 'createdAt', order: 'desc', limit: 10 }
+      params: { sort: 'createdOn', order: 'desc', limit: 10 }
     });
     return response.data?.map((w: any) => new Widget(w));
   }

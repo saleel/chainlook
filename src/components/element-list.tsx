@@ -52,9 +52,9 @@ function ElementList(props: Props) {
                   {element.user && (
                     <span>Created by @{element.user!.username}</span>
                   )}
-                  {element.createdAt && (
+                  {element.createdOn && (
                     <span className="ml-2">
-                      on {formatDate(element.createdAt)}
+                      on {formatDate(element.createdOn)}
                     </span>
                   )}
                 </div>

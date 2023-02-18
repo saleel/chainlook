@@ -27,8 +27,8 @@ const DEFAULT_DASHBOARD: Dashboard = new Dashboard({
   tags: [],
   starred: 0,
   version: 1,
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  createdOn: new Date(),
+  updatedOn: new Date(),
   user: new User({ id: "", username: "", address: "" }),
 });
 

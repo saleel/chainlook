@@ -52,8 +52,8 @@ function NewWidgetPage() {
         definition: DEFAULT_DEFINITION,
         version: 1,
         user: user || new User({ id: "", address: "" }),
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdOn: new Date(),
+        updatedOn: new Date(),
       })
   );
 
