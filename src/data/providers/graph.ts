@@ -5,13 +5,10 @@ import { applyVariables } from '../utils/widget-parsing';
 import { GRAPH_API_KEY, GRAPH_API_URL, GRAPH_HOSTED_SERVICE_URL } from '../../constants';
 import Store from '../store';
 
-export default async function fetchWidgetDataFromTheGraph(config, fieldsRequired, variables) {
+export default async function fetchWidgetDataFromTheGraph(config: any, fieldsRequired: string[], variables: object) {
   const {
     subgraphId, entity, orderBy, orderDirection, skip = 0, first, filters,
   } = config;
-
-  // Assume hosted service if the subgraphId is has in author/name format
-  const isHostedService = subgraphId.includes('/');
 
   const fieldsObject = {};
   fieldsRequired.forEach((field) => set(fieldsObject, field, true));
@@ -37,6 +34,15 @@ export default async function fetchWidgetDataFromTheGraph(config, fieldsRequired
   };
   const query = jsonToGraphQLQuery(queryObj, { pretty: true });
 
+  const result = await queryGraphQl(subgraphId, query);
+  
+  return result.data?.[entity] ?? null;
+}
+
+export async function queryGraphQl(subgraphId: string, query: string) {
+  // Assume hosted service if the subgraphId is has in author/name format
+  const isHostedService = subgraphId.includes('/');
+
   const apiKey = Store.getTheGraphAPIKey() || GRAPH_API_KEY;
 
   let url = `${GRAPH_API_URL}/${apiKey}/subgraphs/id/${subgraphId}`;
@@ -56,5 +62,5 @@ export default async function fetchWidgetDataFromTheGraph(config, fieldsRequired
     throw new Error(`Error while querying data from subgraph ${subgraphId} \n${JSON.stringify(result.errors)}`);
   }
 
-  return result.data?.[entity] ?? null;
+  return result;
 }

@@ -7,10 +7,11 @@ type ModalProps = {
   title: string;
   children: ReactNode;
   height?: string | number;
+  width?: string | number;
 };
 
 function Modal(props: ModalProps) {
-  const { isOpen, onRequestClose, title, children, height } = props;
+  const { isOpen, onRequestClose, title, children, height, width } = props;
 
   return (
     <ReactModal
@@ -23,16 +24,18 @@ function Modal(props: ModalProps) {
           marginRight: "-50%",
           transform: "translate(-50%, -50%)",
           height: height || "400px",
-          width: "600px",
+          width: width || "600px",
+          display: 'flex',
+          flexDirection: 'column',
         },
       }}
       contentLabel={title}
     >
-      <h3 className="subtitle">{title}</h3>
+      <h3 className="subtitle mb-0">{title}</h3>
 
-      <hr />
+      <hr className="mt-4" />
 
-      <div className="modal-body">{children}</div>
+      <div className="modal-body" style={{ flexGrow: 1 }}>{children}</div>
 
       <button
         type="button"

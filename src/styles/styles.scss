@@ -132,6 +132,10 @@ button {
   width: 100%;
 }
 
+.h-100 {
+  height: 100%;
+}
+
 .paragraph-title {
   font-size: 1.15rem;
   font-weight: 600;
@@ -283,7 +287,6 @@ button {
 
     th {
       background-color: var(--gray-300);
-      position: sticky;
       top: 0;
       z-index: 1;
     }

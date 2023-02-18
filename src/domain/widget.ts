@@ -2,12 +2,12 @@ import User from './user';
 
 export type WidgetDefinition = {
   type: 'chart' | 'table' | 'metric' | 'pieChart';
-  data?: object;
-  chart?: object;
-  table?: object;
-  metric?: object;
-  text?: object;
-  pieChart?: object;
+  data?: { source: any };
+  chart?: any;
+  table?: any;
+  metric?: any;
+  text?: any;
+  pieChart?: any;
 }
 
 type IWidget = {

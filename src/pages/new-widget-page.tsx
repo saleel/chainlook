@@ -10,6 +10,8 @@ import { useConnectModal } from "@rainbow-me/rainbowkit";
 import Store from "../data/store";
 import { useDebouncedCallback } from "use-debounce";
 import { cleanString } from "../utils";
+import Modal from "../components/modal";
+import WidgetWizard from "../components/widget-wizard";
 
 const DEFAULT_DEFINITION: Widget["definition"] = {
   type: "table",
@@ -43,6 +45,7 @@ function NewWidgetPage() {
 
   const { openConnectModal } = useConnectModal();
 
+  const [isWizardOpen, setIsWizardOpen] = React.useState(false);
   const [widget, setWidget] = React.useState(
     Store.getWidgetDraft() ||
       new Widget({
@@ -95,7 +98,15 @@ function NewWidgetPage() {
 
   return (
     <div className="page create-widget-page">
-      <h2 className="section-title">Create new widget</h2>
+      <h2 className="section-title">
+        Create new widget
+        <button
+          className="button is-small ml-5"
+          onClick={() => setIsWizardOpen(true)}
+        >
+          Use Wizard
+        </button>
+      </h2>
 
       <div className="create-widget-container">
         <div className="create-widget-section">
@@ -115,7 +126,7 @@ function NewWidgetPage() {
                   value={cleanString(title)}
                   required
                   onChange={(e) => {
-                    updateWidget("title", e.target.value)
+                    updateWidget("title", e.target.value);
                   }}
                 />
               </div>
@@ -147,6 +158,22 @@ function NewWidgetPage() {
           <WidgetView widget={widget} />
         </div>
       </div>
+
+      <Modal
+        isOpen={isWizardOpen}
+        onRequestClose={() => setIsWizardOpen(false)}
+        title="Widget wizard"
+        height="min(600px, 80vh)"
+        width="min(800px, 80vw)"
+      >
+        <WidgetWizard
+          onSubmit={(def) => {
+            console.log(def);
+            updateWidget("definition", def);
+            setIsWizardOpen(false);
+          }}
+        />
+      </Modal>
     </div>
   );
 }

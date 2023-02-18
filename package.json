@@ -32,6 +32,7 @@
     "wagmi": "^0.9.6"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.191",
     "@vitejs/plugin-react": "^3.0.1",
     "eslint": "^8.31.0",
     "eslint-config-airbnb": "^19.0.4",
