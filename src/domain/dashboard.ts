@@ -18,10 +18,11 @@ type IDashboard = {
   user: User;
   tags: string[];
   definition: DashboardDefinition;
-  starred: number;
-  createdAt: Date;
-  updatedAt: Date;
+  starCount: number;
+  createdOn: Date;
+  updatedOn: Date;
   version: number;
+  isPrivate?: boolean;
 };
 
 export default class Dashboard {
@@ -39,13 +40,15 @@ export default class Dashboard {
 
   definition: DashboardDefinition;
 
-  starred: number;
+  starCount: number;
 
   version: number;
 
-  createdAt: Date;
+  isPrivate?: boolean;
 
-  updatedAt: Date;
+  createdOn: Date;
+
+  updatedOn: Date;
 
   constructor(input: IDashboard) {
     this.id = input.id;
@@ -55,9 +58,10 @@ export default class Dashboard {
     this.tags = input.tags;
     this.user = input.user;
     this.definition = input.definition;
-    this.starred = input.starred;
+    this.starCount = input.starCount;
     this.version = input.version;
-    this.createdAt = input.createdAt;
-    this.updatedAt = input.updatedAt;
+    this.isPrivate = input.isPrivate;
+    this.createdOn = input.createdOn;
+    this.updatedOn = input.updatedOn;
   }
 }

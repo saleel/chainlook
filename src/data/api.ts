@@ -198,12 +198,16 @@ export default class API {
   }
 
   static async getRecentDashboards() {
-    const response = await apiInstance.get('/dashboards/?sort=createdAt&order=desc&limit=10');
+    const response = await apiInstance.get('/dashboards/', {
+      params: { sort: 'createdAt', order: 'desc', limit: 10 }
+    });
     return response.data?.map((w: any) => new Dashboard(w));
   }
 
   static async getRecentWidgets() {
-    const response = await apiInstance.get('/widgets/?sort=createdAt&order=desc&limit=10');
+    const response = await apiInstance.get('/widgets/', {
+      params: { sort: 'createdAt', order: 'desc', limit: 10 }
+    });
     return response.data?.map((w: any) => new Widget(w));
   }
 
@@ -214,4 +218,21 @@ export default class API {
 
     return response.data;
   }
+
+  static async starDashboard(dashboardId: string, isStarred: boolean) {
+    const response = await apiInstance.post(`/star`, {
+      dashboardId,
+      isStarred,
+    });
+
+    return response.data;
+  }
+
+  static async getStarredDashboards(userId: string) {
+    const response = await apiInstance.get('/dashboards/', {
+      params: { starredBy: userId },
+    });
+    return response.data?.map((w: any) => new Dashboard(w));
+  }
+  
 }

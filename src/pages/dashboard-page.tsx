@@ -1,18 +1,25 @@
 /* eslint-disable react/no-array-index-key */
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import React from "react";
+import { IoStar } from "react-icons/io5";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import DashboardView from "../components/dashboard-view";
 import { AuthContext } from "../context/auth-context";
 import API from "../data/api";
+import Formatters from "../data/modifiers/formatters";
+import Dashboard from "../domain/dashboard";
 import usePromise from "../hooks/use-promise";
 
 function DashboardPage() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { id } = useParams();
+  const { openConnectModal } = useConnectModal();
 
-  const { user } = React.useContext(AuthContext);
+  const [isStarred, setIsStarred] = React.useState(false);
+  const [starCount, setStarCount] = React.useState(0);
+  const { user, isAuthenticated } = React.useContext(AuthContext);
 
-  const [dashboard, { isFetching, error }] = usePromise(
+  const [dashboard, { isFetching, error }] = usePromise<Dashboard>(
     () => API.getDashboard(id as string),
     {
       dependencies: [id],
@@ -20,16 +27,42 @@ function DashboardPage() {
     }
   );
 
+  const [starredDashboards, { isFetching: isFetchingStarred }] = usePromise<
+    Dashboard[]
+  >(() => API.getStarredDashboards(user!.id), {
+    dependencies: [user],
+    conditions: [user],
+  });
+
   React.useEffect(() => {
     if (dashboard) {
       document.title = `${dashboard.title} by ${dashboard.user.username} - ChainLook`;
+      setStarCount(dashboard.starCount);
     }
   }, [dashboard]);
+
+  React.useEffect(() => {
+    if (starredDashboards && dashboard) {
+      setIsStarred(starredDashboards.some((d) => d.id === dashboard.id));
+    }
+  }, [starredDashboards, dashboard]);
 
   // const onForkClick = React.useCallback(async () => {
   //   // await saveDashboardLocally(dashboard);
   //   navigate('/dashboards/new'); // TODO: a hack for now - new widget page will load the most recent local widget
   // }, [dashboard]);
+
+  async function onStarClick() {
+    if (!isAuthenticated && openConnectModal) {
+      openConnectModal();
+      return;
+    }
+
+    setIsStarred(!isStarred);
+    setStarCount(isStarred ? starCount - 1 : starCount + 1);
+
+    await API.starDashboard(dashboard.id, !isStarred);
+  }
 
   if (isFetching) {
     return <div className="page dashboard-page">Loading</div>;
@@ -53,12 +86,27 @@ function DashboardPage() {
             )}
 
             {dashboard.tags?.map((tag: string) => (
-              <span key={tag} className="tag mr-2">#{tag}</span>
+              <span key={tag} className="tag mr-2">
+                #{tag}
+              </span>
             ))}
           </div>
         </div>
 
         <div className="dashboard-actions">
+          <button className="button is-normal">Share</button>
+
+          {!isFetchingStarred && (
+            <button
+              className={"button is-normal" + (isStarred ? " is-active" : "")}
+              style={{ minWidth: "5rem", justifyContent: "space-between" }}
+              onClick={onStarClick}
+            >
+              <IoStar size={16} className="mr-3" />
+              {Formatters.number(starCount)}
+            </button>
+          )}
+
           {isDashboardOwner && (
             <Link
               className="button is-normal"

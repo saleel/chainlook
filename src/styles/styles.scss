@@ -44,7 +44,8 @@ button {
   font-family: "Fira Code", monospace;
 }
 
-#root, #root [data-rk] {
+#root,
+#root [data-rk] {
   display: flex;
   height: 100%;
   flex-direction: column;
@@ -416,6 +417,7 @@ button {
   border-radius: 0;
   color: var(--text-color);
   border: 1px solid var(--text-color);
+  background-color: #fff;
   font-weight: 500;
   font-size: 1.1rem;
 
@@ -423,6 +425,18 @@ button {
     background-color: var(--text-color);
     border: 1px solid var(--text-color);
     color: #fff;
+  }
+
+  &.is-active {
+    background-color: var(--text-color);
+    border: 1px solid var(--text-color);
+    color: #fff;
+
+    &:hover {
+      color: var(--text-color);
+      border: 1px solid var(--text-color);
+      background-color: #fff;
+    }
   }
 }
 
@@ -563,7 +577,7 @@ button {
 }
 
 
-.react-grid-item > .react-resizable-handle::after {
+.react-grid-item>.react-resizable-handle::after {
   border-color: var(--text-color) !important;
   border-width: 2px !important;
   width: 8px !important;

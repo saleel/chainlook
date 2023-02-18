@@ -2,8 +2,8 @@ type IUser = {
   id: string;
   username?: string;
   address: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdOn?: Date;
+  updatedOn?: Date;
 };
 
 export default class User {
@@ -13,15 +13,15 @@ export default class User {
 
   address: string;
 
-  createdAt?: Date;
+  createdOn?: Date;
 
-  updatedAt?: Date;
+  updatedOn?: Date;
 
   constructor(input: IUser) {
     this.id = input.id;
     this.username = input.username;
     this.address = input.address;
-    this.createdAt = input.createdAt;
-    this.updatedAt = input.updatedAt;
+    this.createdOn = input.createdOn;
+    this.updatedOn = input.updatedOn;
   }
 }

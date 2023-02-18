@@ -1,7 +1,7 @@
 import User from './user';
 
 export type WidgetDefinition = {
-  type: 'table' | 'chart' | 'pieChart' | 'metric';
+  type: string;
   data?: object;
   chart?: object;
   table?: object;
@@ -19,8 +19,9 @@ type IWidget = {
   forkId?: string;
   forkVersion?: number;
   user: User;
-  createdAt: Date;
-  updatedAt: Date;
+  isPrivate?: boolean;
+  createdOn: Date;
+  updatedOn: Date;
 };
 
 export default class Widget {
@@ -40,9 +41,11 @@ export default class Widget {
 
   forkVersion?: number;
 
-  createdAt: Date;
+  isPrivate?: boolean;
 
-  updatedAt: Date;
+  createdOn: Date;
+
+  updatedOn: Date;
 
   constructor(input: IWidget) {
     this.id = input.id;
@@ -53,7 +56,8 @@ export default class Widget {
     this.version = input.version;
     this.forkId = input.forkId;
     this.forkVersion = input.forkVersion;
-    this.createdAt = input.createdAt;
-    this.updatedAt = input.updatedAt;
+    this.isPrivate = input.isPrivate;
+    this.createdOn = input.createdOn;
+    this.updatedOn = input.updatedOn;
   }
 }
