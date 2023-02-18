@@ -37,25 +37,34 @@ function HomePage() {
     document.title = "ChainLook - Blockchain analytics platform for subgraphs";
   }, []);
 
-  const [recentDashboards, { isFetching: isFetchingDashboards }] = usePromise(() => API.getRecentDashboards(), {
-    defaultValue: [],
-  });
+  const [recentDashboards, { isFetching: isFetchingDashboards }] = usePromise(
+    () => API.getRecentDashboards(),
+    {
+      defaultValue: [],
+    }
+  );
 
-  const [recentWidgets, { isFetching: isFetchingWidgets }] = usePromise(() => API.getRecentWidgets(), {
-    defaultValue: [],
-  });
+  const [recentWidgets, { isFetching: isFetchingWidgets }] = usePromise(
+    () => API.getRecentWidgets(),
+    {
+      defaultValue: [],
+    }
+  );
 
   return (
     <div className="page home-page">
       <div className="intro mb-5">
-        ChainLook is a blockchain analytics platform based on data from{" "}
+        ChainLook is a community-driven blockchain analytics platform based on{" "}
         <a href="https://thegraph.com/docs/en/">subgraphs</a> (TheGraph).
         <br />
         <br />
         Create awesome <strong>widgets</strong> like line-chart, pie-chart,
-        table, etc. from subgraphs using simple configuration. Then use the
+        table, from subgraphs data using simple configuration. Use the
         drag-and-drop editor to build beautiful <strong>dashboards</strong> from
         your widgets.
+        <br />
+        <br />
+        Explore. Build. Share.
         <br />
         <Link to="/widgets/new" className="button mt-5">
           Create your first widget
@@ -65,7 +74,6 @@ function HomePage() {
       <hr />
 
       <div className="columns is-multiline">
-
         <div className="column mb-5">
           <ElementList
             title={`Featured dashboards`}
@@ -91,7 +99,6 @@ function HomePage() {
             type="widget"
           />
         </div>
-
       </div>
     </div>
   );
