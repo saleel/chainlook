@@ -25,7 +25,7 @@ const DEFAULT_DASHBOARD: Dashboard = new Dashboard({
   slug: "",
   definition: { title: "", elements: [] },
   tags: [],
-  starred: 0,
+  starCount: 0,
   version: 1,
   createdOn: new Date(),
   updatedOn: new Date(),
@@ -369,7 +369,6 @@ function DashboardEditor(props: DashboardEditorProps) {
               className="input"
               placeholder="Enter tags separated by comma"
               value={dashboard.tags}
-              required
               onChange={(e) =>
                 setDashboard((ex) => ({
                   ...ex,

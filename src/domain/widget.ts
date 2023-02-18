@@ -1,7 +1,7 @@
 import User from './user';
 
 export type WidgetDefinition = {
-  type: string;
+  type: 'chart' | 'table' | 'metric' | 'pieChart';
   data?: object;
   chart?: object;
   table?: object;

@@ -127,7 +127,6 @@ function NewWidgetPage() {
                 className="input"
                 placeholder="Enter tags separated by comma"
                 value={tags}
-                required
                 onChange={(e) =>
                   updateWidget("tags", e.target.value.split(","))
                 }
