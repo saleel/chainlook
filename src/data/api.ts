@@ -143,9 +143,9 @@ export default class API {
     return response.data;
   }
 
-  static async getWidgetsByUser(userId: string) {
+  static async getWidgetsByUser(userUsername: string) {
     const response = await apiInstance.get('/widgets/', {
-      params: { userId },
+      params: { userUsername },
     });
 
     return response.data?.map((w: any) => new Widget(w));
@@ -196,9 +196,9 @@ export default class API {
     return response.data;
   }
 
-  static async getDashboardsByUser(userId: string) {
+  static async getDashboardsByUser(userUsername: string) {
     const response = await apiInstance.get('/dashboards/', {
-      params: { userId },
+      params: { userUsername },
     });
 
     return response.data?.map((w: any) => new Dashboard(w));

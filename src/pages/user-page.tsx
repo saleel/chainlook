@@ -1,4 +1,5 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 import ElementList from '../components/element-list';
 import { AuthContext } from '../context/auth-context';
 import API from '../data/api';
@@ -7,26 +8,25 @@ import Widget from '../domain/widget';
 import usePromise from '../hooks/use-promise';
 
 function UserPage() {
-  const { user } = React.useContext(AuthContext);
+  const { username } = useParams();
 
-  const [usersWidgets, { isFetching: isFetchingWidgets }] = usePromise<Widget[]>(() => API.getWidgetsByUser(user!.id), {
-    defaultValue: [],
-    dependencies: [user],
-    conditions: [user],
-  });
-
-  const [usersDashboards, { isFetching: isFetchingDashboards }] = usePromise<Widget[]>(
-    () => API.getDashboardsByUser(user!.id),
+  const [usersWidgets, { isFetching: isFetchingWidgets }] = usePromise<Widget[]>(
+    () => API.getWidgetsByUser(username as string),
     {
       defaultValue: [],
-      dependencies: [user],
-      conditions: [user],
+      dependencies: [username],
+      conditions: [username],
     },
   );
 
-  if (!user) {
-    return <div>You are not logged in</div>;
-  }
+  const [usersDashboards, { isFetching: isFetchingDashboards }] = usePromise<Widget[]>(
+    () => API.getDashboardsByUser(username as string),
+    {
+      defaultValue: [],
+      dependencies: [username],
+      conditions: [username],
+    },
+  );
 
   if (isFetchingDashboards || isFetchingWidgets) {
     return <div>Loading...</div>;
@@ -36,21 +36,25 @@ function UserPage() {
     <div className='page user-page'>
       <div className='dashboard-header'>
         <div className='dashboard-title'>
-          <h2>{user?.username}</h2>
-
-          <div className='dashboard-info mt-1'>
-            <span className='tag mr-2'>{user?.address}</span>
-          </div>
+          <h2>{username}</h2>
         </div>
       </div>
 
       <div className='columns'>
         <div className='column'>
-          <ElementList title={`Widgets created by @${user?.username}`} elements={usersWidgets} type='widget' />
+          <ElementList
+            title={`Widgets created by @${username}`}
+            elements={usersWidgets}
+            type='widget'
+          />
         </div>
 
         <div className='column'>
-          <ElementList title={`Dashboards created by @${user?.username}`} elements={usersDashboards} type='dashboard' />
+          <ElementList
+            title={`Dashboards created by @${username}`}
+            elements={usersDashboards}
+            type='dashboard'
+          />
         </div>
       </div>
     </div>
