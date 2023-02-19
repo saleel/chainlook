@@ -61,7 +61,7 @@ function HomePage() {
         Create awesome <strong>widgets</strong> like line-chart, pie-chart,
         table, from subgraphs data using simple configuration. Use the
         drag-and-drop editor to build beautiful <strong>dashboards</strong> from
-        your widgets.
+        your widgets, and share with others.
         <br />
         <Link to="/widgets/new" className="button mt-5">
           Create your first widget

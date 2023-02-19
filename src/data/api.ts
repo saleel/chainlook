@@ -371,6 +371,7 @@ export default class API {
     }`;
 
     const result = await queryGraphQl(subgraphId, query);
+
     return result.data?.__schema;
   }
 }

@@ -25,6 +25,7 @@
     "react-icons": "^4.7.1",
     "react-modal": "^3.16.1",
     "react-monaco-editor": "^0.51.0",
+    "react-multi-select-component": "^4.3.4",
     "react-router-dom": "^6.6.1",
     "recharts": "^2.2.0",
     "siwe": "^1.1.6",

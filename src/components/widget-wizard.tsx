@@ -1,5 +1,7 @@
 import React from "react";
 import set from "lodash/set";
+import get from "lodash/get";
+import { MultiSelect } from "react-multi-select-component";
 import API from "../data/api";
 import {
   getQueriesFromGraphQlSchema,
@@ -8,8 +10,7 @@ import {
 import usePromise from "../hooks/use-promise";
 import { WidgetDefinition } from "../domain/widget";
 
-const DEFAULT_DEFINITION: WidgetDefinition = {
-  type: "table",
+const DEFAULT_DEFINITION: Partial<WidgetDefinition> = {
   data: {
     source: {
       provider: "graph",
@@ -19,25 +20,31 @@ const DEFAULT_DEFINITION: WidgetDefinition = {
   },
 };
 
-function WidgetWizard(props: { onSubmit: (widget: WidgetDefinition) => void }) {
+type WidgetWizardProps = {
+  onSubmit: (widget: WidgetDefinition) => void;
+};
+
+function WidgetWizard(props: WidgetWizardProps) {
+  const { onSubmit } = props;
+
   const [widgetDefinition, setWidgetDefinition] =
-    React.useState<WidgetDefinition>(DEFAULT_DEFINITION);
-  const [widgetType, setWidgetType] = React.useState<string>("");
+    React.useState(DEFAULT_DEFINITION);
 
-  const subgraphId = widgetDefinition?.data?.source.subgraphId ?? "";
+  const subgraphId = widgetDefinition?.data?.source.subgraphId ?? "as";
 
-  const [schema] = usePromise(() => API.getSubgraphSchema(subgraphId), {
+  const [schema, { isFetching }] = usePromise(() => API.getSubgraphSchema(subgraphId), {
     conditions: [subgraphId],
     dependencies: [subgraphId],
   });
 
+  const widgetType = widgetDefinition?.type ?? "";
   const selectedEntityName = widgetDefinition?.data?.source.entity ?? "";
   const entities = getQueriesFromGraphQlSchema(schema);
   const selectedEntity = getReturnEntityForQuery(schema, selectedEntityName);
 
-  function onSubmit(e: any) {
+  function onFormSubmit(e: any) {
     e.preventDefault();
-    props.onSubmit(widgetDefinition);
+    onSubmit(widgetDefinition as WidgetDefinition);
   }
 
   function updateWidgetDefinition(path: string, value: any) {
@@ -46,18 +53,19 @@ function WidgetWizard(props: { onSubmit: (widget: WidgetDefinition) => void }) {
     });
   }
 
-  function renderFieldSelector(
-    label: string,
-    value: string,
-    onChange: (field: string) => void
-  ) {
+  function renderFieldSelector(label: string, path: string) {
+    const fields = selectedEntity.fields as { name: string }[];
+    const value = get(widgetDefinition, path, "");
+    const onChange = (e) => updateWidgetDefinition(path, e.target.value);
+
     return (
       <div className="field mb-5">
         <label className="label">{label}</label>
+
         <div className="select">
-          <select onChange={(e) => onChange(e.target.value)} value={value}>
+          <select onChange={onChange} value={value}>
             <option>Select</option>
-            {selectedEntity.fields.map((field: any) => (
+            {fields.map((field) => (
               <option key={field.name} value={field.name}>
                 {field.name}
               </option>
@@ -68,39 +76,47 @@ function WidgetWizard(props: { onSubmit: (widget: WidgetDefinition) => void }) {
     );
   }
 
+  function renderMultiFieldSelector(
+    label: string,
+    path: string,
+    keyName: string
+  ) {
+    const fields = selectedEntity.fields as { name: string }[];
+    const value = get(widgetDefinition, path, []).map((s: any) => ({
+      label: s[keyName],
+      value: s[keyName],
+    }));
+    const onChange = (values: any[]) =>
+      updateWidgetDefinition(
+        path,
+        values.map((v) => ({ [keyName]: v.value }))
+      );
+
+    return (
+      <div className="field mb-5">
+        <label className="label">{label}</label>
+        <MultiSelect
+          options={fields.map((f) => ({ label: f.name, value: f.name }))}
+          value={value}
+          onChange={onChange}
+          hasSelectAll={false}
+          labelledBy={label}
+          overrideStrings={{
+            selectSomeItems:
+              "Select fields to be rendered as " + label.toLowerCase(),
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="widget-wizard h-100">
       <form
         className="is-flex is-flex-direction-column is-justify-content-space-between h-100"
-        onSubmit={onSubmit}
+        onSubmit={onFormSubmit}
       >
         <div>
-          <div className="field mb-5">
-            <label className="label">Widget type</label>
-            <div className="select">
-              <select
-                onChange={(e) => {
-                  const _type = e.target.value;
-                  setWidgetType(_type);
-                  if (_type.startsWith("chart")) {
-                    updateWidgetDefinition("type", "chart");
-                  } else {
-                    updateWidgetDefinition("type", _type);
-                  }
-                }}
-                value={widgetType}
-              >
-                <option value="">Select</option>
-                <option value="table">Table</option>
-                <option value="chart.line">Line Chart</option>
-                <option value="chart.bar">Bar Chart</option>
-                <option value="chart.area">Area Chart</option>
-                <option value="pieChart">Pie Chart</option>
-                <option value="metric">Metric</option>
-              </select>
-            </div>
-          </div>
-
           <div className="field mb-5">
             <label className="label">Subgraph ID</label>
             <div className="control">
@@ -108,7 +124,7 @@ function WidgetWizard(props: { onSubmit: (widget: WidgetDefinition) => void }) {
                 type="text"
                 className="input"
                 value={subgraphId}
-                placeholder="Enter Subgraph ID to query"
+                placeholder="Enter Subgraph ID to query - Hosted service or Decentralized network"
                 onChange={(e) =>
                   updateWidgetDefinition(
                     "data.source.subgraphId",
@@ -119,81 +135,140 @@ function WidgetWizard(props: { onSubmit: (widget: WidgetDefinition) => void }) {
             </div>
           </div>
 
-          {subgraphId && entities && (
+          {isFetching && (
+            <div>Loading...</div>
+          )}
+
+          {!isFetching && subgraphId && entities && (
+            <div className="columns">
+              <div className="column is-one-third">
+                <div className="field">
+                  <label className="label">Entity / Query</label>
+                  <div className="select">
+                    <select
+                      onChange={(e) =>
+                        updateWidgetDefinition(
+                          "data.source.entity",
+                          e.target.value
+                        )
+                      }
+                      value={selectedEntityName}
+                    >
+                      <option>Select</option>
+                      {entities.map((entity: any) => (
+                        <option key={entity.name} value={entity.name}>
+                          {entity.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {selectedEntity && (
+                <>
+                  <div className="column" style={{ marginBottom: '-2rem' }}>
+                    {renderFieldSelector("Order by", "data.source.orderBy")}
+                  </div>
+
+                  <div className="column">
+                    <div className="field">
+                      <label className="label">Order direction</label>
+                      <div className="select">
+                        <select
+                          onChange={(e) =>
+                            updateWidgetDefinition(
+                              "data.source.orderDirection",
+                              e.target.value
+                            )
+                          }
+                          value={
+                            widgetDefinition?.data?.source.orderDirection ?? ""
+                          }
+                        >
+                          <option>Select</option>
+                          <option key={"asc"} value={"asc"}>
+                            Ascending
+                          </option>
+                          <option key={"desc"} value={"desc"}>
+                            Descending
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="column">
+                    <div className="field">
+                      <label className="label">Limit</label>
+                      <div className="control">
+                        <input
+                          type="number"
+                          className="input"
+                          value={widgetDefinition?.data?.source.limit ?? ""}
+                          placeholder="Number of items"
+                          onChange={(e) =>
+                            updateWidgetDefinition(
+                              "data.source.limit",
+                              Number(e.target.value)
+                            )
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {selectedEntity && <hr />}
+
+          {selectedEntity && (
             <div className="field mb-5">
-              <label className="label">Entity</label>
+              <label className="label">Widget type</label>
               <div className="select">
                 <select
                   onChange={(e) =>
-                    updateWidgetDefinition("data.source.entity", e.target.value)
+                    updateWidgetDefinition("type", e.target.value)
                   }
-                  value={selectedEntityName}
+                  value={widgetType}
                 >
-                  <option>Select</option>
-                  {entities.map((entity: any) => (
-                    <option key={entity.name} value={entity.name}>
-                      {entity.name}
-                    </option>
-                  ))}
+                  <option value="">Select</option>
+                  <option value="table">Table</option>
+                  <option value="metric">
+                    Metric (Display a single key metric)
+                  </option>
+                  <option value="chart">
+                    Chart (Line chart, Bar chart, Area Chart)
+                  </option>
+                  <option value="pieChart">Pie Chart</option>
                 </select>
               </div>
             </div>
           )}
 
-          {selectedEntity && widgetType.startsWith("chart") && (
+          {widgetType === "chart" && (
             <>
-              {renderFieldSelector(
-                "X Axis",
-                widgetDefinition?.chart?.xAxis?.dataKey ?? "",
-                (field) => updateWidgetDefinition("chart.xAxis.dataKey", field)
-              )}
-              {renderFieldSelector(
-                "Y Axis",
-                widgetDefinition?.chart?.[`${widgetType.split(".")[1]}s[0]`]
-                  ?.dataKey ?? "",
-                (field) =>
-                  updateWidgetDefinition(
-                    `chart.${widgetType.split(".")[1]}s[0].dataKey`,
-                    field
-                  )
-              )}
+              {renderFieldSelector("X Axis", "chart.xAxis.dataKey")}
+              {renderMultiFieldSelector("Lines", "chart.lines", "dataKey")}
+              {renderMultiFieldSelector("Bars", "chart.bars", "dataKey")}
+              {renderMultiFieldSelector("Areas", "chart.areas", "dataKey")}
             </>
           )}
 
-          {selectedEntity && widgetType.startsWith("pieChart") && (
+          {widgetType === "pieChart" && (
             <>
-              {renderFieldSelector(
-                "Data Key",
-                widgetDefinition?.pieChart?.dataKey ?? "",
-                (field) => updateWidgetDefinition("pieChart.dataKey", field)
-              )}
-              {renderFieldSelector(
-                "Name Key",
-                widgetDefinition?.pieChart?.nameKey ?? "",
-                (field) => updateWidgetDefinition("pieChart.nameKey", field)
-              )}
+              {renderFieldSelector("Name Key", "pieChart.nameKey")}
+              {renderFieldSelector("Data Key", "pieChart.dataKey")}
             </>
           )}
 
-          {selectedEntity && widgetType.startsWith("table") && (
-            <>
-              {renderFieldSelector(
-                "Columns",
-                widgetDefinition?.chart?.xAxis ?? "",
-                (field) => updateWidgetDefinition("chart.xAxis", field)
-              )}
-            </>
-          )}
+          {widgetType === "table" &&
+            renderMultiFieldSelector("Columns", "table.columns", "dataKey")}
 
-          {selectedEntity && widgetType.startsWith("metric") && (
-            <>
-              {renderFieldSelector(
-                "Data Key",
-                widgetDefinition?.metric?.dataKey ?? "",
-                (field) => updateWidgetDefinition("metric.dataKey", field)
-              )}
-            </>
-          )}
+          {widgetType === "metric" &&
+            renderFieldSelector("Data Key", "metric.dataKey")}
         </div>
 
         <button

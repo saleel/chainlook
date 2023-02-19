@@ -163,12 +163,11 @@ function NewWidgetPage() {
         isOpen={isWizardOpen}
         onRequestClose={() => setIsWizardOpen(false)}
         title="Widget wizard"
-        height="min(600px, 80vh)"
+        height="min(800px, 80vh)"
         width="min(800px, 80vw)"
       >
         <WidgetWizard
           onSubmit={(def) => {
-            console.log(def);
             updateWidget("definition", def);
             setIsWizardOpen(false);
           }}
