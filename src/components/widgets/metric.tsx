@@ -2,9 +2,7 @@ import Formatters from '../../data/modifiers/formatters';
 
 function Metric(props) {
   try {
-    const {
-      data, config,
-    } = props;
+    const { data, config } = props;
 
     const { dataKey, unit, format } = config;
 
@@ -14,15 +12,13 @@ function Metric(props) {
     }
 
     return (
-      <div className="metric">
-        <div className="metric-value">{value}</div>
-        <div className="metric-unit">{unit}</div>
+      <div className='metric'>
+        <div className='metric-value'>{value}</div>
+        <div className='metric-unit'>{unit}</div>
       </div>
     );
   } catch (error) {
-    return (
-      <div>{error.message}</div>
-    );
+    return <div>{error.message}</div>;
   }
 }
 

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "lint": "eslint . --fix",
+    "lint": "eslint . --fix && prettier --write .",
     "analyze": "source-map-explorer 'build/static/js/*.js'"
   },
   "dependencies": {
@@ -41,6 +41,7 @@
     "eslint-plugin-jsx-a11y": "^6.6.1",
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "2.8.4",
     "source-map-explorer": "^2.5.3",
     "typescript": "^4.9.4",
     "vite": "^4.0.4",
@@ -112,5 +113,13 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all",
+    "semi": true,
+    "tabWidth": 2,
+    "printWidth": 120,
+    "jsxSingleQuote": true
   }
 }

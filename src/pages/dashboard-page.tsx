@@ -1,14 +1,14 @@
 /* eslint-disable react/no-array-index-key */
-import { useConnectModal } from "@rainbow-me/rainbowkit";
-import React from "react";
-import { IoStar } from "react-icons/io5";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import DashboardView from "../components/dashboard-view";
-import { AuthContext } from "../context/auth-context";
-import API from "../data/api";
-import Formatters from "../data/modifiers/formatters";
-import Dashboard from "../domain/dashboard";
-import usePromise from "../hooks/use-promise";
+import { useConnectModal } from '@rainbow-me/rainbowkit';
+import React from 'react';
+import { IoStar } from 'react-icons/io5';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import DashboardView from '../components/dashboard-view';
+import { AuthContext } from '../context/auth-context';
+import API from '../data/api';
+import Formatters from '../data/modifiers/formatters';
+import Dashboard from '../domain/dashboard';
+import usePromise from '../hooks/use-promise';
 
 function DashboardPage() {
   // const navigate = useNavigate();
@@ -19,20 +19,18 @@ function DashboardPage() {
   const [starCount, setStarCount] = React.useState(0);
   const { user, isAuthenticated } = React.useContext(AuthContext);
 
-  const [dashboard, { isFetching, error }] = usePromise<Dashboard>(
-    () => API.getDashboard(id as string),
-    {
-      dependencies: [id],
-      conditions: [id],
-    }
-  );
-
-  const [starredDashboards, { isFetching: isFetchingStarred }] = usePromise<
-    Dashboard[]
-  >(() => API.getStarredDashboards(user!.id), {
-    dependencies: [user],
-    conditions: [user],
+  const [dashboard, { isFetching, error }] = usePromise<Dashboard>(() => API.getDashboard(id as string), {
+    dependencies: [id],
+    conditions: [id],
   });
+
+  const [starredDashboards, { isFetching: isFetchingStarred }] = usePromise<Dashboard[]>(
+    () => API.getStarredDashboards(user!.id),
+    {
+      dependencies: [user],
+      conditions: [user],
+    },
+  );
 
   React.useEffect(() => {
     if (dashboard) {
@@ -65,54 +63,48 @@ function DashboardPage() {
   }
 
   if (isFetching) {
-    return <div className="page dashboard-page">Loading</div>;
+    return <div className='page dashboard-page'>Loading</div>;
   }
 
   if (error) {
-    return <div className="page dashboard-page">{error.message}</div>;
+    return <div className='page dashboard-page'>{error.message}</div>;
   }
 
   const isDashboardOwner = dashboard?.user?.id === user?.id;
 
   return (
-    <div className="page dashboard-page">
-      <div className="dashboard-header">
-        <div className="dashboard-title">
+    <div className='page dashboard-page'>
+      <div className='dashboard-header'>
+        <div className='dashboard-title'>
           <h2>{dashboard?.title}</h2>
 
-          <div className="dashboard-info mt-1">
-            {dashboard.user && (
-              <span className="tag mr-2">👤 {dashboard.user?.username}</span>
-            )}
+          <div className='dashboard-info mt-1'>
+            {dashboard.user && <span className='tag mr-2'>👤 {dashboard.user?.username}</span>}
 
             {dashboard.tags?.map((tag: string) => (
-              <span key={tag} className="tag mr-2">
+              <span key={tag} className='tag mr-2'>
                 #{tag}
               </span>
             ))}
           </div>
         </div>
 
-        <div className="dashboard-actions">
-          <button className="button is-normal">Share</button>
+        <div className='dashboard-actions'>
+          <button className='button is-normal'>Share</button>
 
           {!isFetchingStarred && (
             <button
-              className={"button is-normal" + (isStarred ? " is-active" : "")}
-              style={{ minWidth: "5rem", justifyContent: "space-between" }}
+              className={'button is-normal' + (isStarred ? ' is-active' : '')}
+              style={{ minWidth: '5rem', justifyContent: 'space-between' }}
               onClick={onStarClick}
             >
-              <IoStar size={16} className="mr-3" />
+              <IoStar size={16} className='mr-3' />
               {Formatters.number(starCount)}
             </button>
           )}
 
           {isDashboardOwner && (
-            <Link
-              className="button is-normal"
-              to={`/dashboards/${dashboard.id}/edit`}
-              title="Edit the dashboard"
-            >
+            <Link className='button is-normal' to={`/dashboards/${dashboard.id}/edit`} title='Edit the dashboard'>
               Edit
             </Link>
           )}

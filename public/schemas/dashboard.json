@@ -9,7 +9,7 @@
       "items": {
         "type": "object",
         "properties": {
-          "widget": { 
+          "widget": {
             "type": "object",
             "additionalProperties": true,
             "required": ["definition", "title"],
@@ -21,14 +21,14 @@
               "version": { "type": "number" }
             }
           },
-          "text": { 
+          "text": {
             "type": "object",
             "properties": {
               "title": { "type": "string" },
               "message": { "type": "string" }
             },
             "required": ["title", "message"]
-           },
+          },
           "layout": {
             "type": "object",
             "properties": {
@@ -41,10 +41,7 @@
           }
         },
         "required": ["layout"],
-        "anyOf": [
-          { "required": ["widget"] },
-          { "required": ["text"] }
-        ]
+        "anyOf": [{ "required": ["widget"] }, { "required": ["text"] }]
       },
       "minItems": 1
     }

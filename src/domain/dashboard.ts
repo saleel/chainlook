@@ -5,8 +5,8 @@ export type DashboardDefinition = {
   title: string;
   elements: {
     widget?: Partial<Widget>;
-    text?: { title: string, message: string };
-    layout: { i: number, x: number, y: number, w: number, h: number };
+    text?: { title: string; message: string };
+    layout: { i: number; x: number; y: number; w: number; h: number };
   }[];
 };
 

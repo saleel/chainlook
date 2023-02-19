@@ -1,5 +1,5 @@
-import { ReactNode } from "react";
-import ReactModal from "react-modal";
+import { ReactNode } from 'react';
+import ReactModal from 'react-modal';
 
 type ModalProps = {
   isOpen: boolean;
@@ -19,30 +19,27 @@ function Modal(props: ModalProps) {
       onRequestClose={() => onRequestClose()}
       style={{
         content: {
-          top: "40%",
-          left: "50%",
-          marginRight: "-50%",
-          transform: "translate(-50%, -50%)",
-          height: height || "400px",
-          width: width || "600px",
+          top: '40%',
+          left: '50%',
+          marginRight: '-50%',
+          transform: 'translate(-50%, -50%)',
+          height: height || '400px',
+          width: width || '600px',
           display: 'flex',
           flexDirection: 'column',
         },
       }}
       contentLabel={title}
     >
-      <h3 className="subtitle mb-0">{title}</h3>
+      <h3 className='subtitle mb-0'>{title}</h3>
 
-      <hr className="mt-4" />
+      <hr className='mt-4' />
 
-      <div className="modal-body" style={{ flexGrow: 1 }}>{children}</div>
+      <div className='modal-body' style={{ flexGrow: 1 }}>
+        {children}
+      </div>
 
-      <button
-        type="button"
-        className="modal-close"
-        aria-label="close"
-        onClick={() => onRequestClose()}
-      />
+      <button type='button' className='modal-close' aria-label='close' onClick={() => onRequestClose()} />
     </ReactModal>
   );
 }

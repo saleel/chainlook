@@ -1,15 +1,15 @@
-import Dashboard from "../domain/dashboard";
-import Widget from "../domain/widget";
+import Dashboard from '../domain/dashboard';
+import Widget from '../domain/widget';
 
 export default class Store {
   static saveWidgetDraft(widget: Widget) {
     window.localStorage.setItem('widgetDraft', JSON.stringify(widget));
   }
-  
+
   static getWidgetDraft() {
     try {
       const widgetJson = window.localStorage.getItem('widgetDraft');
-      return widgetJson ? new Widget(JSON.parse(widgetJson)) : null;    
+      return widgetJson ? new Widget(JSON.parse(widgetJson)) : null;
     } catch (error) {
       return null;
     }
@@ -22,11 +22,11 @@ export default class Store {
   static saveDashboardDraft(dashboard: Dashboard) {
     window.localStorage.setItem('dashboardDraft', JSON.stringify(dashboard));
   }
-  
+
   static getDashboardDraft() {
     try {
       const dashboardJson = window.localStorage.getItem('dashboardDraft');
-      return dashboardJson ? new Dashboard(JSON.parse(dashboardJson)) : undefined;    
+      return dashboardJson ? new Dashboard(JSON.parse(dashboardJson)) : undefined;
     } catch (error) {
       return undefined;
     }

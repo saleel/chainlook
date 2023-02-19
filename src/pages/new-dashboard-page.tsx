@@ -1,13 +1,12 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
-import API from "../data/api";
-import Store from "../data/store";
-import { AuthContext } from "../context/auth-context";
-import Dashboard from "../domain/dashboard";
-import { useDebouncedCallback } from "use-debounce";
-import DashboardEditor from "../components/dashboard-editor";
-
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
+import API from '../data/api';
+import Store from '../data/store';
+import { AuthContext } from '../context/auth-context';
+import Dashboard from '../domain/dashboard';
+import { useDebouncedCallback } from 'use-debounce';
+import DashboardEditor from '../components/dashboard-editor';
 
 function NewDashboardPage() {
   const navigate = useNavigate();
@@ -16,13 +15,10 @@ function NewDashboardPage() {
   const { isAuthenticated } = React.useContext(AuthContext);
 
   // Save Dashboard being created as draft in local storage (with a debounce)
-  const saveDraft = useDebouncedCallback(
-    (d) => Store.saveDashboardDraft(d),
-    1000
-  );
+  const saveDraft = useDebouncedCallback((d) => Store.saveDashboardDraft(d), 1000);
 
   React.useEffect(() => {
-    document.title = "New Dashboard - ChainLook";
+    document.title = 'New Dashboard - ChainLook';
   }, []);
 
   async function onPublish(dashboard: Dashboard) {
@@ -37,12 +33,8 @@ function NewDashboardPage() {
   }
 
   return (
-    <div className="page new-dashboard-page">
-      <DashboardEditor
-        dashboard={Store.getDashboardDraft()}
-        onChange={saveDraft}
-        onPublish={onPublish}
-      />
+    <div className='page new-dashboard-page'>
+      <DashboardEditor dashboard={Store.getDashboardDraft()} onChange={saveDraft} onPublish={onPublish} />
     </div>
   );
 }

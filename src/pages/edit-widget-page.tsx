@@ -1,11 +1,11 @@
-import React from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import WidgetView from "../components/widget-view";
-import API from "../data/api";
-import usePromise from "../hooks/use-promise";
-import WidgetEditor from "../components/widget-editor";
-import Widget from "../domain/widget";
-import { AuthContext } from "../context/auth-context";
+import React from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import WidgetView from '../components/widget-view';
+import API from '../data/api';
+import usePromise from '../hooks/use-promise';
+import WidgetEditor from '../components/widget-editor';
+import Widget from '../domain/widget';
+import { AuthContext } from '../context/auth-context';
 
 function EditWidgetPage() {
   const { widgetId } = useParams();
@@ -16,13 +16,10 @@ function EditWidgetPage() {
 
   const { user } = React.useContext(AuthContext);
 
-  const [widget, { isFetching, error }] = usePromise<Widget>(
-    () => API.getWidget(widgetId as string),
-    {
-      dependencies: [widgetId],
-      conditions: [widgetId],
-    }
-  );
+  const [widget, { isFetching, error }] = usePromise<Widget>(() => API.getWidget(widgetId as string), {
+    dependencies: [widgetId],
+    conditions: [widgetId],
+  });
 
   React.useEffect(() => {
     if (!widget) return;
@@ -37,7 +34,7 @@ function EditWidgetPage() {
 
   async function onSaveClick(e: any) {
     e.preventDefault();
-    
+
     const submitButton = e.target.querySelector('button[type="submit"]');
     submitButton.disabled = true;
 
@@ -62,52 +59,43 @@ function EditWidgetPage() {
   const isWidgetOwner = widget.user.id === user?.id;
 
   if (!isWidgetOwner) {
-    return (
-      <div className="message text-center">
-        You are not allowed to edit this widget.
-      </div>
-    );
+    return <div className='message text-center'>You are not allowed to edit this widget.</div>;
   }
 
   return (
-    <div className="page create-widget-page">
-      <h2 className="section-title">Create new widget</h2>
+    <div className='page create-widget-page'>
+      <h2 className='section-title'>Create new widget</h2>
 
-      <div className="create-widget-container">
-        <div className="create-widget-section">
-          <WidgetEditor
-            onChange={(d) => updateWidget("definition", d)}
-            definition={definition}
-          />
+      <div className='create-widget-container'>
+        <div className='create-widget-section'>
+          <WidgetEditor onChange={(d) => updateWidget('definition', d)} definition={definition} />
 
-          <form className="create-widget-helper" onSubmit={onSaveClick}>
-            <div className="field">
-              <label className="label">Title</label>
-              <div className="control">
+          <form className='create-widget-helper' onSubmit={onSaveClick}>
+            <div className='field'>
+              <label className='label'>Title</label>
+              <div className='control'>
                 <input
-                  type="text"
-                  className="input"
-                  placeholder="Enter widget title"
+                  type='text'
+                  className='input'
+                  placeholder='Enter widget title'
                   required
                   value={title}
-                  onChange={(e) => updateWidget("title", e.target.value)}
+                  onChange={(e) => updateWidget('title', e.target.value)}
                 />
               </div>
             </div>
-            <div className="field">
-              <label className="label">Tags</label>
+            <div className='field'>
+              <label className='label'>Tags</label>
               <input
-                type="text"
-                className="input"
-                placeholder="Enter tags separated by comma"
+                type='text'
+                className='input'
+                placeholder='Enter tags separated by comma'
                 value={tags}
-                onChange={(e) =>
-                  updateWidget("tags", e.target.value.split(","))
-                }
+                onChange={(e) => updateWidget('tags', e.target.value.split(','))}
               />
             </div>
             <hr />
-            <button type="submit" className="button">
+            <button type='submit' className='button'>
               Save
             </button>
           </form>
@@ -115,8 +103,8 @@ function EditWidgetPage() {
 
         <hr />
 
-        <div className="create-widget-preview">
-          <div className="section-title">Preview</div>
+        <div className='create-widget-preview'>
+          <div className='section-title'>Preview</div>
           <WidgetView widget={editingWidget} />
         </div>
       </div>

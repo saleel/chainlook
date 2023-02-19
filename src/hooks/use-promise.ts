@@ -48,12 +48,15 @@ type UsePromiseOptions = {
   cacheKey?: string;
   updateWithRevalidated?: boolean;
   cachePeriodInSecs?: number;
-}
-
+};
 
 function usePromise<T>(promise: () => Promise<T>, options: UsePromiseOptions = {}) {
   const {
-    defaultValue, dependencies = [], cacheKey, updateWithRevalidated = true, cachePeriodInSecs = 10,
+    defaultValue,
+    dependencies = [],
+    cacheKey,
+    updateWithRevalidated = true,
+    cachePeriodInSecs = 10,
     conditions = [],
   } = options;
 
@@ -81,8 +84,7 @@ function usePromise<T>(promise: () => Promise<T>, options: UsePromiseOptions = {
     }
 
     if (cachedData) {
-      if (cachedData.storedAt
-        && differenceInSeconds(new Date(), new Date(cachedData.storedAt)) < cachePeriodInSecs) {
+      if (cachedData.storedAt && differenceInSeconds(new Date(), new Date(cachedData.storedAt)) < cachePeriodInSecs) {
         return;
       }
     }
@@ -135,9 +137,15 @@ function usePromise<T>(promise: () => Promise<T>, options: UsePromiseOptions = {
     return fetch();
   }
 
-  return [result, {
-    isFetching, fetchedAt, reFetch, error,
-  }] as [T, { isFetching: boolean, fetchedAt: Date, reFetch: () => void, error: Error }];
+  return [
+    result,
+    {
+      isFetching,
+      fetchedAt,
+      reFetch,
+      error,
+    },
+  ] as [T, { isFetching: boolean; fetchedAt: Date; reFetch: () => void; error: Error }];
 }
 
 export default usePromise;

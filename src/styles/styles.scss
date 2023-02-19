@@ -1,7 +1,7 @@
-@import "../../node_modules/bulma/bulma.sass";
-@import "../../node_modules/@creativebulma/bulma-tooltip/dist/bulma-tooltip.css";
-@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap");
-@import "./element-list.scss";
+@import '../../node_modules/bulma/bulma.sass';
+@import '../../node_modules/@creativebulma/bulma-tooltip/dist/bulma-tooltip.css';
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap');
+@import './element-list.scss';
 
 // Colors from Chakra UI https://chakra-ui.com/docs/theming/theme
 :root {
@@ -34,14 +34,14 @@ body {
 }
 
 body {
-  font-family: "Fira Code", monospace;
+  font-family: 'Fira Code', monospace;
   color: var(--text-color);
   margin: 0;
   padding: 0;
 }
 
 button {
-  font-family: "Fira Code", monospace;
+  font-family: 'Fira Code', monospace;
 }
 
 #root,
@@ -561,16 +561,14 @@ button {
   }
 }
 
-@media screen and (max-width:641px) {
-
+@media screen and (max-width: 641px) {
   // Disable create dashboard and widgets on small screens
   .menu {
     display: none;
   }
 }
 
-
-.react-grid-item>.react-resizable-handle::after {
+.react-grid-item > .react-resizable-handle::after {
   border-color: var(--text-color) !important;
   border-width: 2px !important;
   width: 8px !important;

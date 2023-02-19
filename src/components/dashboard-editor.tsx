@@ -1,16 +1,16 @@
-import React from "react";
-import DashboardView from "../components/dashboard-view";
-import Modal from "../components/modal";
-import usePromise from "../hooks/use-promise";
-import API from "../data/api";
-import Store from "../data/store";
-import Dashboard, { DashboardDefinition } from "../domain/dashboard";
-import Widget from "../domain/widget";
-import User from "../domain/user";
-import { cleanString, slugify } from "../utils";
-import { AuthContext } from "../context/auth-context";
+import React from 'react';
+import DashboardView from '../components/dashboard-view';
+import Modal from '../components/modal';
+import usePromise from '../hooks/use-promise';
+import API from '../data/api';
+import Store from '../data/store';
+import Dashboard, { DashboardDefinition } from '../domain/dashboard';
+import Widget from '../domain/widget';
+import User from '../domain/user';
+import { cleanString, slugify } from '../utils';
+import { AuthContext } from '../context/auth-context';
 
-type Element = DashboardDefinition["elements"][0];
+type Element = DashboardDefinition['elements'][0];
 
 const minDimensions = {
   table: { width: 4, height: 3 },
@@ -20,23 +20,23 @@ const minDimensions = {
 };
 
 const DEFAULT_DASHBOARD: Dashboard = new Dashboard({
-  id: "",
-  title: "",
-  slug: "",
-  definition: { title: "", elements: [] },
+  id: '',
+  title: '',
+  slug: '',
+  definition: { title: '', elements: [] },
   tags: [],
   starCount: 0,
   version: 1,
   createdOn: new Date(),
   updatedOn: new Date(),
-  user: new User({ id: "", username: "", address: "" }),
+  user: new User({ id: '', username: '', address: '' }),
 });
 
 type DashboardEditorProps = {
   dashboard?: Dashboard;
   onChange?: (d: Dashboard) => void;
   onPublish: (e: Dashboard) => Promise<void>;
-}
+};
 
 function DashboardEditor(props: DashboardEditorProps) {
   const { user } = React.useContext(AuthContext);
@@ -46,13 +46,10 @@ function DashboardEditor(props: DashboardEditorProps) {
   const [isPublishModalOpen, setIsPublishModalOpen] = React.useState(false);
   const [dashboard, setDashboard] = React.useState<Dashboard>(props.dashboard || DEFAULT_DASHBOARD);
 
-  const [widgetOfUser] = usePromise<Widget[]>(
-    () => API.getWidgetsByUser(user?.id as string),
-    {
-      conditions: [user?.id],
-      defaultValue: [],
-    }
-  );
+  const [widgetOfUser] = usePromise<Widget[]>(() => API.getWidgetsByUser(user?.id as string), {
+    conditions: [user?.id],
+    defaultValue: [],
+  });
 
   React.useEffect(() => {
     if (props.onChange) {
@@ -62,7 +59,7 @@ function DashboardEditor(props: DashboardEditorProps) {
 
   React.useEffect(() => {
     if (props.dashboard && props.dashboard !== dashboard) {
-      console.log("updating dashboard");
+      console.log('updating dashboard');
       setDashboard(props.dashboard);
     }
   }, [props.dashboard]);
@@ -87,7 +84,7 @@ function DashboardEditor(props: DashboardEditorProps) {
     let width = 4;
     let height = 4;
 
-    if (definition?.type === "metric") {
+    if (definition?.type === 'metric') {
       width = 1;
       height = 1;
     }
@@ -148,22 +145,20 @@ function DashboardEditor(props: DashboardEditorProps) {
             minW: minDimensionForWidget?.width,
           },
         };
-      })
+      }),
     );
   }
 
   function onRemoveElement(removedWidget: Element) {
-    updateElements((existing) =>
-      existing.filter((w) => w.layout.i !== removedWidget.layout.i)
-    );
+    updateElements((existing) => existing.filter((w) => w.layout.i !== removedWidget.layout.i));
   }
 
   function onNewTextFormSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     const formData = new FormData(e.target as HTMLFormElement);
-    const title = formData.get("title") as string;
-    const message = formData.get("message") as string;
+    const title = formData.get('title') as string;
+    const message = formData.get('message') as string;
 
     updateElements((existing) => [
       ...existing,
@@ -188,7 +183,7 @@ function DashboardEditor(props: DashboardEditorProps) {
   async function onPublishFormSubmit(e: any) {
     e.preventDefault();
 
-    const submitButton = e.target.querySelector("button[type=submit]");
+    const submitButton = e.target.querySelector('button[type=submit]');
 
     try {
       submitButton.disabled = true;
@@ -205,43 +200,31 @@ function DashboardEditor(props: DashboardEditorProps) {
 
   return (
     <>
-      <div className="dashboard-header">
+      <div className='dashboard-header'>
         <div></div>
 
-        <div className="dashboard-actions">
+        <div className='dashboard-actions'>
           <button
-            type="button"
-            className="button is-normal"
+            type='button'
+            className='button is-normal'
             disabled={dashboard.definition.elements.length === 0}
             onClick={() => {
-              if (
-                window.confirm(
-                  "Are you sure you want to clear all the items from the dashboard?"
-                )
-              ) {
+              if (window.confirm('Are you sure you want to clear all the items from the dashboard?')) {
                 setDashboard(DEFAULT_DASHBOARD);
               }
             }}
           >
             Reset
           </button>
-          <button
-            type="button"
-            className="button is-normal"
-            onClick={() => setIsAddTextModalOpen(true)}
-          >
+          <button type='button' className='button is-normal' onClick={() => setIsAddTextModalOpen(true)}>
             Add Text
           </button>
-          <button
-            type="button"
-            className="button is-normal"
-            onClick={() => setIsAddWidgetModalOpen(true)}
-          >
+          <button type='button' className='button is-normal' onClick={() => setIsAddWidgetModalOpen(true)}>
             Add Widget
           </button>
           <button
-            type="button"
-            className="button is-normal"
+            type='button'
+            className='button is-normal'
             disabled={dashboard.definition.elements.length === 0}
             onClick={() => setIsPublishModalOpen(true)}
           >
@@ -258,24 +241,18 @@ function DashboardEditor(props: DashboardEditorProps) {
           onRemoveWidgetClick={onRemoveElement}
         />
       ) : (
-        <div className="mt-5 text-center message">
-          Start creating dashboard by adding Widgets
-        </div>
+        <div className='mt-5 text-center message'>Start creating dashboard by adding Widgets</div>
       )}
 
-      <Modal
-        isOpen={isAddWidgetModalOpen}
-        onRequestClose={() => setIsAddWidgetModalOpen(false)}
-        title="Add Widget"
-      >
+      <Modal isOpen={isAddWidgetModalOpen} onRequestClose={() => setIsAddWidgetModalOpen(false)} title='Add Widget'>
         <div>
           {widgetOfUser.length > 0 ? (
             widgetOfUser.map((widget) => (
               <div
                 key={widget.id}
                 tabIndex={0}
-                role="button"
-                className="add-widget-item"
+                role='button'
+                className='add-widget-item'
                 onClick={() => onAddWidget(widget)}
               >
                 {widget.definition?.type} - {widget.title}
@@ -283,51 +260,32 @@ function DashboardEditor(props: DashboardEditorProps) {
             ))
           ) : (
             <div>
-              {user
-                ? "You have not created any widgets yet."
-                : "You need to sign in to see your created widgets."}
+              {user ? 'You have not created any widgets yet.' : 'You need to sign in to see your created widgets.'}
             </div>
           )}
         </div>
       </Modal>
 
-      <Modal
-        isOpen={isAddTextModalOpen}
-        onRequestClose={() => setIsAddTextModalOpen(false)}
-        title="Add Text"
-      >
+      <Modal isOpen={isAddTextModalOpen} onRequestClose={() => setIsAddTextModalOpen(false)} title='Add Text'>
         <form onSubmit={onNewTextFormSubmit}>
-          <input
-            name="title"
-            className="form-input"
-            type="text"
-            placeholder="Title"
-          />
-          <textarea
-            name="message"
-            className="form-input"
-            placeholder="Message"
-          />
+          <input name='title' className='form-input' type='text' placeholder='Title' />
+          <textarea name='message' className='form-input' placeholder='Message' />
 
-          <button className="button mt-4" type="submit">
+          <button className='button mt-4' type='submit'>
             Submit
           </button>
         </form>
       </Modal>
 
-      <Modal
-        title="Publish Dashboard"
-        isOpen={isPublishModalOpen}
-        onRequestClose={() => setIsPublishModalOpen(false)}
-      >
+      <Modal title='Publish Dashboard' isOpen={isPublishModalOpen} onRequestClose={() => setIsPublishModalOpen(false)}>
         <form onSubmit={onPublishFormSubmit}>
-          <div className="field">
-            <label className="label">Title</label>
-            <div className="control">
+          <div className='field'>
+            <label className='label'>Title</label>
+            <div className='control'>
               <input
-                type="text"
-                className="input"
-                placeholder="Enter widget title"
+                type='text'
+                className='input'
+                placeholder='Enter widget title'
                 required
                 value={cleanString(dashboard.title)}
                 onChange={(e) => {
@@ -345,40 +303,38 @@ function DashboardEditor(props: DashboardEditorProps) {
             </div>
           </div>
 
-          <div className="field">
-            <label className="label">Slug</label>
-            <div className="control">
+          <div className='field'>
+            <label className='label'>Slug</label>
+            <div className='control'>
               <input
-                type="text"
-                className="input"
-                placeholder="Enter slug to be used in the URL for the dashboard"
+                type='text'
+                className='input'
+                placeholder='Enter slug to be used in the URL for the dashboard'
                 required
                 value={dashboard.slug}
-                pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$"
-                onChange={(e) =>
-                  setDashboard((ex) => ({ ...ex, slug: e.target.value }))
-                }
+                pattern='^[a-z0-9]+(?:-[a-z0-9]+)*$'
+                onChange={(e) => setDashboard((ex) => ({ ...ex, slug: e.target.value }))}
               />
             </div>
           </div>
 
-          <div className="field">
-            <label className="label">Tags</label>
+          <div className='field'>
+            <label className='label'>Tags</label>
             <input
-              type="text"
-              className="input"
-              placeholder="Enter tags separated by comma"
+              type='text'
+              className='input'
+              placeholder='Enter tags separated by comma'
               value={dashboard.tags}
               onChange={(e) =>
                 setDashboard((ex) => ({
                   ...ex,
-                  tags: e.target.value.split(","),
+                  tags: e.target.value.split(','),
                 }))
               }
             />
           </div>
 
-          <button type="submit" className="button mt-4">
+          <button type='submit' className='button mt-4'>
             Publish
           </button>
         </form>

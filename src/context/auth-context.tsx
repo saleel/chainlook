@@ -1,40 +1,34 @@
-import {
-  connectorsForWallets,
-  lightTheme,
-} from "@rainbow-me/rainbowkit";
-import React, { ReactNode } from "react";
+import { connectorsForWallets, lightTheme } from '@rainbow-me/rainbowkit';
+import React, { ReactNode } from 'react';
 import {
   AuthenticationStatus,
   createAuthenticationAdapter,
   RainbowKitAuthenticationProvider,
   RainbowKitProvider,
-} from "@rainbow-me/rainbowkit";
+} from '@rainbow-me/rainbowkit';
 import {
   metaMaskWallet,
   coinbaseWallet,
   walletConnectWallet,
   trustWallet,
   ledgerWallet,
-} from "@rainbow-me/rainbowkit/wallets";
-import { configureChains, createClient, WagmiConfig } from "wagmi";
-import { mainnet } from "wagmi/chains";
-import { publicProvider } from "wagmi/providers/public";
-import { SiweMessage } from "siwe";
-import API from "../data/api";
-import { deleteTokenAndUser, getUser, isTokenValid, saveTokenAndUser } from "../data/auth";
-import User from "../domain/user";
+} from '@rainbow-me/rainbowkit/wallets';
+import { configureChains, createClient, WagmiConfig } from 'wagmi';
+import { mainnet } from 'wagmi/chains';
+import { publicProvider } from 'wagmi/providers/public';
+import { SiweMessage } from 'siwe';
+import API from '../data/api';
+import { deleteTokenAndUser, getUser, isTokenValid, saveTokenAndUser } from '../data/auth';
+import User from '../domain/user';
 
-const { chains, provider, webSocketProvider } = configureChains(
-  [mainnet],
-  [publicProvider()]
-);
+const { chains, provider, webSocketProvider } = configureChains([mainnet], [publicProvider()]);
 
 const connectors = connectorsForWallets([
   {
-    groupName: "Wallets",
+    groupName: 'Wallets',
     wallets: [
       metaMaskWallet({ chains }),
-      coinbaseWallet({ appName: "ChainLook", chains }),
+      coinbaseWallet({ appName: 'ChainLook', chains }),
       walletConnectWallet({ chains }),
       trustWallet({ chains }),
       ledgerWallet({ chains }),
@@ -61,16 +55,16 @@ export const AuthContext = React.createContext<AuthContextParams>({
 
 const Disclaimer = () => (
   <div style={{ lineHeight: '1.5rem', margin: '0 -5px' }}>
-    <h4 className="paragraph-title">Sign in with Ethereum</h4>
+    <h4 className='paragraph-title'>Sign in with Ethereum</h4>
     <div>
-      You can use your Ethereum Wallet to sign in to ChainLook.
-      This don't create a transaction <u>nor incur any gas fee</u>.
+      You can use your Ethereum Wallet to sign in to ChainLook. This don't create a transaction{' '}
+      <u>nor incur any gas fee</u>.
     </div>
   </div>
 );
 
 const customTheme = lightTheme();
-customTheme.radii.modal = "10px";
+customTheme.radii.modal = '10px';
 
 export function AuthContextProvider(props: { children: ReactNode }) {
   const { children } = props;
@@ -78,10 +72,10 @@ export function AuthContextProvider(props: { children: ReactNode }) {
 
   const [user, setUser] = React.useState<User | null>(getUser());
 
-  const [authStatus, setAuthStatus] = React.useState<AuthenticationStatus>("loading");
+  const [authStatus, setAuthStatus] = React.useState<AuthenticationStatus>('loading');
 
   React.useEffect(() => {
-    setAuthStatus(isTokenValid() ? "authenticated" : "unauthenticated");
+    setAuthStatus(isTokenValid() ? 'authenticated' : 'unauthenticated');
   }, []);
 
   const authAdapter = React.useMemo(() => {
@@ -94,9 +88,9 @@ export function AuthContextProvider(props: { children: ReactNode }) {
         return new SiweMessage({
           domain: window.location.host,
           address,
-          statement: "Sign in with Ethereum to the app.",
+          statement: 'Sign in with Ethereum to the app.',
           uri: window.location.origin,
-          version: "1",
+          version: '1',
           chainId,
           nonce,
         });
@@ -113,26 +107,25 @@ export function AuthContextProvider(props: { children: ReactNode }) {
           const { user, token } = await API.signIn({ message, signature });
 
           saveTokenAndUser(token, user);
-          
+
           if (!user.username) {
-            const username = window.prompt("Enter a username for your account");
+            const username = window.prompt('Enter a username for your account');
             if (username) {
               await API.editProfile({ username });
               user.username = username;
               saveTokenAndUser(token, user);
-            }
-            else {
-              alert("You need a username to continue");
+            } else {
+              alert('You need a username to continue');
               return false;
             }
           }
 
-          setAuthStatus(token ? "authenticated" : "unauthenticated");
+          setAuthStatus(token ? 'authenticated' : 'unauthenticated');
           setUser(user);
 
           return true;
         } catch (error) {
-          console.error(error)
+          console.error(error);
           return false;
         } finally {
           verifyingRef.current = false;
@@ -140,25 +133,22 @@ export function AuthContextProvider(props: { children: ReactNode }) {
       },
 
       signOut: async () => {
-        setAuthStatus("unauthenticated");
+        setAuthStatus('unauthenticated');
         deleteTokenAndUser();
       },
     });
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated: authStatus === "authenticated" || isTokenValid(), user }}>
+    <AuthContext.Provider value={{ isAuthenticated: authStatus === 'authenticated' || isTokenValid(), user }}>
       <WagmiConfig client={wagmiClient}>
-        <RainbowKitAuthenticationProvider
-          adapter={authAdapter}
-          status={authStatus}
-        >
+        <RainbowKitAuthenticationProvider adapter={authAdapter} status={authStatus}>
           <RainbowKitProvider
             chains={chains}
-            modalSize="compact"
+            modalSize='compact'
             theme={customTheme}
             appInfo={{
-              appName: "ChainLook",
+              appName: 'ChainLook',
               disclaimer: Disclaimer,
             }}
             showRecentTransactions={false}

@@ -33,14 +33,12 @@ export function getFieldNamesRequiredForWidget(widget) {
   // Include all fields mentioned in join and group
   const fieldsRequiredForJoin = [...new Set(Object.entries(widget.data?.join ?? {}).flat())];
   const fieldsRequiredForGroup = widget.data.group?.dataKey ?? [];
-  const fieldsRequiredForDynamicFields = Object.values(widget.data.dynamicFields || {}).map((d: any) => d?.fields)?.flat() || [];
+  const fieldsRequiredForDynamicFields =
+    Object.values(widget.data.dynamicFields || {})
+      .map((d: any) => d?.fields)
+      ?.flat() || [];
 
-  return [
-    ...displayFields,
-    ...fieldsRequiredForJoin,
-    ...fieldsRequiredForGroup,
-    ...fieldsRequiredForDynamicFields,
-  ];
+  return [...displayFields, ...fieldsRequiredForJoin, ...fieldsRequiredForGroup, ...fieldsRequiredForDynamicFields];
 }
 
 /**

@@ -1,46 +1,33 @@
-import axios, { AxiosHeaders } from "axios";
-import { SiweMessage } from "siwe";
-import Dashboard from "../domain/dashboard";
-import Widget from "../domain/widget";
-import { getToken } from "./auth";
-import {
-  groupItems,
-  flattenAndTransformItem,
-  computeDynamicFields,
-} from "./modifiers/helpers";
-import { queryGraphQl } from "./providers/graph";
-import { getWidgetDataFromProvider } from "./providers/helpers";
-import { fetchDataFromIPFS, fetchDataFromIPNS } from "./utils/network";
-import {
-  applyVariables,
-  getFieldNamesRequiredForWidget,
-} from "./utils/widget-parsing";
+import axios, { AxiosHeaders } from 'axios';
+import { SiweMessage } from 'siwe';
+import Dashboard from '../domain/dashboard';
+import Widget from '../domain/widget';
+import { getToken } from './auth';
+import { groupItems, flattenAndTransformItem, computeDynamicFields } from './modifiers/helpers';
+import { queryGraphQl } from './providers/graph';
+import { getWidgetDataFromProvider } from './providers/helpers';
+import { fetchDataFromIPFS, fetchDataFromIPNS } from './utils/network';
+import { applyVariables, getFieldNamesRequiredForWidget } from './utils/widget-parsing';
 
 let apiInstance = axios.create({
-  baseURL: "http://localhost:9000",
+  baseURL: 'http://localhost:9000',
 });
 
 apiInstance.interceptors.request.use((config) => {
   const token = getToken();
 
-  (config.headers as AxiosHeaders).set("Authorization", `Bearer ${token}`);
+  (config.headers as AxiosHeaders).set('Authorization', `Bearer ${token}`);
   return config;
 });
 
 export default class API {
   static async getNonce() {
-    const response = await apiInstance.get("/nonce");
+    const response = await apiInstance.get('/nonce');
     return response.data;
   }
 
-  static async signIn({
-    message,
-    signature,
-  }: {
-    message: SiweMessage;
-    signature: string;
-  }) {
-    const response = await apiInstance.post("/sign-in", {
+  static async signIn({ message, signature }: { message: SiweMessage; signature: string }) {
+    const response = await apiInstance.post('/sign-in', {
       message,
       signature,
     });
@@ -55,10 +42,9 @@ export default class API {
   }
 
   static async fetchDataForWidget(widget, variables) {
-    const { source, sources, group, join, transforms, dynamicFields } =
-      widget.data;
+    const { source, sources, group, join, transforms, dynamicFields } = widget.data;
 
-    const isSingleSource = typeof source === "object";
+    const isSingleSource = typeof source === 'object';
 
     // Get fields required to be queries from all providers
     const fieldsRequiredForWidget = getFieldNamesRequiredForWidget(widget);
@@ -66,8 +52,8 @@ export default class API {
     // Group joins by provider (check both key and value of the join object)
     const allJoins = {};
     for (const [left, right] of Object.entries(join || {})) {
-      const [leftSource] = left.split(".");
-      const [rightSource] = right.split(".");
+      const [leftSource] = left.split('.');
+      const [rightSource] = right.split('.');
 
       if (!allJoins[leftSource]) allJoins[leftSource] = {};
       if (!allJoins[rightSource]) allJoins[rightSource] = {};
@@ -80,46 +66,33 @@ export default class API {
 
     if (isSingleSource) {
       const cleanConfig = applyVariables(source, variables); // Apply real values to config values starting with $
-      result = await getWidgetDataFromProvider(
-        cleanConfig,
-        fieldsRequiredForWidget
-      );
+      result = await getWidgetDataFromProvider(cleanConfig, fieldsRequiredForWidget);
       result = result.map((i) => flattenAndTransformItem(i, transforms));
     }
 
     if (!isSingleSource) {
       if (!sources) {
-        throw new Error("data.sources not defined in schema");
+        throw new Error('data.sources not defined in schema');
       }
 
       // Fetch data from each data source and produce { sourceKey, items }[]
       const resultFromSources = await Promise.all(
         Object.entries(sources).map(async ([sourceKey, sourceConfig]) => {
           const cleanConfig = applyVariables(sourceConfig, variables);
-          const items = await getWidgetDataFromProvider(
-            cleanConfig,
-            fieldsRequiredForWidget,
-            sourceKey
-          );
+          const items = await getWidgetDataFromProvider(cleanConfig, fieldsRequiredForWidget, sourceKey);
           return { sourceKey, items };
-        })
+        }),
       );
 
       // Apply transformations and join
       for (const { sourceKey, items = [] } of resultFromSources) {
         for (const item of items) {
-          const cleanItem = flattenAndTransformItem(
-            item,
-            transforms,
-            sourceKey
-          );
+          const cleanItem = flattenAndTransformItem(item, transforms, sourceKey);
 
           // Look for matching items in the final results based on the join conditions
           const joinsForSource = allJoins[sourceKey] || {};
           const matchingItem = result.find((f) =>
-            Object.keys(joinsForSource).every(
-              (jk) => cleanItem[jk] === f[joinsForSource[jk]]
-            )
+            Object.keys(joinsForSource).every((jk) => cleanItem[jk] === f[joinsForSource[jk]]),
           );
 
           if (matchingItem) {
@@ -147,7 +120,7 @@ export default class API {
   }
 
   static async createWidget(widget: Partial<Widget>) {
-    const response = await apiInstance.post("/widgets", {
+    const response = await apiInstance.post('/widgets', {
       title: widget.title,
       definition: widget.definition,
       tags: widget.tags,
@@ -157,7 +130,7 @@ export default class API {
   }
 
   static async editWidget(widget: Widget) {
-    const response = await apiInstance.patch("/widgets/" + widget.id, {
+    const response = await apiInstance.patch('/widgets/' + widget.id, {
       title: widget.title,
       definition: widget.definition,
       tags: widget.tags,
@@ -167,7 +140,7 @@ export default class API {
   }
 
   static async getWidgetsByUser(userId: string) {
-    const response = await apiInstance.get("/widgets/", {
+    const response = await apiInstance.get('/widgets/', {
       params: { userId },
     });
 
@@ -175,9 +148,9 @@ export default class API {
   }
 
   static async getDashboard(id: string) {
-    const [protocolOrAuthor, dashboardId] = id.split(":");
+    const [protocolOrAuthor, dashboardId] = id.split(':');
 
-    if (protocolOrAuthor === "ipfs") {
+    if (protocolOrAuthor === 'ipfs') {
       const data = await fetchDataFromIPFS(dashboardId);
       return {
         definition: data,
@@ -185,7 +158,7 @@ export default class API {
       } as Dashboard;
     }
 
-    if (protocolOrAuthor === "ipns") {
+    if (protocolOrAuthor === 'ipns') {
       const data = await fetchDataFromIPNS(dashboardId);
       return {
         definition: data,
@@ -198,10 +171,8 @@ export default class API {
     return new Dashboard(response.data);
   }
 
-  static async createDashboard(
-    dashboard: Partial<Dashboard>
-  ): Promise<Dashboard> {
-    const response = await apiInstance.post("/dashboards", {
+  static async createDashboard(dashboard: Partial<Dashboard>): Promise<Dashboard> {
+    const response = await apiInstance.post('/dashboards', {
       title: dashboard.title,
       definition: dashboard.definition,
       tags: dashboard.tags,
@@ -211,10 +182,8 @@ export default class API {
     return response.data;
   }
 
-  static async editDashboard(
-    dashboard: Partial<Dashboard>
-  ): Promise<Dashboard> {
-    const response = await apiInstance.patch("/dashboards/" + dashboard.id, {
+  static async editDashboard(dashboard: Partial<Dashboard>): Promise<Dashboard> {
+    const response = await apiInstance.patch('/dashboards/' + dashboard.id, {
       title: dashboard.title,
       definition: dashboard.definition,
       tags: dashboard.tags,
@@ -224,7 +193,7 @@ export default class API {
   }
 
   static async getDashboardsByUser(userId: string) {
-    const response = await apiInstance.get("/dashboards/", {
+    const response = await apiInstance.get('/dashboards/', {
       params: { userId },
     });
 
@@ -232,21 +201,21 @@ export default class API {
   }
 
   static async getRecentDashboards() {
-    const response = await apiInstance.get("/dashboards/", {
-      params: { sort: "createdOn", order: "desc", limit: 10 },
+    const response = await apiInstance.get('/dashboards/', {
+      params: { sort: 'createdOn', order: 'desc', limit: 10 },
     });
     return response.data?.map((w: any) => new Dashboard(w));
   }
 
   static async getRecentWidgets() {
-    const response = await apiInstance.get("/widgets/", {
-      params: { sort: "createdOn", order: "desc", limit: 10 },
+    const response = await apiInstance.get('/widgets/', {
+      params: { sort: 'createdOn', order: 'desc', limit: 10 },
     });
     return response.data?.map((w: any) => new Widget(w));
   }
 
   static async editProfile(params: { username: string }) {
-    const response = await apiInstance.patch("/profile", {
+    const response = await apiInstance.patch('/profile', {
       username: params.username,
     });
 
@@ -263,7 +232,7 @@ export default class API {
   }
 
   static async getStarredDashboards(userId: string) {
-    const response = await apiInstance.get("/dashboards/", {
+    const response = await apiInstance.get('/dashboards/', {
       params: { starredBy: userId },
     });
     return response.data?.map((w: any) => new Dashboard(w));

@@ -3,9 +3,7 @@ import { applyVariables } from '../utils/widget-parsing';
 
 export default async function fetchWidgetDataFromTableland(config, fieldsRequired, variables) {
   const { network, tableName, ...restConfig } = config;
-  const {
-    orderBy, orderDirection, skip, first, filters,
-  } = applyVariables(restConfig, variables);
+  const { orderBy, orderDirection, skip, first, filters } = applyVariables(restConfig, variables);
 
   const tableland = await connect({ network });
 

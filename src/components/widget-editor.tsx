@@ -11,38 +11,44 @@ const SCHEMA_URL = window.origin + '/schemas/widget.json';
 
 // @ts-ignore
 self.MonacoEnvironment = {
-	getWorker(_: any, label: string) {
-		if (label === 'json') {
-			return new jsonWorker();
-		}
-		return new editorWorker();
-	}
+  getWorker(_: any, label: string) {
+    if (label === 'json') {
+      return new jsonWorker();
+    }
+    return new editorWorker();
+  },
 };
 
 monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
 
-const examples = [{
-  title: 'Line Chart - Uniswap usage trend',
-  url: '../examples/widget-line-chart-uniswap-usage.json',
-}, {
-  title: 'Table - Uniswap top pools (incl. grouping)',
-  url: '../examples/widget-table-uniswap-top-pools.json',
-}, {
-  title: 'Area Chart - Uniswap daily volume',
-  url: '../examples/widget-area-uniswap-daily-volume.json',
-}, {
-  title: 'Metric - Uniswap total pools',
-  url: '../examples/widget-metric-uniswap-pools.json',
-}, {
-  title: 'Bar Chart - Data from IPFS (json)',
-  url: '../examples/widget-bar-chart-ipfs.json',
-}, {
-  title: 'Table - Data from Tableland',
-  url: '../examples/widget-table-tableland.json',
-}];
+const examples = [
+  {
+    title: 'Line Chart - Uniswap usage trend',
+    url: '../examples/widget-line-chart-uniswap-usage.json',
+  },
+  {
+    title: 'Table - Uniswap top pools (incl. grouping)',
+    url: '../examples/widget-table-uniswap-top-pools.json',
+  },
+  {
+    title: 'Area Chart - Uniswap daily volume',
+    url: '../examples/widget-area-uniswap-daily-volume.json',
+  },
+  {
+    title: 'Metric - Uniswap total pools',
+    url: '../examples/widget-metric-uniswap-pools.json',
+  },
+  {
+    title: 'Bar Chart - Data from IPFS (json)',
+    url: '../examples/widget-bar-chart-ipfs.json',
+  },
+  {
+    title: 'Table - Data from Tableland',
+    url: '../examples/widget-table-tableland.json',
+  },
+];
 
-
-function WidgetEditor(props: { definition: object, onChange: (d: object) => void}) {
+function WidgetEditor(props: { definition: object; onChange: (d: object) => void }) {
   const { definition, onChange } = props;
 
   const [widgetJson, setWidgetJson] = React.useState<string>();
@@ -56,33 +62,29 @@ function WidgetEditor(props: { definition: object, onChange: (d: object) => void
     }
   }, [definition]);
 
-  const debounced = useDebouncedCallback(
-    (newJson) => {
-      try {
-        onChange(JSON.parse(newJson));
-      } catch (e) {
-        // Ignore
-      }
-    },
-    500,
-  );
+  const debounced = useDebouncedCallback((newJson) => {
+    try {
+      onChange(JSON.parse(newJson));
+    } catch (e) {
+      // Ignore
+    }
+  }, 500);
 
   async function onChangeExample(url: string) {
-      const definition = await fetchDataFromHTTP({ url });
-      if (definition) {
-        onChange(definition);
-      }
-      setExamplesModalOpen(false)
+    const definition = await fetchDataFromHTTP({ url });
+    if (definition) {
+      onChange(definition);
+    }
+    setExamplesModalOpen(false);
   }
 
-
   return (
-    <div className="create-widget-editor">
+    <div className='create-widget-editor'>
       <MonacoEditor
-        width="100%"
-        height="100%"
-        language="json"
-        theme="vs-light"
+        width='100%'
+        height='100%'
+        language='json'
+        theme='vs-light'
         value={widgetJson}
         options={{
           fontSize: 13,
@@ -98,40 +100,46 @@ function WidgetEditor(props: { definition: object, onChange: (d: object) => void
           monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
             validate: true,
             enableSchemaRequest: true,
-            schemas: [{
-              fileMatch: ['*'],
-              uri: SCHEMA_URL,
-            }],
+            schemas: [
+              {
+                fileMatch: ['*'],
+                uri: SCHEMA_URL,
+              },
+            ],
           });
         }}
       />
 
       <div className='widget-editor-links'>
-        <button className="link mr-3" onClick={() => setExamplesModalOpen(true)}>
+        <button className='link mr-3' onClick={() => setExamplesModalOpen(true)}>
           Load Example
         </button>
-        <a className="link" href={SCHEMA_URL} target="_blank">
+        <a className='link' href={SCHEMA_URL} target='_blank'>
           View Schema
         </a>
       </div>
 
-      <Modal isOpen={examplesModalOpen} title="Load an example" height="200px" onRequestClose={() => setExamplesModalOpen(false)}>
-        <div className="new-widget-example mb-4">
-          <label htmlFor="example" className="mr-3">Example:</label>
+      <Modal
+        isOpen={examplesModalOpen}
+        title='Load an example'
+        height='200px'
+        onRequestClose={() => setExamplesModalOpen(false)}
+      >
+        <div className='new-widget-example mb-4'>
+          <label htmlFor='example' className='mr-3'>
+            Example:
+          </label>
 
-          <select
-            name="example"
-            id="example"
-            onChange={(e) => onChangeExample(e.target.value)}
-          >
-            <option value="select">Select</option>
+          <select name='example' id='example' onChange={(e) => onChangeExample(e.target.value)}>
+            <option value='select'>Select</option>
             {examples.map((example) => (
-              <option key={example.title} value={example.url}>{example.title}</option>
+              <option key={example.title} value={example.url}>
+                {example.title}
+              </option>
             ))}
           </select>
         </div>
       </Modal>
-
     </div>
   );
 }

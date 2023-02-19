@@ -191,11 +191,7 @@
         }
       },
       "required": ["xAxis"],
-      "anyOf": [
-        { "required": ["areas"] },
-        { "required": ["bars"] },
-        { "required": ["lines"] }
-      ]
+      "anyOf": [{ "required": ["areas"] }, { "required": ["bars"] }, { "required": ["lines"] }]
     },
     "widget-pieChart": {
       "type": "object",

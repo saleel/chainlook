@@ -2,13 +2,14 @@ import Formatters from '../../data/modifiers/formatters';
 
 function Table(props) {
   const {
-    data = [], config: { columns = [] },
+    data = [],
+    config: { columns = [] },
   } = props;
 
   try {
     return (
-      <div className="table-container">
-        <table className="table">
+      <div className='table-container'>
+        <table className='table'>
           <thead>
             <tr>
               {columns.map((column) => (
@@ -33,9 +34,7 @@ function Table(props) {
                     value = Formatters[column.format](value);
                   }
 
-                  return (
-                    <td key={column.dataKey}>{String(value)}</td>
-                  );
+                  return <td key={column.dataKey}>{String(value)}</td>;
                 })}
               </tr>
             ))}
@@ -47,13 +46,7 @@ function Table(props) {
     // eslint-disable-next-line no-console
     console.error(error);
 
-    return (
-      <div className="error">
-        Error:
-        {' '}
-        {error.message}
-      </div>
-    );
+    return <div className='error'>Error: {error.message}</div>;
   }
 }
 

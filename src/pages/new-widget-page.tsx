@@ -1,38 +1,38 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import WidgetView from "../components/widget-view";
-import API from "../data/api";
-import WidgetEditor from "../components/widget-editor";
-import Widget from "../domain/widget";
-import { AuthContext } from "../context/auth-context";
-import User from "../domain/user";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
-import Store from "../data/store";
-import { useDebouncedCallback } from "use-debounce";
-import { cleanString } from "../utils";
-import Modal from "../components/modal";
-import WidgetWizard from "../components/widget-wizard";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import WidgetView from '../components/widget-view';
+import API from '../data/api';
+import WidgetEditor from '../components/widget-editor';
+import Widget from '../domain/widget';
+import { AuthContext } from '../context/auth-context';
+import User from '../domain/user';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
+import Store from '../data/store';
+import { useDebouncedCallback } from 'use-debounce';
+import { cleanString } from '../utils';
+import Modal from '../components/modal';
+import WidgetWizard from '../components/widget-wizard';
 
-const DEFAULT_DEFINITION: Widget["definition"] = {
-  type: "table",
+const DEFAULT_DEFINITION: Widget['definition'] = {
+  type: 'table',
   data: {
     source: {
-      provider: "graph",
-      subgraphId: "messari/uniswap-v3-ethereum",
-      entity: "financialsDailySnapshots",
+      provider: 'graph',
+      subgraphId: 'messari/uniswap-v3-ethereum',
+      entity: 'financialsDailySnapshots',
     },
   },
   table: {
     columns: [
       {
-        dataKey: "timestamp",
-        format: "dateMMMdd",
-        label: "Date",
+        dataKey: 'timestamp',
+        format: 'dateMMMdd',
+        label: 'Date',
       },
       {
-        dataKey: "dailyVolumeUSD",
-        label: "Daily Volume (USD)",
-        format: "number",
+        dataKey: 'dailyVolumeUSD',
+        label: 'Daily Volume (USD)',
+        format: 'number',
       },
     ],
   },
@@ -49,19 +49,19 @@ function NewWidgetPage() {
   const [widget, setWidget] = React.useState(
     Store.getWidgetDraft() ||
       new Widget({
-        id: "",
-        title: "",
+        id: '',
+        title: '',
         tags: [],
         definition: DEFAULT_DEFINITION,
         version: 1,
-        user: user || new User({ id: "", address: "" }),
+        user: user || new User({ id: '', address: '' }),
         createdOn: new Date(),
         updatedOn: new Date(),
-      })
+      }),
   );
 
   React.useEffect(() => {
-    document.title = "New Widget - ChainLook";
+    document.title = 'New Widget - ChainLook';
   }, []);
 
   const saveDraft = useDebouncedCallback((w) => Store.saveWidgetDraft(w), 1000);
@@ -97,54 +97,46 @@ function NewWidgetPage() {
   const { definition, title, tags } = widget;
 
   return (
-    <div className="page create-widget-page">
-      <h2 className="section-title">
+    <div className='page create-widget-page'>
+      <h2 className='section-title'>
         Create new widget
-        <button
-          className="button is-small ml-5"
-          onClick={() => setIsWizardOpen(true)}
-        >
+        <button className='button is-small ml-5' onClick={() => setIsWizardOpen(true)}>
           Use Wizard
         </button>
       </h2>
 
-      <div className="create-widget-container">
-        <div className="create-widget-section">
-          <WidgetEditor
-            onChange={(d) => updateWidget("definition", d)}
-            definition={definition}
-          />
+      <div className='create-widget-container'>
+        <div className='create-widget-section'>
+          <WidgetEditor onChange={(d) => updateWidget('definition', d)} definition={definition} />
 
-          <form className="create-widget-helper" onSubmit={onFormSubmit}>
-            <div className="field">
-              <label className="label">Title</label>
-              <div className="control">
+          <form className='create-widget-helper' onSubmit={onFormSubmit}>
+            <div className='field'>
+              <label className='label'>Title</label>
+              <div className='control'>
                 <input
-                  type="text"
-                  className="input"
-                  placeholder="Enter widget title"
+                  type='text'
+                  className='input'
+                  placeholder='Enter widget title'
                   value={cleanString(title)}
                   required
                   onChange={(e) => {
-                    updateWidget("title", e.target.value);
+                    updateWidget('title', e.target.value);
                   }}
                 />
               </div>
             </div>
-            <div className="field">
-              <label className="label">Tags</label>
+            <div className='field'>
+              <label className='label'>Tags</label>
               <input
-                type="text"
-                className="input"
-                placeholder="Enter tags separated by comma"
+                type='text'
+                className='input'
+                placeholder='Enter tags separated by comma'
                 value={tags}
-                onChange={(e) =>
-                  updateWidget("tags", e.target.value.split(","))
-                }
+                onChange={(e) => updateWidget('tags', e.target.value.split(','))}
               />
             </div>
             <hr />
-            <button type="submit" className="button">
+            <button type='submit' className='button'>
               Save
             </button>
           </form>
@@ -152,8 +144,8 @@ function NewWidgetPage() {
 
         <hr />
 
-        <div className="create-widget-preview">
-          <div className="section-title">Preview</div>
+        <div className='create-widget-preview'>
+          <div className='section-title'>Preview</div>
 
           <WidgetView widget={widget} />
         </div>
@@ -162,13 +154,13 @@ function NewWidgetPage() {
       <Modal
         isOpen={isWizardOpen}
         onRequestClose={() => setIsWizardOpen(false)}
-        title="Widget wizard"
-        height="min(800px, 80vh)"
-        width="min(800px, 80vw)"
+        title='Widget wizard'
+        height='min(800px, 80vh)'
+        width='min(800px, 80vw)'
       >
         <WidgetWizard
           onSubmit={(def) => {
-            updateWidget("definition", def);
+            updateWidget('definition', def);
             setIsWizardOpen(false);
           }}
         />

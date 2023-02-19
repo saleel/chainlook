@@ -6,15 +6,17 @@ import { GRAPH_API_KEY, GRAPH_API_URL, GRAPH_HOSTED_SERVICE_URL } from '../../co
 import Store from '../store';
 
 export default async function fetchWidgetDataFromTheGraph(config: any, fieldsRequired: string[], variables: object) {
-  const {
-    subgraphId, entity, orderBy, orderDirection, skip = 0, first, filters,
-  } = config;
+  const { subgraphId, entity, orderBy, orderDirection, skip = 0, first, filters } = config;
 
   const fieldsObject = {};
   fieldsRequired.forEach((field) => set(fieldsObject, field, true));
 
   let queryFilters = {
-    orderBy, orderDirection, skip, first, ...filters,
+    orderBy,
+    orderDirection,
+    skip,
+    first,
+    ...filters,
   };
   queryFilters = applyVariables(queryFilters, variables);
 
@@ -35,7 +37,7 @@ export default async function fetchWidgetDataFromTheGraph(config: any, fieldsReq
   const query = jsonToGraphQLQuery(queryObj, { pretty: true });
 
   const result = await queryGraphQl(subgraphId, query);
-  
+
   return result.data?.[entity] ?? null;
 }
 
