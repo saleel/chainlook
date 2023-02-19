@@ -17,10 +17,13 @@ function WidgetView(props: { widget: Widget; showActions?: boolean }) {
 
   const [isAutoRefreshEnabled, setIsAutoRefreshEnabled] = React.useState(false);
 
-  const [data, { isFetching, error, reFetch }] = usePromise(() => API.fetchDataForWidget(widget.definition, {}), {
-    dependencies: [widget.definition],
-    conditions: [widget && widget.definition],
-  });
+  const [data, { isFetching, error, reFetch }] = usePromise(
+    () => API.fetchDataForWidget(widget.definition, {}),
+    {
+      dependencies: [widget.definition],
+      conditions: [widget && widget.definition],
+    },
+  );
 
   React.useEffect(() => {
     let interval: NodeJS.Timer;
@@ -155,7 +158,11 @@ function WidgetView(props: { widget: Widget; showActions?: boolean }) {
               className='ml-4 icon-button widget-action-item'
               style={{ width: '15px' }}
             >
-              {isAutoRefreshEnabled ? <div className='blink-dot mb-1'></div> : <IoRefresh size={17} />}
+              {isAutoRefreshEnabled ? (
+                <div className='blink-dot mb-1'></div>
+              ) : (
+                <IoRefresh size={17} />
+              )}
             </button>
           </div>
         )}

@@ -27,4 +27,3 @@ export function formatDate(textOrDate: string | Date): string {
     day: 'numeric',
   });
 }
-

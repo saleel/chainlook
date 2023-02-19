@@ -34,7 +34,9 @@ export default async function fetchWidgetDataFromTableland(config, fieldsRequire
     filtersQuery += ` OFFSET ${skip}`;
   }
 
-  const query = `SELECT ${fieldsRequired.join(', ')} FROM ${tableName} ${whereQuery} ${filtersQuery};`;
+  const query = `SELECT ${fieldsRequired.join(
+    ', ',
+  )} FROM ${tableName} ${whereQuery} ${filtersQuery};`;
 
   const result = await tableland.read(query);
 

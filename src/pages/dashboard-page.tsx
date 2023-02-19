@@ -19,10 +19,13 @@ function DashboardPage() {
   const [starCount, setStarCount] = React.useState(0);
   const { user, isAuthenticated } = React.useContext(AuthContext);
 
-  const [dashboard, { isFetching, error }] = usePromise<Dashboard>(() => API.getDashboard(id as string), {
-    dependencies: [id],
-    conditions: [id],
-  });
+  const [dashboard, { isFetching, error }] = usePromise<Dashboard>(
+    () => API.getDashboard(id as string),
+    {
+      dependencies: [id],
+      conditions: [id],
+    },
+  );
 
   const [starredDashboards, { isFetching: isFetchingStarred }] = usePromise<Dashboard[]>(
     () => API.getStarredDashboards(user!.id),
@@ -123,7 +126,11 @@ function DashboardPage() {
           )}
 
           {isDashboardOwner && (
-            <Link className='button is-normal' to={`/dashboards/${dashboard.id}/edit`} title='Edit the dashboard'>
+            <Link
+              className='button is-normal'
+              to={`/dashboards/${dashboard.id}/edit`}
+              title='Edit the dashboard'
+            >
               Edit
             </Link>
           )}

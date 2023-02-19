@@ -39,7 +39,12 @@ function Modal(props: ModalProps) {
         {children}
       </div>
 
-      <button type='button' className='modal-close' aria-label='close' onClick={() => onRequestClose()} />
+      <button
+        type='button'
+        className='modal-close'
+        aria-label='close'
+        onClick={() => onRequestClose()}
+      />
     </ReactModal>
   );
 }

@@ -33,7 +33,7 @@ function WidgetWizard(props: WidgetWizardProps) {
     {
       conditions: [subgraphId],
       dependencies: [subgraphId],
-      defaultValue: {}
+      defaultValue: {},
     },
   );
 
@@ -42,10 +42,11 @@ function WidgetWizard(props: WidgetWizardProps) {
   const queryNames = Object.keys(subgraphQueries);
   const fieldsInSelectedQuery = subgraphQueries[selectedEntityName] || [];
 
-  const isValid = widgetDefinition?.table?.columns?.length > 0
-    || widgetDefinition?.chart?.xAxis?.dataKey
-    || widgetDefinition?.pieChart?.dataKey
-    || widgetDefinition?.metric?.dataKey;
+  const isValid =
+    widgetDefinition?.table?.columns?.length > 0 ||
+    widgetDefinition?.chart?.xAxis?.dataKey ||
+    widgetDefinition?.pieChart?.dataKey ||
+    widgetDefinition?.metric?.dataKey;
 
   function onFormSubmit(e: any) {
     e.preventDefault();
@@ -120,7 +121,10 @@ function WidgetWizard(props: WidgetWizardProps) {
 
   return (
     <div className='widget-wizard h-100'>
-      <form className='is-flex is-flex-direction-column is-justify-content-space-between h-100' onSubmit={onFormSubmit}>
+      <form
+        className='is-flex is-flex-direction-column is-justify-content-space-between h-100'
+        onSubmit={onFormSubmit}
+      >
         <div>
           <div className='field mb-5'>
             <label className='label'>Subgraph ID</label>
@@ -168,7 +172,9 @@ function WidgetWizard(props: WidgetWizardProps) {
 
                       <div className='select'>
                         <select
-                          onChange={(e) => updateWidgetDefinition('data.source.orderBy', e.target.value)}
+                          onChange={(e) =>
+                            updateWidgetDefinition('data.source.orderBy', e.target.value)
+                          }
                           value={widgetDefinition?.data?.source?.orderBy}
                         >
                           <option>Select</option>
@@ -187,7 +193,9 @@ function WidgetWizard(props: WidgetWizardProps) {
                       <label className='label'>Order direction</label>
                       <div className='select'>
                         <select
-                          onChange={(e) => updateWidgetDefinition('data.source.orderDirection', e.target.value)}
+                          onChange={(e) =>
+                            updateWidgetDefinition('data.source.orderDirection', e.target.value)
+                          }
                           value={widgetDefinition?.data?.source.orderDirection ?? ''}
                         >
                           <option>Select</option>
@@ -211,7 +219,9 @@ function WidgetWizard(props: WidgetWizardProps) {
                           className='input'
                           value={widgetDefinition?.data?.source.limit ?? ''}
                           placeholder='Number of items'
-                          onChange={(e) => updateWidgetDefinition('data.source.limit', Number(e.target.value))}
+                          onChange={(e) =>
+                            updateWidgetDefinition('data.source.limit', Number(e.target.value))
+                          }
                         />
                       </div>
                     </div>
@@ -227,7 +237,10 @@ function WidgetWizard(props: WidgetWizardProps) {
             <div className='field mb-5'>
               <label className='label'>Widget type</label>
               <div className='select'>
-                <select onChange={(e) => updateWidgetDefinition('type', e.target.value)} value={widgetType}>
+                <select
+                  onChange={(e) => updateWidgetDefinition('type', e.target.value)}
+                  value={widgetType}
+                >
                   <option value=''>Select</option>
                   <option value='table'>Table</option>
                   <option value='metric'>Metric (Display a single key metric)</option>
@@ -254,7 +267,8 @@ function WidgetWizard(props: WidgetWizardProps) {
             </>
           )}
 
-          {widgetType === 'table' && renderMultiFieldSelector('Columns', 'table.columns', 'dataKey')}
+          {widgetType === 'table' &&
+            renderMultiFieldSelector('Columns', 'table.columns', 'dataKey')}
 
           {widgetType === 'metric' && renderFieldSelector('Data Key', 'metric.dataKey')}
         </div>

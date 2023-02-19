@@ -19,7 +19,9 @@ function ElementList(props: Props) {
 
       {loading && <div className='element-list-items p-4'>Loading...</div>}
 
-      {!loading && elements.length === 0 && <div className='element-list-items p-4'>No items found</div>}
+      {!loading && elements.length === 0 && (
+        <div className='element-list-items p-4'>No items found</div>
+      )}
 
       {!loading && elements.length > 0 && (
         <div className='element-list-items'>
@@ -38,7 +40,9 @@ function ElementList(props: Props) {
 
                 <div className='element-list-item-info'>
                   {element.user && <span>Created by @{element.user!.username}</span>}
-                  {element.createdOn && <span className='ml-2'>on {formatDate(element.createdOn)}</span>}
+                  {element.createdOn && (
+                    <span className='ml-2'>on {formatDate(element.createdOn)}</span>
+                  )}
                 </div>
               </Link>
             );

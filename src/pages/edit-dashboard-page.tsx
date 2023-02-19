@@ -16,10 +16,13 @@ function EditDashboardPage() {
 
   const { isAuthenticated } = React.useContext(AuthContext);
 
-  const [dashboard, { isFetching, error }] = usePromise<Dashboard>(() => API.getDashboard(dashboardId as string), {
-    dependencies: [dashboardId],
-    conditions: [dashboardId],
-  });
+  const [dashboard, { isFetching, error }] = usePromise<Dashboard>(
+    () => API.getDashboard(dashboardId as string),
+    {
+      dependencies: [dashboardId],
+      conditions: [dashboardId],
+    },
+  );
 
   React.useEffect(() => {
     if (dashboard) {

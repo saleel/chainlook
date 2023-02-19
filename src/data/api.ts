@@ -79,7 +79,11 @@ export default class API {
       const resultFromSources = await Promise.all(
         Object.entries(sources).map(async ([sourceKey, sourceConfig]) => {
           const cleanConfig = applyVariables(sourceConfig, variables);
-          const items = await getWidgetDataFromProvider(cleanConfig, fieldsRequiredForWidget, sourceKey);
+          const items = await getWidgetDataFromProvider(
+            cleanConfig,
+            fieldsRequiredForWidget,
+            sourceKey,
+          );
           return { sourceKey, items };
         }),
       );

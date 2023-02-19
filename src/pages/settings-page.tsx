@@ -13,7 +13,9 @@ function SettingsPage() {
     const apiKey = e.target.apiKey.value;
     Store.setTheGraphAPIKey(apiKey);
 
-    alert('API key saved successfully. This key will be used for all future queries to TheGraph network.');
+    alert(
+      'API key saved successfully. This key will be used for all future queries to TheGraph network.',
+    );
   }
 
   return (
@@ -27,8 +29,8 @@ function SettingsPage() {
       <div className='section mb-6'>
         <div className='section-title'>TheGraph API Key</div>
         <p>
-          You can set your own API key to query TheGraph. This will be used when you render a widget that use subgraphs
-          from TheGraph decentralized network.
+          You can set your own API key to query TheGraph. This will be used when you render a widget
+          that use subgraphs from TheGraph decentralized network.
         </p>
         <p>
           This wont be used for subgraphs built on top of the hosted service, or other data sources.
@@ -37,15 +39,20 @@ function SettingsPage() {
           </a>
         </p>
         <p>
-          Your keys are only saved on your local storage. They are not sent to Chainlook servers. The key will be lost
-          if you clear your browser storage.
+          Your keys are only saved on your local storage. They are not sent to Chainlook servers.
+          The key will be lost if you clear your browser storage.
         </p>
 
         <form className='mt-4' onSubmit={onAPIFormSubmit}>
           <div className='field'>
             <label className='label'>TheGraph API Key</label>
             <div className='control'>
-              <input id='apiKey' className='input' type='text' defaultValue={Store.getTheGraphAPIKey() || ''} />
+              <input
+                id='apiKey'
+                className='input'
+                type='text'
+                defaultValue={Store.getTheGraphAPIKey() || ''}
+              />
             </div>
           </div>
 

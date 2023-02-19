@@ -38,7 +38,12 @@ export function getFieldNamesRequiredForWidget(widget) {
       .map((d: any) => d?.fields)
       ?.flat() || [];
 
-  return [...displayFields, ...fieldsRequiredForJoin, ...fieldsRequiredForGroup, ...fieldsRequiredForDynamicFields];
+  return [
+    ...displayFields,
+    ...fieldsRequiredForJoin,
+    ...fieldsRequiredForGroup,
+    ...fieldsRequiredForDynamicFields,
+  ];
 }
 
 /**

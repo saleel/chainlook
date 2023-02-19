@@ -18,7 +18,7 @@ type FieldDetails = {
   name: string;
   nameForFilter: string;
   formatter?: string;
-}
+};
 
 export function getFormatterForField(name: string, type: string) {
   const fieldName = name.toLowerCase();
@@ -39,7 +39,6 @@ export function getFormatterForField(name: string, type: string) {
     return 'bigDecimal';
   }
 }
-
 
 export function getQueriesAndFieldsFromGraphQlSchema(schema: GraphQlSchema) {
   // Get all queries
@@ -62,7 +61,11 @@ export function getQueriesAndFieldsFromGraphQlSchema(schema: GraphQlSchema) {
     const returnEntityFields = schema.types.find((t) => t.name === returnEntity.name)?.fields ?? [];
 
     const fieldNameMap: FieldDetails[] = [];
-    const fieldsToProcess = [...returnEntityFields] as { name: string; type: FieldType; _path?: string }[];
+    const fieldsToProcess = [...returnEntityFields] as {
+      name: string;
+      type: FieldType;
+      _path?: string;
+    }[];
 
     while (fieldsToProcess.length > 0) {
       const field = fieldsToProcess.shift();

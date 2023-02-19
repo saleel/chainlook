@@ -140,7 +140,9 @@ export function AuthContextProvider(props: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated: authStatus === 'authenticated' || isTokenValid(), user }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated: authStatus === 'authenticated' || isTokenValid(), user }}
+    >
       <WagmiConfig client={wagmiClient}>
         <RainbowKitAuthenticationProvider adapter={authAdapter} status={authStatus}>
           <RainbowKitProvider

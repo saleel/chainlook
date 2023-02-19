@@ -96,7 +96,10 @@ function NewWidgetPage() {
   }
 
   function onWizardSubmit(def: WidgetDefinition) {
-    if (widget.definition && !window.confirm('This will replace your existing configuration. Continue?')) {
+    if (
+      widget.definition &&
+      !window.confirm('This will replace your existing configuration. Continue?')
+    ) {
       return;
     }
     updateWidget('definition', def);

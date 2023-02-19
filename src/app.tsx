@@ -33,7 +33,7 @@ function App() {
           </Route>
 
           <Route path='users'>
-            <Route path=':id' element={<UserPage />} />
+            <Route path=':username' element={<UserPage />} />
           </Route>
 
           <Route path='settings' element={<SettingsPage />} />

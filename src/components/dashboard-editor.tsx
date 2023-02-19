@@ -209,17 +209,27 @@ function DashboardEditor(props: DashboardEditorProps) {
             className='button is-normal'
             disabled={dashboard.definition.elements.length === 0}
             onClick={() => {
-              if (window.confirm('Are you sure you want to clear all the items from the dashboard?')) {
+              if (
+                window.confirm('Are you sure you want to clear all the items from the dashboard?')
+              ) {
                 setDashboard(DEFAULT_DASHBOARD);
               }
             }}
           >
             Reset
           </button>
-          <button type='button' className='button is-normal' onClick={() => setIsAddTextModalOpen(true)}>
+          <button
+            type='button'
+            className='button is-normal'
+            onClick={() => setIsAddTextModalOpen(true)}
+          >
             Add Text
           </button>
-          <button type='button' className='button is-normal' onClick={() => setIsAddWidgetModalOpen(true)}>
+          <button
+            type='button'
+            className='button is-normal'
+            onClick={() => setIsAddWidgetModalOpen(true)}
+          >
             Add Widget
           </button>
           <button
@@ -244,7 +254,11 @@ function DashboardEditor(props: DashboardEditorProps) {
         <div className='mt-5 text-center message'>Start creating dashboard by adding Widgets</div>
       )}
 
-      <Modal isOpen={isAddWidgetModalOpen} onRequestClose={() => setIsAddWidgetModalOpen(false)} title='Add Widget'>
+      <Modal
+        isOpen={isAddWidgetModalOpen}
+        onRequestClose={() => setIsAddWidgetModalOpen(false)}
+        title='Add Widget'
+      >
         <div>
           {widgetOfUser.length > 0 ? (
             widgetOfUser.map((widget) => (
@@ -260,13 +274,19 @@ function DashboardEditor(props: DashboardEditorProps) {
             ))
           ) : (
             <div>
-              {user ? 'You have not created any widgets yet.' : 'You need to sign in to see your created widgets.'}
+              {user
+                ? 'You have not created any widgets yet.'
+                : 'You need to sign in to see your created widgets.'}
             </div>
           )}
         </div>
       </Modal>
 
-      <Modal isOpen={isAddTextModalOpen} onRequestClose={() => setIsAddTextModalOpen(false)} title='Add Text'>
+      <Modal
+        isOpen={isAddTextModalOpen}
+        onRequestClose={() => setIsAddTextModalOpen(false)}
+        title='Add Text'
+      >
         <form onSubmit={onNewTextFormSubmit}>
           <input name='title' className='form-input' type='text' placeholder='Title' />
           <textarea name='message' className='form-input' placeholder='Message' />
@@ -277,7 +297,11 @@ function DashboardEditor(props: DashboardEditorProps) {
         </form>
       </Modal>
 
-      <Modal title='Publish Dashboard' isOpen={isPublishModalOpen} onRequestClose={() => setIsPublishModalOpen(false)}>
+      <Modal
+        title='Publish Dashboard'
+        isOpen={isPublishModalOpen}
+        onRequestClose={() => setIsPublishModalOpen(false)}
+      >
         <form onSubmit={onPublishFormSubmit}>
           <div className='field'>
             <label className='label'>Title</label>

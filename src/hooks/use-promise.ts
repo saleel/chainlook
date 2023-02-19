@@ -71,8 +71,12 @@ function usePromise<T>(promise: () => Promise<T>, options: UsePromiseOptions = {
   });
 
   const [result, setResult] = React.useState<T>(cachedData ? cachedData.data : defaultValue);
-  const [fetchedAt, setFetchedAt] = React.useState<Date>(cachedData ? cachedData.storedAt : undefined);
-  const [isFetching, setIsFetching] = React.useState<boolean>(allConditionsValid && !(cachedData && cachedData.data));
+  const [fetchedAt, setFetchedAt] = React.useState<Date>(
+    cachedData ? cachedData.storedAt : undefined,
+  );
+  const [isFetching, setIsFetching] = React.useState<boolean>(
+    allConditionsValid && !(cachedData && cachedData.data),
+  );
   const [error, setError] = React.useState<Error>();
 
   let didCancel = false;
@@ -84,7 +88,10 @@ function usePromise<T>(promise: () => Promise<T>, options: UsePromiseOptions = {
     }
 
     if (cachedData) {
-      if (cachedData.storedAt && differenceInSeconds(new Date(), new Date(cachedData.storedAt)) < cachePeriodInSecs) {
+      if (
+        cachedData.storedAt &&
+        differenceInSeconds(new Date(), new Date(cachedData.storedAt)) < cachePeriodInSecs
+      ) {
         return;
       }
     }

@@ -50,7 +50,9 @@ export default function DashboardView(props: Props) {
       >
         {elements.map((element, index) => (
           <div key={index} data-grid={{ ...element.layout }}>
-            {element.widget && <WidgetView widget={element.widget as Widget} showActions={!isEditable} />}
+            {element.widget && (
+              <WidgetView widget={element.widget as Widget} showActions={!isEditable} />
+            )}
 
             {element.text && <TextView text={element.text} />}
 

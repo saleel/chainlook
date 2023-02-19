@@ -5,7 +5,11 @@ import { applyVariables } from '../utils/widget-parsing';
 import { GRAPH_API_KEY, GRAPH_API_URL, GRAPH_HOSTED_SERVICE_URL } from '../../constants';
 import Store from '../store';
 
-export default async function fetchWidgetDataFromTheGraph(config: any, fieldsRequired: string[], variables: object) {
+export default async function fetchWidgetDataFromTheGraph(
+  config: any,
+  fieldsRequired: string[],
+  variables: object,
+) {
   const { subgraphId, entity, orderBy, orderDirection, skip = 0, first, filters } = config;
 
   const fieldsObject = {};
@@ -61,7 +65,9 @@ export async function queryGraphQl(subgraphId: string, query: string) {
   });
 
   if (result.errors) {
-    throw new Error(`Error while querying data from subgraph ${subgraphId} \n${JSON.stringify(result.errors)}`);
+    throw new Error(
+      `Error while querying data from subgraph ${subgraphId} \n${JSON.stringify(result.errors)}`,
+    );
   }
 
   return result;

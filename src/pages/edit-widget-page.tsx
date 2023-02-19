@@ -16,10 +16,13 @@ function EditWidgetPage() {
 
   const { user } = React.useContext(AuthContext);
 
-  const [widget, { isFetching, error }] = usePromise<Widget>(() => API.getWidget(widgetId as string), {
-    dependencies: [widgetId],
-    conditions: [widgetId],
-  });
+  const [widget, { isFetching, error }] = usePromise<Widget>(
+    () => API.getWidget(widgetId as string),
+    {
+      dependencies: [widgetId],
+      conditions: [widgetId],
+    },
+  );
 
   React.useEffect(() => {
     if (!widget) return;

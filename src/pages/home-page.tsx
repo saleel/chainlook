@@ -37,24 +37,30 @@ function HomePage() {
     document.title = 'ChainLook - Blockchain analytics platform for subgraphs';
   }, []);
 
-  const [recentDashboards, { isFetching: isFetchingDashboards }] = usePromise(() => API.getRecentDashboards(), {
-    defaultValue: [],
-  });
+  const [recentDashboards, { isFetching: isFetchingDashboards }] = usePromise(
+    () => API.getRecentDashboards(),
+    {
+      defaultValue: [],
+    },
+  );
 
-  const [recentWidgets, { isFetching: isFetchingWidgets }] = usePromise(() => API.getRecentWidgets(), {
-    defaultValue: [],
-  });
+  const [recentWidgets, { isFetching: isFetchingWidgets }] = usePromise(
+    () => API.getRecentWidgets(),
+    {
+      defaultValue: [],
+    },
+  );
 
   return (
     <div className='page home-page'>
       <div className='intro mb-5'>
-        ChainLook is a community-driven blockchain analytics platform based on{' '}
+        ChainLook is a blockchain analytics platform based on{' '}
         <a href='https://thegraph.com/docs/en/'>subgraphs</a> (TheGraph).
         <br />
         <br />
-        Create awesome <strong>widgets</strong> like line-chart, pie-chart, table, from subgraphs data using simple
-        configuration. Use the drag-and-drop editor to build beautiful <strong>dashboards</strong> from your widgets,
-        and share with others.
+        Create awesome <strong>widgets</strong> like line-chart, pie-chart, table, from subgraphs
+        data using simple configuration. Use the drag-and-drop editor to build beautiful{' '}
+        <strong>dashboards</strong> from your widgets, and share with others.
         <br />
         <Link to='/widgets/new' className='button mt-5'>
           Create your first widget
@@ -65,7 +71,11 @@ function HomePage() {
 
       <div className='columns is-multiline'>
         <div className='column mb-5'>
-          <ElementList title={`Featured dashboards`} elements={featuredDashboards} type='dashboard' />
+          <ElementList
+            title={`Featured dashboards`}
+            elements={featuredDashboards}
+            type='dashboard'
+          />
         </div>
 
         <div className='column mb-5'>
@@ -78,7 +88,12 @@ function HomePage() {
         </div>
 
         <div className='column mb-5'>
-          <ElementList loading={isFetchingWidgets} title={`Recent widgets`} elements={recentWidgets} type='widget' />
+          <ElementList
+            loading={isFetchingWidgets}
+            title={`Recent widgets`}
+            elements={recentWidgets}
+            type='widget'
+          />
         </div>
       </div>
     </div>

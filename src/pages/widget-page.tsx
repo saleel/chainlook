@@ -106,7 +106,11 @@ function WidgetPage() {
             </button>
 
             {isWidgetOwner && (
-              <Link className='button is-normal' to={`/widgets/${widget.id}/edit`} title='Edit the widget'>
+              <Link
+                className='button is-normal'
+                to={`/widgets/${widget.id}/edit`}
+                title='Edit the widget'
+              >
                 Edit
               </Link>
             )}

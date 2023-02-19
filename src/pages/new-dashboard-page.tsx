@@ -34,7 +34,11 @@ function NewDashboardPage() {
 
   return (
     <div className='page new-dashboard-page'>
-      <DashboardEditor dashboard={Store.getDashboardDraft()} onChange={saveDraft} onPublish={onPublish} />
+      <DashboardEditor
+        dashboard={Store.getDashboardDraft()}
+        onChange={saveDraft}
+        onPublish={onPublish}
+      />
     </div>
   );
 }
