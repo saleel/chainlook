@@ -1,36 +1,102 @@
-export function getCleanEntitiesFromGraphQlSchema(schema: any) {
-  const entities =
-    schema?.types?.filter(
-      (t: { kind: string; name: string }) =>
-        t.kind === 'OBJECT' &&
-        t.name !== 'Query' &&
-        t.name !== 'Mutation' &&
-        t.name !== 'Subscription' &&
-        !t.name.startsWith('_'),
-    ) ?? [];
+type FieldType = {
+  kind: string;
+  name: string;
+  ofType: FieldType;
+};
 
-  return entities;
+type GraphQlSchema = {
+  types: {
+    name: string;
+    fields: {
+      name: string;
+      type: FieldType;
+    }[];
+  }[];
+};
+
+type FieldDetails = {
+  name: string;
+  nameForFilter: string;
+  formatter?: string;
 }
 
-export function getQueriesFromGraphQlSchema(schema: any) {
-  const queryFields = schema?.types?.find((t) => t.name === 'Query').fields ?? [];
+export function getFormatterForField(name: string, type: string) {
+  const fieldName = name.toLowerCase();
 
-  const pluralQueries = queryFields.filter(
+  if (fieldName.includes('timestamp') || fieldName.includes('date')) {
+    return 'dateMMMdd';
+  }
+
+  if ((fieldName.includes('amount'), fieldName.includes('usd'))) {
+    return 'currency';
+  }
+
+  if (type === 'BigInt') {
+    return 'number';
+  }
+
+  if (type === 'BigDecimal') {
+    return 'bigDecimal';
+  }
+}
+
+
+export function getQueriesAndFieldsFromGraphQlSchema(schema: GraphQlSchema) {
+  // Get all queries
+  const queries = schema.types.find((t) => t.name === 'Query')?.fields ?? [];
+
+  // Only select queries that return an array, and don't start with _
+  const cleanQueries = queries.filter(
     (q) => q.type.kind === 'NON_NULL' && q.type.ofType.kind === 'LIST' && !q.name.startsWith('_'),
   );
 
-  return pluralQueries;
-}
+  // Create an object with the query name as the key, and fields as the value
+  const queryEntities: Record<string, FieldDetails[]> = {};
 
-export function getReturnEntityForQuery(schema: any, queryName: any) {
-  const query = schema?.types?.find((t) => t.name === 'Query').fields?.find((q) => q.name === queryName);
+  for (const query of cleanQueries) {
+    let returnEntity = query.type;
+    while (returnEntity.ofType) {
+      returnEntity = returnEntity.ofType;
+    }
 
-  let returnEntity = query?.type;
-  while (returnEntity?.ofType) {
-    returnEntity = returnEntity?.ofType;
+    const returnEntityFields = schema.types.find((t) => t.name === returnEntity.name)?.fields ?? [];
+
+    const fieldNameMap: FieldDetails[] = [];
+    const fieldsToProcess = [...returnEntityFields] as { name: string; type: FieldType; _path?: string }[];
+
+    while (fieldsToProcess.length > 0) {
+      const field = fieldsToProcess.shift();
+      if (!field) continue;
+
+      const keyName = [field._path, field.name].filter(Boolean).join('.');
+      const nameForFilter = keyName.replace(/\./g, '__');
+
+      let fieldType = field.type;
+      if (fieldType.kind === 'NON_NULL') {
+        fieldType = fieldType.ofType;
+      }
+
+      if (fieldType.kind === 'SCALAR') {
+        const formatter = getFormatterForField(field.name, fieldType.name);
+
+        fieldNameMap.push({
+          name: keyName,
+          nameForFilter,
+          formatter,
+        });
+      }
+
+      if (fieldType.kind === 'OBJECT') {
+        const nestedFields = schema.types.find((t) => t.name === fieldType.name)?.fields || [];
+
+        for (const nestedField of nestedFields) {
+          fieldsToProcess.push({ ...nestedField, _path: keyName });
+        }
+      }
+    }
+
+    queryEntities[query.name] = fieldNameMap;
   }
-  returnEntity = returnEntity?.name;
 
-  const field = schema?.types?.find((t) => t.name === returnEntity);
-  return field;
+  return queryEntities;
 }

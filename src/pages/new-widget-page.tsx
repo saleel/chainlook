@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import WidgetView from '../components/widget-view';
 import API from '../data/api';
 import WidgetEditor from '../components/widget-editor';
-import Widget from '../domain/widget';
+import Widget, { WidgetDefinition } from '../domain/widget';
 import { AuthContext } from '../context/auth-context';
 import User from '../domain/user';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
@@ -12,6 +12,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { cleanString } from '../utils';
 import Modal from '../components/modal';
 import WidgetWizard from '../components/widget-wizard';
+import { IoColorWand } from 'react-icons/io5';
 
 const DEFAULT_DEFINITION: Widget['definition'] = {
   type: 'table',
@@ -94,16 +95,25 @@ function NewWidgetPage() {
     }
   }
 
+  function onWizardSubmit(def: WidgetDefinition) {
+    if (widget.definition && !window.confirm('This will replace your existing configuration. Continue?')) {
+      return;
+    }
+    updateWidget('definition', def);
+    setIsWizardOpen(false);
+  }
+
   const { definition, title, tags } = widget;
 
   return (
     <div className='page create-widget-page'>
-      <h2 className='section-title'>
-        Create new widget
+      <div className='section-title is-flex'>
+        <h2>Create new widget</h2>
         <button className='button is-small ml-5' onClick={() => setIsWizardOpen(true)}>
+          <IoColorWand size={15} className='mr-2' />
           Use Wizard
         </button>
-      </h2>
+      </div>
 
       <div className='create-widget-container'>
         <div className='create-widget-section'>
@@ -158,12 +168,7 @@ function NewWidgetPage() {
         height='min(800px, 80vh)'
         width='min(800px, 80vw)'
       >
-        <WidgetWizard
-          onSubmit={(def) => {
-            updateWidget('definition', def);
-            setIsWizardOpen(false);
-          }}
-        />
+        <WidgetWizard onSubmit={onWizardSubmit} />
       </Modal>
     </div>
   );

@@ -27,3 +27,9 @@ export function formatDate(textOrDate: string | Date): string {
     day: 'numeric',
   });
 }
+
+export function camelCaseToTitle(text: string) {
+  return text
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, (str) => str.toUpperCase());
+}

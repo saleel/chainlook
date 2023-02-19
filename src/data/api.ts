@@ -241,25 +241,8 @@ export default class API {
   static async getSubgraphSchema(subgraphId: string) {
     const query = `query IntrospectionQuery {
       __schema {
-        queryType {
-          name
-        }
-        mutationType {
-          name
-        }
-        subscriptionType {
-          name
-        }
         types {
           ...FullType
-        }
-        directives {
-          name
-          description
-          locations
-          args {
-            ...InputValue
-          }
         }
       }
     }

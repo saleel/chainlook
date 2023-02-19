@@ -3,7 +3,7 @@ import set from 'lodash/set';
 import get from 'lodash/get';
 import { MultiSelect } from 'react-multi-select-component';
 import API from '../data/api';
-import { getQueriesFromGraphQlSchema, getReturnEntityForQuery } from '../data/utils/graphql';
+import { getQueriesAndFieldsFromGraphQlSchema } from '../data/utils/graphql';
 import usePromise from '../hooks/use-promise';
 import { WidgetDefinition } from '../domain/widget';
 
@@ -26,17 +26,21 @@ function WidgetWizard(props: WidgetWizardProps) {
 
   const [widgetDefinition, setWidgetDefinition] = React.useState(DEFAULT_DEFINITION);
 
-  const subgraphId = widgetDefinition?.data?.source.subgraphId ?? 'as';
+  const subgraphId = widgetDefinition?.data?.source.subgraphId ?? '';
 
-  const [schema, { isFetching }] = usePromise(() => API.getSubgraphSchema(subgraphId), {
-    conditions: [subgraphId],
-    dependencies: [subgraphId],
-  });
+  const [subgraphQueries, { isFetching, error }] = usePromise(
+    () => API.getSubgraphSchema(subgraphId).then(getQueriesAndFieldsFromGraphQlSchema),
+    {
+      conditions: [subgraphId],
+      dependencies: [subgraphId],
+      defaultValue: {}
+    },
+  );
 
   const widgetType = widgetDefinition?.type ?? '';
   const selectedEntityName = widgetDefinition?.data?.source.entity ?? '';
-  const entities = getQueriesFromGraphQlSchema(schema);
-  const selectedEntity = getReturnEntityForQuery(schema, selectedEntityName);
+  const queryNames = Object.keys(subgraphQueries);
+  const fieldsInSelectedQuery = subgraphQueries[selectedEntityName] || [];
 
   function onFormSubmit(e: any) {
     e.preventDefault();
@@ -50,9 +54,17 @@ function WidgetWizard(props: WidgetWizardProps) {
   }
 
   function renderFieldSelector(label: string, path: string) {
-    const fields = selectedEntity.fields as { name: string }[];
     const value = get(widgetDefinition, path, '');
-    const onChange = (e) => updateWidgetDefinition(path, e.target.value);
+    const onChange = (e) => {
+      const fieldName = e.target.value;
+      updateWidgetDefinition(path, fieldName);
+
+      const formatter = fieldsInSelectedQuery.find((f) => f.name === fieldName)?.formatter;
+      if (formatter) {
+        const formatterPath = path.split('.').slice(0, -1).concat('format').join('.');
+        updateWidgetDefinition(formatterPath, formatter);
+      }
+    };
 
     return (
       <div className='field mb-5'>
@@ -61,7 +73,7 @@ function WidgetWizard(props: WidgetWizardProps) {
         <div className='select'>
           <select onChange={onChange} value={value}>
             <option>Select</option>
-            {fields.map((field) => (
+            {fieldsInSelectedQuery.map((field) => (
               <option key={field.name} value={field.name}>
                 {field.name}
               </option>
@@ -73,7 +85,7 @@ function WidgetWizard(props: WidgetWizardProps) {
   }
 
   function renderMultiFieldSelector(label: string, path: string, keyName: string) {
-    const fields = selectedEntity.fields as { name: string }[];
+    const fields = fieldsInSelectedQuery as { name: string }[];
     const value = get(widgetDefinition, path, []).map((s: any) => ({
       label: s[keyName],
       value: s[keyName],
@@ -120,7 +132,9 @@ function WidgetWizard(props: WidgetWizardProps) {
 
           {isFetching && <div>Loading...</div>}
 
-          {!isFetching && subgraphId && entities && (
+          {error && <div>Error: {error.message}</div>}
+
+          {!isFetching && subgraphId && queryNames.length > 0 && (
             <div className='columns'>
               <div className='column is-one-third'>
                 <div className='field'>
@@ -131,9 +145,9 @@ function WidgetWizard(props: WidgetWizardProps) {
                       value={selectedEntityName}
                     >
                       <option>Select</option>
-                      {entities.map((entity: any) => (
-                        <option key={entity.name} value={entity.name}>
-                          {entity.name}
+                      {queryNames.map((queryName) => (
+                        <option key={queryName} value={queryName}>
+                          {queryName}
                         </option>
                       ))}
                     </select>
@@ -141,10 +155,26 @@ function WidgetWizard(props: WidgetWizardProps) {
                 </div>
               </div>
 
-              {selectedEntity && (
+              {fieldsInSelectedQuery && (
                 <>
-                  <div className='column' style={{ marginBottom: '-2rem' }}>
-                    {renderFieldSelector('Order by', 'data.source.orderBy')}
+                  <div className='column'>
+                    <div className='field mb-5'>
+                      <label className='label'>Order by</label>
+
+                      <div className='select'>
+                        <select
+                          onChange={(e) => updateWidgetDefinition('data.source.orderBy', e.target.value)}
+                          value={widgetDefinition?.data?.source?.orderBy}
+                        >
+                          <option>Select</option>
+                          {fieldsInSelectedQuery.map((field) => (
+                            <option key={field.nameForFilter} value={field.nameForFilter}>
+                              {field.nameForFilter}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
                   </div>
 
                   <div className='column'>
@@ -186,9 +216,9 @@ function WidgetWizard(props: WidgetWizardProps) {
             </div>
           )}
 
-          {selectedEntity && <hr />}
+          {fieldsInSelectedQuery.length > 0 && <hr />}
 
-          {selectedEntity && (
+          {fieldsInSelectedQuery.length > 0 && (
             <div className='field mb-5'>
               <label className='label'>Widget type</label>
               <div className='select'>
@@ -224,7 +254,7 @@ function WidgetWizard(props: WidgetWizardProps) {
           {widgetType === 'metric' && renderFieldSelector('Data Key', 'metric.dataKey')}
         </div>
 
-        <button type='submit' className='button is-normal mt-5' disabled={!selectedEntity}>
+        <button type='submit' className='button is-normal mt-5' disabled={!fieldsInSelectedQuery}>
           Submit
         </button>
       </form>
