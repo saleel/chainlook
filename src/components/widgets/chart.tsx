@@ -38,7 +38,7 @@ function Chart(props) {
           />
 
           <Tooltip
-            {...(Formatters[xAxis.format] && { labelFormatter: Formatters[xAxis.format] })}
+            {...(Formatters[xAxis.format] && { labelFormatter: Formatters[xAxis.format || 'camelCaseToTitle'] })}
             {...(Formatters[yAxis?.format] && { formatter: Formatters[yAxis.format] })}
           />
 

@@ -32,7 +32,7 @@ export function getFormatterForField(name: string, type: string) {
   }
 
   if (type === 'BigInt') {
-    return 'number';
+    return 'roundedNumber';
   }
 
   if (type === 'BigDecimal') {

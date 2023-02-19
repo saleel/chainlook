@@ -17,7 +17,7 @@ function Table(props) {
                   // style={{ width: `${100 / columns.length}%` }}
                   key={column.dataKey}
                 >
-                  {column.label || column.key}
+                  {column.label || Formatters.camelCaseToTitle(column.dataKey)}
                 </th>
               ))}
             </tr>

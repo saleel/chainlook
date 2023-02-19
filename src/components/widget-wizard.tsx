@@ -42,6 +42,11 @@ function WidgetWizard(props: WidgetWizardProps) {
   const queryNames = Object.keys(subgraphQueries);
   const fieldsInSelectedQuery = subgraphQueries[selectedEntityName] || [];
 
+  const isValid = widgetDefinition?.table?.columns?.length > 0
+    || widgetDefinition?.chart?.xAxis?.dataKey
+    || widgetDefinition?.pieChart?.dataKey
+    || widgetDefinition?.metric?.dataKey;
+
   function onFormSubmit(e: any) {
     e.preventDefault();
     onSubmit(widgetDefinition as WidgetDefinition);
@@ -158,7 +163,7 @@ function WidgetWizard(props: WidgetWizardProps) {
               {fieldsInSelectedQuery && (
                 <>
                   <div className='column'>
-                    <div className='field mb-5'>
+                    <div className='field'>
                       <label className='label'>Order by</label>
 
                       <div className='select'>
@@ -254,7 +259,7 @@ function WidgetWizard(props: WidgetWizardProps) {
           {widgetType === 'metric' && renderFieldSelector('Data Key', 'metric.dataKey')}
         </div>
 
-        <button type='submit' className='button is-normal mt-5' disabled={!fieldsInSelectedQuery}>
+        <button type='submit' className='button is-normal mt-5' disabled={!isValid}>
           Submit
         </button>
       </form>
