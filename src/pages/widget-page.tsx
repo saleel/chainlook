@@ -1,10 +1,12 @@
 import React from 'react';
+import { IoCalendarClearOutline, IoPerson } from 'react-icons/io5';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import WidgetView from '../components/widget-view';
 import { AuthContext } from '../context/auth-context';
 import API from '../data/api';
 import Store from '../data/store';
 import usePromise from '../hooks/use-promise';
+import { formatDate } from '../utils';
 
 function WidgetPage() {
   const { widgetId } = useParams();
@@ -62,7 +64,26 @@ function WidgetPage() {
           <h2>{widget?.title}</h2>
 
           <div className='dashboard-info mt-1'>
-            {widget.user && <span className='tag mr-2'>👤 {widget.user?.username}</span>}
+            {widget.user && (
+              <Link to={`/users/${widget.user.username}`} className='tag mr-2'>
+                <span className='tag mr-2'>
+                  <IoPerson size={10} />
+                  <span className='ml-3'>{widget.user?.username}</span>
+                </span>
+              </Link>
+            )}
+
+            {widget.createdOn && (
+              <span
+                className='tag mr-2'
+                data-tooltip={`This widget was created on ${formatDate(
+                  widget.createdOn,
+                )} and was last updated on ${formatDate(widget.updatedOn)}`}
+              >
+                <IoCalendarClearOutline size={10} />
+                <span className='ml-3'>{formatDate(widget.createdOn)}</span>
+              </span>
+            )}
 
             {widget.tags?.map((tag: string) => (
               <span key={tag} className='tag mr-2'>

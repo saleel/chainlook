@@ -1,14 +1,14 @@
 /* eslint-disable react/no-array-index-key */
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import React from 'react';
-import { IoStar } from 'react-icons/io5';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { IoCalendarClearOutline, IoPerson, IoStar } from 'react-icons/io5';
+import { Link, useParams } from 'react-router-dom';
 import DashboardView from '../components/dashboard-view';
 import { AuthContext } from '../context/auth-context';
 import API from '../data/api';
-import Formatters from '../data/modifiers/formatters';
 import Dashboard from '../domain/dashboard';
 import usePromise from '../hooks/use-promise';
+import { formatDate } from '../utils';
 
 function DashboardPage() {
   // const navigate = useNavigate();
@@ -79,7 +79,26 @@ function DashboardPage() {
           <h2>{dashboard?.title}</h2>
 
           <div className='dashboard-info mt-1'>
-            {dashboard.user && <span className='tag mr-2'>👤 {dashboard.user?.username}</span>}
+            {dashboard.user && (
+              <Link to={`/users/${dashboard.user.username}`} className='tag mr-2'>
+                <span className='tag mr-2'>
+                  <IoPerson size={10} />
+                  <span className='ml-3'>{dashboard.user?.username}</span>
+                </span>
+              </Link>
+            )}
+
+            {dashboard.createdOn && (
+              <span
+                className='tag mr-2'
+                data-tooltip={`This dashboard was created on ${formatDate(
+                  dashboard.createdOn,
+                )} and was last updated on ${formatDate(dashboard.updatedOn)}`}
+              >
+                <IoCalendarClearOutline size={10} />
+                <span className='ml-3'>{formatDate(dashboard.createdOn)}</span>
+              </span>
+            )}
 
             {dashboard.tags?.map((tag: string) => (
               <span key={tag} className='tag mr-2'>
@@ -99,7 +118,7 @@ function DashboardPage() {
               onClick={onStarClick}
             >
               <IoStar size={16} className='mr-3' />
-              {Formatters.number(starCount)}
+              {starCount}
             </button>
           )}
 
