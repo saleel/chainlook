@@ -6,30 +6,30 @@ import Dashboard from '../domain/dashboard';
 import usePromise from '../hooks/use-promise';
 
 const featuredDashboards = [
-  {
-    id: 'saleel:uniswap-v3',
-    slug: 'saleel:uniswap-v3',
-    title: 'Uniswap v3',
-    // image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Uniswap_Logo_and_Wordmark.svg/640px-Uniswap_Logo_and_Wordmark.svg.png',
-  },
-  {
-    id: 'saleel:aave',
-    slug: 'saleel:aave-v3',
-    title: 'Aave',
-    // image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Uniswap_Logo_and_Wordmark.svg/640px-Uniswap_Logo_and_Wordmark.svg.png',
-  },
-  {
-    id: 'saleel:lido',
-    slug: 'saleel:lido',
-    title: 'Lido',
-    // image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Uniswap_Logo_and_Wordmark.svg/640px-Uniswap_Logo_and_Wordmark.svg.png',
-  },
-  {
-    id: 'saleel:rocketpool',
-    slug: 'saleel:rocketpool',
-    title: 'Rocketpool',
-    // image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Uniswap_Logo_and_Wordmark.svg/640px-Uniswap_Logo_and_Wordmark.svg.png',
-  },
+  // {
+  //   id: 'saleel:uniswap-v3',
+  //   slug: 'saleel:uniswap-v3',
+  //   title: 'Uniswap v3',
+  //   // image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Uniswap_Logo_and_Wordmark.svg/640px-Uniswap_Logo_and_Wordmark.svg.png',
+  // },
+  // {
+  //   id: 'saleel:aave',
+  //   slug: 'saleel:aave-v3',
+  //   title: 'Aave',
+  //   // image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Uniswap_Logo_and_Wordmark.svg/640px-Uniswap_Logo_and_Wordmark.svg.png',
+  // },
+  // {
+  //   id: 'saleel:lido',
+  //   slug: 'saleel:lido',
+  //   title: 'Lido',
+  //   // image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Uniswap_Logo_and_Wordmark.svg/640px-Uniswap_Logo_and_Wordmark.svg.png',
+  // },
+  // {
+  //   id: 'saleel:rocketpool',
+  //   slug: 'saleel:rocketpool',
+  //   title: 'Rocketpool',
+  //   // image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Uniswap_Logo_and_Wordmark.svg/640px-Uniswap_Logo_and_Wordmark.svg.png',
+  // },
 ];
 
 function HomePage() {
