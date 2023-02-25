@@ -145,7 +145,8 @@
           "type": "object",
           "properties": {
             "dataKey": { "type": "string" },
-            "format": { "type": "string" }
+            "format": { "type": "string" },
+            "reversed": { "type": "boolean" }
           },
           "required": ["dataKey"]
         },

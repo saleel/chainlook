@@ -38,6 +38,7 @@ function Chart(props) {
           <XAxis
             dataKey={xAxis.dataKey}
             {...(Formatters[xAxis.format] && { tickFormatter: Formatters[xAxis.format] })}
+            reversed={xAxis.reversed}
           />
 
           <YAxis
