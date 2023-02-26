@@ -10,7 +10,7 @@ import { fetchDataFromIPFS, fetchDataFromIPNS } from './utils/network';
 import { applyVariables, getFieldNamesRequiredForWidget } from './utils/widget-parsing';
 
 let apiInstance = axios.create({
-  baseURL: 'http://localhost:9000',
+  baseURL: import.meta.env.VITE_API_URL,
 });
 
 apiInstance.interceptors.request.use((config) => {
