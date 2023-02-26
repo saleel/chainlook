@@ -52,8 +52,7 @@ export default function Layout() {
       </div>
 
       <div className='footer wrapper'>
-        Disclaimer: ChainLook don&lsquo;t guarantee accuracy of the data. Project still in alpha
-        stage and schema might change.
+        Disclaimer: ChainLook don&lsquo;t guarantee accuracy of the data.
       </div>
     </>
   );
