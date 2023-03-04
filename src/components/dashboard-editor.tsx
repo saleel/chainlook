@@ -7,7 +7,7 @@ import Store from '../data/store';
 import Dashboard, { DashboardDefinition } from '../domain/dashboard';
 import Widget from '../domain/widget';
 import User from '../domain/user';
-import { cleanString, slugify } from '../utils';
+import { cleanTitleString, slugify } from '../utils';
 import { AuthContext } from '../context/auth-context';
 
 type Element = DashboardDefinition['elements'][0];
@@ -46,7 +46,7 @@ function DashboardEditor(props: DashboardEditorProps) {
   const [isPublishModalOpen, setIsPublishModalOpen] = React.useState(false);
   const [dashboard, setDashboard] = React.useState<Dashboard>(props.dashboard || DEFAULT_DASHBOARD);
 
-  const [widgetOfUser] = usePromise<Widget[]>(() => API.getWidgetsByUser(user?.id as string), {
+  const [widgetOfUser] = usePromise<Widget[]>(() => API.getWidgetsByUser(user?.username as string), {
     conditions: [user?.id],
     defaultValue: [],
   });
@@ -311,7 +311,7 @@ function DashboardEditor(props: DashboardEditorProps) {
                 className='input'
                 placeholder='Enter widget title'
                 required
-                value={cleanString(dashboard.title)}
+                value={cleanTitleString(dashboard.title)}
                 onChange={(e) => {
                   setDashboard((ex) => ({
                     ...ex,
