@@ -28,11 +28,9 @@ const DEFAULT_DEFINITION: Widget['definition'] = {
       {
         dataKey: 'timestamp',
         format: 'dateMMMdd',
-        label: 'Date',
       },
       {
         dataKey: 'dailyVolumeUSD',
-        label: 'Daily Volume (USD)',
         format: 'number',
       },
     ],

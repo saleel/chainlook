@@ -394,6 +394,10 @@ button {
   }
 }
 
+.widget-editor {
+  min-height: 400px;
+}
+
 .widget-editor-links {
   position: absolute;
   top: 0.5rem;
@@ -403,6 +407,25 @@ button {
     cursor: pointer;
     font-size: 1rem;
     font-weight: 400;
+  }
+}
+
+.widget-editor-run {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 1.5rem;
+  background-color: var(--text-color);
+  color: #fff;
+
+  button {
+    min-width: 5rem;
+
+    span {
+      font-size: 0.9rem;
+      color: var(--gray-500);
+      font-weight: 500;
+      margin-left: 0.5rem;
+    }
   }
 }
 
@@ -430,6 +453,14 @@ button {
       border: 1px solid var(--text-color);
       background-color: #fff;
     }
+  }
+
+  &[disabled] {
+    background-color:  #efefef;
+    border: 1px solid #efefef;
+    color: var(--gray-500);
+    cursor: not-allowed;
+    opacity: 0.8;
   }
 }
 

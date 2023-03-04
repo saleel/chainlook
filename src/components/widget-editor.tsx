@@ -48,34 +48,63 @@ const examples = [
   },
 ];
 
+const isMacOS = navigator.userAgent.indexOf('Mac OS X') !== -1;
+const ctrlBtnName =   isMacOS ? 'Cmd' : 'Ctrl';
+const saveButtonLabel = `${ctrlBtnName} + S`;
+
+function formatJson(obj: object) {
+  return JSON.stringify(obj, null, 2);
+}
+
 function WidgetEditor(props: { definition: object; onChange: (d: object) => void }) {
   const { definition, onChange } = props;
 
-  const [widgetJson, setWidgetJson] = React.useState<string>();
+  const editorRef = React.useRef<monaco.editor.IStandaloneCodeEditor>();
+  const localDefinition = React.useRef(definition);
+
   const [examplesModalOpen, setExamplesModalOpen] = React.useState<boolean>(false);
 
+  // Set default definition
   React.useEffect(() => {
-    const wj = JSON.stringify(definition, null, 2);
+    if (definition) {
+      editorRef.current!.setValue(formatJson(definition));
+    }
+  }, []);
 
-    if (widgetJson !== wj) {
-      setWidgetJson(wj);
+  // Update editor when definition from parent changes
+  React.useEffect(() => {
+    if (localDefinition.current !== definition) {
+      editorRef.current!.setValue(formatJson(definition));
     }
   }, [definition]);
 
-  const debounced = useDebouncedCallback((newJson) => {
-    try {
-      onChange(JSON.parse(newJson));
-    } catch (e) {
-      // Ignore
-    }
-  }, 500);
-
   async function onChangeExample(url: string) {
     const definition = await fetchDataFromHTTP({ url });
-    if (definition) {
-      onChange(definition);
-    }
+    const formatted = formatJson(definition);
+
+    editorRef.current!.setValue(formatted);
+    updateDefinition();
+
     setExamplesModalOpen(false);
+  }
+
+  function updateDefinition() {
+    editorRef.current!.trigger('manual', 'editor.action.formatDocument', null);
+
+    const model = editorRef.current!.getModel();
+    const markers = monaco.editor.getModelMarkers({ resource: model!.uri });
+    const isValid = markers.length === 0;
+
+    if (!isValid) {
+      window.alert('There seems to be an error in your definition. Please fix it before running it.');
+      return;
+    }
+
+    const def = editorRef.current!.getValue();
+    const parsed = JSON.parse(def);
+
+    localDefinition.current = parsed;
+    onChange(parsed);
   }
 
   return (
@@ -85,21 +114,17 @@ function WidgetEditor(props: { definition: object; onChange: (d: object) => void
         height='100%'
         language='json'
         theme='vs-light'
-        value={widgetJson}
         options={{
           fontSize: 13,
           minimap: {
             enabled: false,
           },
         }}
-        onChange={(newValue) => {
-          setWidgetJson(newValue);
-          debounced(newValue);
-        }}
         editorWillMount={(monaco) => {
           monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
             validate: true,
             enableSchemaRequest: true,
+            allowComments: false,
             schemas: [
               {
                 fileMatch: ['*'],
@@ -107,6 +132,14 @@ function WidgetEditor(props: { definition: object; onChange: (d: object) => void
               },
             ],
           });
+        }}
+        editorDidMount={(_editor) => {
+          _editor.getModel()!.updateOptions({ tabSize: 2 });
+          _editor.focus();
+
+          _editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, updateDefinition);
+
+          editorRef.current = _editor;
         }}
       />
 
@@ -117,6 +150,13 @@ function WidgetEditor(props: { definition: object; onChange: (d: object) => void
         <a className='link' href={SCHEMA_URL} target='_blank'>
           View Schema
         </a>
+      </div>
+
+      <div className='widget-editor-run'>
+        <button className='button is-normal' onClick={updateDefinition}>
+          Run
+          <span>({saveButtonLabel})</span>
+        </button>
       </div>
 
       <Modal
