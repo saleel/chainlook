@@ -6,6 +6,7 @@ import API from '../data/api';
 import { getQueriesAndFieldsFromGraphQlSchema } from '../data/utils/graphql';
 import usePromise from '../hooks/use-promise';
 import { WidgetDefinition } from '../domain/widget';
+import { getFormatterForField } from '../data/utils/widget-parsing';
 
 const DEFAULT_DEFINITION: Partial<WidgetDefinition> = {
   data: {
@@ -60,16 +61,24 @@ function WidgetWizard(props: WidgetWizardProps) {
     });
   }
 
-  function renderFieldSelector(label: string, path: string) {
+  function getFormatter(fieldName: string) {
+    return getFormatterForField(
+      fieldName,
+      fieldsInSelectedQuery.find((f) => f.name === fieldName)!.type,
+    );
+  }
+
+  function renderFieldSelector(label: string, path: string, formatterPath?: string) {
     const value = get(widgetDefinition, path, '');
     const onChange = (e) => {
       const fieldName = e.target.value;
       updateWidgetDefinition(path, fieldName);
 
-      const formatter = fieldsInSelectedQuery.find((f) => f.name === fieldName)?.formatter;
-      if (formatter) {
-        const formatterPath = path.split('.').slice(0, -1).concat('format').join('.');
-        updateWidgetDefinition(formatterPath, formatter);
+      if (formatterPath) {
+        const formatter = getFormatter(fieldName);
+        if (formatter) {
+          updateWidgetDefinition(formatterPath, formatter);
+        }
       }
     };
 
@@ -91,17 +100,46 @@ function WidgetWizard(props: WidgetWizardProps) {
     );
   }
 
-  function renderMultiFieldSelector(label: string, path: string, keyName: string) {
+  function renderMultiFieldSelector(
+    label: string,
+    path: string,
+    keyName: string,
+    formatterPath?: string,
+  ) {
     const fields = fieldsInSelectedQuery as { name: string }[];
     const value = get(widgetDefinition, path, []).map((s: any) => ({
       label: s[keyName],
       value: s[keyName],
     }));
-    const onChange = (values: any[]) =>
-      updateWidgetDefinition(
-        path,
-        values.map((v) => ({ [keyName]: v.value })),
-      );
+
+    const onChange = (values: any[]) => {
+      const fieldConfig = [];
+
+      for (const v of values) {
+        const { value: fieldName } = v;
+
+        let formatter;
+        if (formatterPath && !formatterPath.includes('.')) {
+          formatter = getFormatter(fieldName);
+        }
+
+        fieldConfig.push({
+          [keyName]: v.value,
+          ...(formatter && { [formatterPath as string]: formatter }),
+        });
+      }
+
+      updateWidgetDefinition(path, fieldConfig);
+
+      // If the formatter path is fullPath, update at the exact path instead (used for charts)
+      if (formatterPath && formatterPath.includes('.')) {
+        const lastField = values[values.length - 1]?.value;
+        const formatter = getFormatter(lastField);
+        if (formatter) {
+          updateWidgetDefinition(formatterPath, formatter);
+        }
+      }
+    };
 
     return (
       <div className='field mb-5'>
@@ -254,24 +292,25 @@ function WidgetWizard(props: WidgetWizardProps) {
 
           {widgetType === 'chart' && (
             <>
-              {renderFieldSelector('X Axis', 'chart.xAxis.dataKey')}
-              {renderMultiFieldSelector('Lines', 'chart.lines', 'dataKey')}
-              {renderMultiFieldSelector('Bars', 'chart.bars', 'dataKey')}
-              {renderMultiFieldSelector('Areas', 'chart.areas', 'dataKey')}
+              {renderFieldSelector('X Axis', 'chart.xAxis.dataKey', 'chart.xAxis.format')}
+              {renderMultiFieldSelector('Lines', 'chart.lines', 'dataKey', 'chart.yAxis.format')}
+              {renderMultiFieldSelector('Bars', 'chart.bars', 'dataKey', 'chart.yAxis.format')}
+              {renderMultiFieldSelector('Areas', 'chart.areas', 'dataKey', 'chart.yAxis.format')}
             </>
           )}
 
           {widgetType === 'pieChart' && (
             <>
               {renderFieldSelector('Name Key', 'pieChart.nameKey')}
-              {renderFieldSelector('Data Key', 'pieChart.dataKey')}
+              {renderFieldSelector('Data Key', 'pieChart.dataKey', 'pieChart.format')}
             </>
           )}
 
           {widgetType === 'table' &&
-            renderMultiFieldSelector('Columns', 'table.columns', 'dataKey')}
+            renderMultiFieldSelector('Columns', 'table.columns', 'dataKey', 'format')}
 
-          {widgetType === 'metric' && renderFieldSelector('Data Key', 'metric.dataKey')}
+          {widgetType === 'metric' &&
+            renderFieldSelector('Data Key', 'metric.dataKey', 'metric.format')}
         </div>
 
         <button type='submit' className='button is-normal mt-5' disabled={!isValid}>

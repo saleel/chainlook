@@ -17,28 +17,8 @@ type GraphQlSchema = {
 type FieldDetails = {
   name: string;
   nameForFilter: string;
-  formatter?: string;
+  type: string;
 };
-
-export function getFormatterForField(name: string, type: string) {
-  const fieldName = name.toLowerCase();
-
-  if (fieldName.includes('timestamp') || fieldName.includes('date')) {
-    return 'dateMMMdd';
-  }
-
-  if ((fieldName.includes('amount'), fieldName.includes('usd'))) {
-    return 'currency';
-  }
-
-  if (type === 'BigInt') {
-    return 'roundedNumber';
-  }
-
-  if (type === 'BigDecimal') {
-    return 'bigDecimal';
-  }
-}
 
 export function getQueriesAndFieldsFromGraphQlSchema(schema: GraphQlSchema) {
   // Get all queries
@@ -80,12 +60,10 @@ export function getQueriesAndFieldsFromGraphQlSchema(schema: GraphQlSchema) {
       }
 
       if (fieldType.kind === 'SCALAR') {
-        const formatter = getFormatterForField(field.name, fieldType.name);
-
         fieldNameMap.push({
           name: keyName,
           nameForFilter,
-          formatter,
+          type: fieldType.name,
         });
       }
 

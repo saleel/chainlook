@@ -81,3 +81,25 @@ export function applyVariables(object, variables) {
 
   return updatedObject;
 }
+
+
+// Return a suitable formatter for the field based on name and type
+export function getFormatterForField(name: string, type: string) {
+  const fieldName = name.toLowerCase();
+
+  if (fieldName.includes('timestamp') || fieldName.includes('date')) {
+    return 'dateMMMdd';
+  }
+
+  if ((fieldName.includes('amount'), fieldName.includes('usd'))) {
+    return 'currencyUSD';
+  }
+
+  if (type === 'BigInt') {
+    return 'roundedNumber';
+  }
+
+  if (type === 'BigDecimal') {
+    return 'bigDecimal';
+  }
+}
