@@ -7,6 +7,7 @@ function timeToJSDate(date) {
 
 const GlobalVariables = {
   $startOfDay: () => timeToJSDate(startOfDay(new Date())),
+  $startOfLastDay: () => timeToJSDate(startOfDay(addDays(new Date(), -1))),
   $startOfLast7D: () => timeToJSDate(startOfDay(addDays(new Date(), -7))),
   $startOfLast30D: () => timeToJSDate(startOfDay(addDays(new Date(), -30))),
 };
