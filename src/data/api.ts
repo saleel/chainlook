@@ -254,33 +254,14 @@ export default class API {
     fragment FullType on __Type {
       kind
       name
-      description
       fields(includeDeprecated: true) {
         name
-        description
         args {
           ...InputValue
         }
         type {
           ...TypeRef
         }
-        isDeprecated
-        deprecationReason
-      }
-      inputFields {
-        ...InputValue
-      }
-      interfaces {
-        ...TypeRef
-      }
-      enumValues(includeDeprecated: true) {
-        name
-        description
-        isDeprecated
-        deprecationReason
-      }
-      possibleTypes {
-        ...TypeRef
       }
     }
     
