@@ -153,6 +153,14 @@ export default class API {
     return response.data?.map((w: any) => new Widget(w));
   }
 
+  static async findWidgets(search: string = '') {
+    const response = await apiInstance.get('/widgets/', {
+      params: { search },
+    });
+
+    return response.data?.map((w: any) => new Widget(w));
+  }
+
   static async getDashboard(id: string) {
     const [protocolOrAuthor, dashboardId] = id.split(':');
 

@@ -134,7 +134,7 @@ function usePromise<T>(promise: () => Promise<T>, options: UsePromiseOptions = {
     return () => {
       didCancel = true;
     };
-  }, [...dependencies, ...conditions]);
+  }, dependencies);
 
   function reFetch() {
     if (cacheKey) {

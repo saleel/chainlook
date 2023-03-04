@@ -1,9 +1,7 @@
 import React from 'react';
 import DashboardView from '../components/dashboard-view';
 import Modal from '../components/modal';
-import usePromise from '../hooks/use-promise';
-import API from '../data/api';
-import Store from '../data/store';
+import WidgetSelector from '../components/widget-selector';
 import Dashboard, { DashboardDefinition } from '../domain/dashboard';
 import Widget from '../domain/widget';
 import User from '../domain/user';
@@ -39,17 +37,10 @@ type DashboardEditorProps = {
 };
 
 function DashboardEditor(props: DashboardEditorProps) {
-  const { user } = React.useContext(AuthContext);
-
   const [isAddWidgetModalOpen, setIsAddWidgetModalOpen] = React.useState(false);
   const [isAddTextModalOpen, setIsAddTextModalOpen] = React.useState(false);
   const [isPublishModalOpen, setIsPublishModalOpen] = React.useState(false);
   const [dashboard, setDashboard] = React.useState<Dashboard>(props.dashboard || DEFAULT_DASHBOARD);
-
-  const [widgetOfUser] = usePromise<Widget[]>(() => API.getWidgetsByUser(user?.username as string), {
-    conditions: [user?.id],
-    defaultValue: [],
-  });
 
   React.useEffect(() => {
     if (props.onChange) {
@@ -59,7 +50,6 @@ function DashboardEditor(props: DashboardEditorProps) {
 
   React.useEffect(() => {
     if (props.dashboard && props.dashboard !== dashboard) {
-      console.log('updating dashboard');
       setDashboard(props.dashboard);
     }
   }, [props.dashboard]);
@@ -258,28 +248,10 @@ function DashboardEditor(props: DashboardEditorProps) {
         isOpen={isAddWidgetModalOpen}
         onRequestClose={() => setIsAddWidgetModalOpen(false)}
         title='Add Widget'
+        width={600}
+        height={600}
       >
-        <div>
-          {widgetOfUser.length > 0 ? (
-            widgetOfUser.map((widget) => (
-              <div
-                key={widget.id}
-                tabIndex={0}
-                role='button'
-                className='add-widget-item'
-                onClick={() => onAddWidget(widget)}
-              >
-                {widget.definition?.type} - {widget.title}
-              </div>
-            ))
-          ) : (
-            <div>
-              {user
-                ? 'You have not created any widgets yet.'
-                : 'You need to sign in to see your created widgets.'}
-            </div>
-          )}
-        </div>
+        <WidgetSelector onSelect={onAddWidget} />
       </Modal>
 
       <Modal
