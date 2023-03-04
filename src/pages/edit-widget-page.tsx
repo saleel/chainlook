@@ -99,7 +99,7 @@ function EditWidgetPage() {
             </div>
             <hr />
             <button type='submit' className='button'>
-              Save
+              Publish
             </button>
           </form>
         </div>
