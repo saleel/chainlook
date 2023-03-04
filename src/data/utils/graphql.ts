@@ -89,7 +89,8 @@ export function getQueriesAndFieldsFromGraphQlSchema(schema: GraphQlSchema) {
         });
       }
 
-      if (fieldType.kind === 'OBJECT') {
+      // Only do three levels of nesting
+      if (fieldType.kind === 'OBJECT' && keyName.split('.').length < 3) {
         const nestedFields = schema.types.find((t) => t.name === fieldType.name)?.fields || [];
 
         for (const nestedField of nestedFields) {
