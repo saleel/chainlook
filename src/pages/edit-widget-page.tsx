@@ -108,7 +108,7 @@ function EditWidgetPage() {
 
         <div className='create-widget-preview'>
           <div className='section-title'>Preview</div>
-          <WidgetView widget={editingWidget} />
+          <WidgetView widget={editingWidget} showActions={false} />
         </div>
       </div>
     </div>

@@ -134,6 +134,8 @@ function WidgetEditor(props: { definition: object; onChange: (d: object) => void
         let fieldNames: string[] = []; // to store fields from all data sources
 
         for (const [sourceName, source] of Object.entries(dataSources)) {
+          if (!source.subgraphId) continue;
+
           const { subgraphId, entity } = source;
 
           const subgraphSchema = await API.getSubgraphSchema(subgraphId);
@@ -208,8 +210,8 @@ function WidgetEditor(props: { definition: object; onChange: (d: object) => void
         onChange={(v) => {
           try {
             const parsed = JSON.parse(v);
-            setDataSource(parsed.data.source);
-            setDataSources(parsed.data.sources);
+            setDataSource(parsed.data.source || {});
+            setDataSources(parsed.data.sources || {});
           } catch (e) {
             // Do nothing
           }

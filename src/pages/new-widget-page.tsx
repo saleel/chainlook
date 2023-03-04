@@ -158,7 +158,7 @@ function NewWidgetPage() {
         <div className='create-widget-preview'>
           <div className='section-title'>Preview</div>
 
-          <WidgetView widget={widget} />
+          <WidgetView widget={widget} showActions={false} />
         </div>
       </div>
 
