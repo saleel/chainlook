@@ -21,7 +21,8 @@ const Formatters = {
   camelCaseToTitle: (input: string) => {
     return input
       .replace(/([.])/g, ' ') // replace dot with space
-      .replace(/([A-Z])/g, ' $1'); // replace camelCase with space
+      .replace(/([A-Z]+)/g, " $1") // camel case to title
+      .replace(/([A-Z][a-z])/g, " $1")
   },
 };
 
