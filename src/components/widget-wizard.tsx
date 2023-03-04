@@ -51,6 +51,7 @@ function WidgetWizard(props: WidgetWizardProps) {
   function onFormSubmit(e: any) {
     e.preventDefault();
     onSubmit(widgetDefinition as WidgetDefinition);
+    setWidgetDefinition(DEFAULT_DEFINITION);
   }
 
   function updateWidgetDefinition(path: string, value: any) {
@@ -148,7 +149,7 @@ function WidgetWizard(props: WidgetWizardProps) {
               <div className='column is-one-third'>
                 <div className='field'>
                   <label className='label'>Entity / Query</label>
-                  <div className='select'>
+                  <div className='select w-100'>
                     <select
                       onChange={(e) => updateWidgetDefinition('data.source.entity', e.target.value)}
                       value={selectedEntityName}
@@ -166,11 +167,11 @@ function WidgetWizard(props: WidgetWizardProps) {
 
               {fieldsInSelectedQuery && (
                 <>
-                  <div className='column'>
+                  <div className='column is-one-third'>
                     <div className='field'>
                       <label className='label'>Order by</label>
 
-                      <div className='select'>
+                      <div className='select w-100'>
                         <select
                           onChange={(e) =>
                             updateWidgetDefinition('data.source.orderBy', e.target.value)
@@ -188,10 +189,10 @@ function WidgetWizard(props: WidgetWizardProps) {
                     </div>
                   </div>
 
-                  <div className='column'>
+                  <div className='column is-one-third'>
                     <div className='field'>
                       <label className='label'>Order direction</label>
-                      <div className='select'>
+                      <div className='select w-100'>
                         <select
                           onChange={(e) =>
                             updateWidgetDefinition('data.source.orderDirection', e.target.value)
@@ -210,7 +211,7 @@ function WidgetWizard(props: WidgetWizardProps) {
                     </div>
                   </div>
 
-                  <div className='column'>
+                  <div className='column is-one-third'>
                     <div className='field'>
                       <label className='label'>Limit</label>
                       <div className='control'>
