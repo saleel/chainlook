@@ -1,5 +1,4 @@
 {
-  "title": "BTC Price History (data from IPFS)",
   "type": "chart",
   "data": {
     "source": {

@@ -1,5 +1,4 @@
 {
-  "title": "Total Pool Count",
   "type": "metric",
   "metric": {
     "dataKey": "totalPoolCount",
