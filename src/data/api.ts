@@ -23,6 +23,17 @@ apiInstance.interceptors.request.use((config) => {
 const CACHE : Record<string, any> = {};
 
 export default class API {
+  static async getWidgetSchema() {
+    if (CACHE.widgetSchema) {
+      return CACHE.widgetSchema;
+    }
+
+    const response = await apiInstance.get('/schemas/widget.json');
+
+    CACHE.widgetSchema = response.data;
+    return response.data;
+  }
+
   static async getNonce() {
     const response = await apiInstance.get('/nonce');
     return response.data;

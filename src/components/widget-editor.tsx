@@ -3,11 +3,12 @@ import MonacoEditor from 'react-monaco-editor';
 import * as monaco from 'monaco-editor';
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
-import { useDebouncedCallback } from 'use-debounce';
 import Modal from './modal';
 import { fetchDataFromHTTP } from '../data/utils/network';
-
-const SCHEMA_URL = window.origin + '/schemas/widget.json';
+import usePromise from '../hooks/use-promise';
+import API from '../data/api';
+import { getQueriesAndFieldsFromGraphQlSchema } from '../data/utils/graphql';
+import { enrichWidgetSchema } from '../data/utils/schema';
 
 // @ts-ignore
 self.MonacoEnvironment = {
@@ -49,20 +50,41 @@ const examples = [
 ];
 
 const isMacOS = navigator.userAgent.indexOf('Mac OS X') !== -1;
-const ctrlBtnName =   isMacOS ? 'Cmd' : 'Ctrl';
+const ctrlBtnName = isMacOS ? 'Cmd' : 'Ctrl';
 const saveButtonLabel = `${ctrlBtnName} + S`;
 
 function formatJson(obj: object) {
   return JSON.stringify(obj, null, 2);
 }
 
+// Set JSON schema to the editor
+function setWidgetSchemaInEditor(schema: object) {
+  monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+    validate: true,
+    enableSchemaRequest: true,
+    allowComments: false,
+    schemas: [
+      // @ts-ignore : uri is required but its not needed when schema is provided
+      {
+        fileMatch: ['*'],
+        schema,
+      },
+    ],
+  });
+}
+
 function WidgetEditor(props: { definition: object; onChange: (d: object) => void }) {
   const { definition, onChange } = props;
 
-  const editorRef = React.useRef<monaco.editor.IStandaloneCodeEditor>();
-  const localDefinition = React.useRef(definition);
-
   const [examplesModalOpen, setExamplesModalOpen] = React.useState<boolean>(false);
+  const [dataSource, setDataSource] = React.useState<any>({});
+  const [dataSources, setDataSources] = React.useState<any[]>([]);
+
+  const editorRef = React.useRef<monaco.editor.IStandaloneCodeEditor>();
+  const localDefinitionRef = React.useRef(definition);
+  const enrichedWidgetSchemaRef = React.useRef<any>({});
+
+  const [widgetSchema] = usePromise(() => API.getWidgetSchema());
 
   // Set default definition
   React.useEffect(() => {
@@ -73,10 +95,63 @@ function WidgetEditor(props: { definition: object; onChange: (d: object) => void
 
   // Update editor when definition from parent changes
   React.useEffect(() => {
-    if (localDefinition.current !== definition) {
+    if (localDefinitionRef.current !== definition) {
       editorRef.current!.setValue(formatJson(definition));
+      localDefinitionRef.current = definition;
     }
   }, [definition]);
+
+  // Set JSON schema to the editor
+  React.useEffect(() => {
+    if (!widgetSchema) return;
+
+    // Add formatter, transforms, etc.
+    enrichedWidgetSchemaRef.current = enrichWidgetSchema(widgetSchema);
+
+    (async () => {
+      const currSchema = enrichedWidgetSchemaRef.current;
+
+      // Only one data source
+      if (dataSource && dataSource.subgraphId) {
+        const { subgraphId, entity } = dataSource;
+
+        const subgraphSchema = await API.getSubgraphSchema(subgraphId);
+        const subgraphQueries = getQueriesAndFieldsFromGraphQlSchema(subgraphSchema);
+
+        // Set options for query
+        currSchema.$defs.dataSource.properties.entity.enum = Object.keys(subgraphQueries);
+
+        const fieldNames = (subgraphQueries[entity] || []).map((s) => s.name);
+        const orderByFields = (subgraphQueries[entity] || []).map((s) => s.nameForFilter);
+
+        // Set fields names
+        currSchema.$defs.field.enum = fieldNames;
+        currSchema.$defs.dataSource.properties.orderBy.enum = orderByFields;
+      }
+
+      // Has multiple data sources
+      if (dataSources) {
+        let fieldNames: string[] = []; // to store fields from all data sources
+
+        for (const [sourceName, source] of Object.entries(dataSources)) {
+          const { subgraphId, entity } = source;
+
+          const subgraphSchema = await API.getSubgraphSchema(subgraphId);
+          const subgraphQueries = getQueriesAndFieldsFromGraphQlSchema(subgraphSchema);
+
+          // Field name should be prefixed with data source name
+          const fieldsInSelectedQuery = (subgraphQueries[entity] || []).map(
+            (s) => `${sourceName}.${s.name}`,
+          );
+          fieldNames = fieldNames.concat(fieldsInSelectedQuery);
+        }
+
+        currSchema.$defs.field.enum = fieldNames;
+      }
+
+      setWidgetSchemaInEditor(currSchema);
+    })();
+  }, [widgetSchema, dataSource.subgraphId, dataSource.entity, dataSources]);
 
   async function onChangeExample(url: string) {
     const definition = await fetchDataFromHTTP({ url });
@@ -96,14 +171,16 @@ function WidgetEditor(props: { definition: object; onChange: (d: object) => void
     const isValid = markers.length === 0;
 
     if (!isValid) {
-      window.alert('There seems to be an error in your definition. Please fix it before running it.');
+      window.alert(
+        'There seems to be an error in your widget definition. Please fix it before running it.',
+      );
       return;
     }
 
     const def = editorRef.current!.getValue();
     const parsed = JSON.parse(def);
 
-    localDefinition.current = parsed;
+    localDefinitionRef.current = parsed;
     onChange(parsed);
   }
 
@@ -120,19 +197,6 @@ function WidgetEditor(props: { definition: object; onChange: (d: object) => void
             enabled: false,
           },
         }}
-        editorWillMount={(monaco) => {
-          monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
-            validate: true,
-            enableSchemaRequest: true,
-            allowComments: false,
-            schemas: [
-              {
-                fileMatch: ['*'],
-                uri: SCHEMA_URL,
-              },
-            ],
-          });
-        }}
         editorDidMount={(_editor) => {
           _editor.getModel()!.updateOptions({ tabSize: 2 });
           _editor.focus();
@@ -141,15 +205,24 @@ function WidgetEditor(props: { definition: object; onChange: (d: object) => void
 
           editorRef.current = _editor;
         }}
+        onChange={(v) => {
+          try {
+            const parsed = JSON.parse(v);
+            setDataSource(parsed.data.source);
+            setDataSources(parsed.data.sources);
+          } catch (e) {
+            // Do nothing
+          }
+        }}
       />
 
       <div className='widget-editor-links'>
         <button className='link mr-3' onClick={() => setExamplesModalOpen(true)}>
           Load Example
         </button>
-        <a className='link' href={SCHEMA_URL} target='_blank'>
+        {/* <a className='link' href={widgetSchema} target='_blank'>
           View Schema
-        </a>
+        </a> */}
       </div>
 
       <div className='widget-editor-run'>
