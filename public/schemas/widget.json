@@ -162,7 +162,7 @@
               "dataKey": { "type": "string" },
               "label": { "type": "string" }
             },
-            "required": ["dataKey", "label"]
+            "required": ["dataKey"]
           },
           "minItems": 1
         },
@@ -174,7 +174,7 @@
               "dataKey": { "type": "string" },
               "label": { "type": "string" }
             },
-            "required": ["dataKey", "label"]
+            "required": ["dataKey"]
           },
           "minItems": 1
         },
@@ -186,7 +186,7 @@
               "dataKey": { "type": "string" },
               "label": { "type": "string" }
             },
-            "required": ["dataKey", "label"]
+            "required": ["dataKey"]
           },
           "minItems": 1
         }
