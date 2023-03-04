@@ -9,9 +9,9 @@ export function slugify(text: string) {
     .replace(/-+$/, ''); // Trim - from end of text
 }
 
-// Remove all chars that are not letters, numbers, spaces, colon or dashes
-export function cleanString(text: string) {
-  return text.toString().replace(/[^\w\s-:]/gi, '');
+// Remove all chars that are not letters, numbers, spaces, colon, parenthesis or dashes
+export function cleanTitleString(text: string) {
+  return text.toString().replace(/[^a-zA-Z0-9\s:()\-]+/g, '');
 }
 
 export function formatDate(textOrDate: string | Date): string {
