@@ -20,6 +20,8 @@ apiInstance.interceptors.request.use((config) => {
   return config;
 });
 
+const CACHE : Record<string, any> = {};
+
 export default class API {
   static async getNonce() {
     const response = await apiInstance.get('/nonce');
@@ -243,6 +245,10 @@ export default class API {
   }
 
   static async getSubgraphSchema(subgraphId: string) {
+    if (CACHE[`subgraph-schema-${subgraphId}`]) {
+      return CACHE[`subgraph-schema-${subgraphId}`];
+    }
+
     const query = `query IntrospectionQuery {
       __schema {
         types {
@@ -309,6 +315,10 @@ export default class API {
 
     const result = await queryGraphQl(subgraphId, query);
 
-    return result.data?.__schema;
+    const schema = result.data?.__schema;
+
+    CACHE[`subgraph-schema-${subgraphId}`] = schema;
+
+    return schema;
   }
 }
