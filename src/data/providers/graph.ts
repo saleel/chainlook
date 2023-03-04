@@ -20,7 +20,9 @@ export default async function fetchWidgetDataFromTheGraph(
     orderDirection,
     skip,
     first,
-    ...filters,
+    where: {
+      ...filters,
+    }
   };
   queryFilters = applyVariables(queryFilters, variables);
 
