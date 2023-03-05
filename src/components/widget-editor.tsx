@@ -9,6 +9,7 @@ import usePromise from '../hooks/use-promise';
 import API from '../data/api';
 import { enrichWidgetSchema } from '../utils/widget-parsing';
 import { WidgetDefinition } from '../domain/widget';
+import { useDebouncedCallback } from 'use-debounce';
 
 // @ts-ignore
 self.MonacoEnvironment = {
@@ -38,6 +39,10 @@ const examples = [
   {
     title: 'Metric - Uniswap total pools',
     url: '../examples/widget-metric-uniswap-pools.json',
+  },
+  {
+    title: 'Line Chart - Uniswap TVL All Chains',
+    url: '../examples/widget-line-chart-uniswap-tvl-all-chains.json',
   },
   {
     title: 'Bar Chart - Data from IPFS (json)',
@@ -107,13 +112,14 @@ function WidgetEditor(props: { definition: WidgetDefinition; onChange: (d: objec
     ...Object.values(currentDefinition.data?.sources || []).map(s => [s.subgraphId, s.query]),
   ].join(',');
 
+  const debouncedEnrich = useDebouncedCallback(() => {
+    enrichWidgetSchema(widgetSchema, currentDefinition).then(setWidgetSchemaInEditor);
+  }, 1000)
+
   React.useEffect(() => {
     if (!widgetSchema) return;
 
-    (async () => {
-      const enrichedSchema = await enrichWidgetSchema(widgetSchema, currentDefinition);
-      setWidgetSchemaInEditor(enrichedSchema);
-    })();
+    debouncedEnrich();
   }, [
     widgetSchema,
     schemaChangeKey,

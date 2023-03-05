@@ -1,0 +1,78 @@
+{
+  "data": {
+    "sources": {
+      "ethereum": {
+        "provider": "graph",
+        "subgraphId": "messari/uniswap-v3-ethereum",
+        "query": "financialsDailySnapshots",
+        "orderBy": "timestamp",
+        "orderDirection": "desc",
+        "first": 30
+      },
+      "polygon": {
+        "provider": "graph",
+        "subgraphId": "messari/uniswap-v3-polygon",
+        "query": "financialsDailySnapshots",
+        "orderBy": "timestamp",
+        "orderDirection": "desc",
+        "first": 30
+      },
+      "arbitrum": {
+        "provider": "graph",
+        "subgraphId": "messari/uniswap-v3-arbitrum",
+        "query": "financialsDailySnapshots",
+        "orderBy": "timestamp",
+        "orderDirection": "desc",
+        "first": 30
+      }
+    },
+    "transforms": {
+      "polygon.timestamp": "startOfDay",
+      "ethereum.timestamp": "startOfDay",
+      "arbitrum.timestamp": "startOfDay"
+    },
+    "join": {
+      "ethereum.timestamp": "arbitrum.timestamp",
+      "polygon.timestamp": "ethereum.timestamp"
+    },
+    "dynamicFields": {
+      "totalTVL": {
+        "fields": [
+          "ethereum.totalValueLockedUSD",
+          "polygon.totalValueLockedUSD",
+          "arbitrum.totalValueLockedUSD"
+        ],
+        "operation": "sum"
+      }
+    }
+  },
+  "type": "chart",
+  "chart": {
+    "xAxis": {
+      "dataKey": "ethereum.timestamp",
+      "format": "localeDate",
+      "reversed": true
+    },
+    "lines": [
+      {
+        "dataKey": "ethereum.totalValueLockedUSD",
+        "label": "Ethereum"
+      },
+      {
+        "dataKey": "polygon.totalValueLockedUSD",
+        "label": "Polygon"
+      },
+      {
+        "dataKey": "arbitrum.totalValueLockedUSD",
+        "label": "Arbitrum"
+      },
+      {
+        "dataKey": "totalTVL",
+        "label": "Total"
+      }
+    ],
+    "yAxis": {
+      "format": "currencyUSD"
+    }
+  }
+}
