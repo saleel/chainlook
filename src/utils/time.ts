@@ -10,3 +10,18 @@ export function numberToJsDate(number) {
 
   return number;
 }
+
+// Format date to locale string
+export function formatDate(textOrDate: string | Date): string {
+  const date = new Date(textOrDate);
+
+  if (date.toString() === 'Invalid Date') {
+    return textOrDate as string;
+  }
+
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}

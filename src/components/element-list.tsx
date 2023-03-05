@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import Dashboard from '../domain/dashboard';
 import Widget from '../domain/widget';
-import { formatDate } from '../utils';
+import { formatDate } from '../utils/string';
 
 type Props = {
   title: string;

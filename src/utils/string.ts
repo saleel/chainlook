@@ -13,17 +13,3 @@ export function slugify(text: string) {
 export function cleanTitleString(text: string) {
   return text.toString().replace(/[^a-zA-Z0-9\s:()\-]+/g, '');
 }
-
-export function formatDate(textOrDate: string | Date): string {
-  const date = new Date(textOrDate);
-
-  if (date.toString() === 'Invalid Date') {
-    return textOrDate as string;
-  }
-
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-}

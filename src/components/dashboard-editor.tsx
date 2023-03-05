@@ -5,7 +5,7 @@ import WidgetSelector from '../components/widget-selector';
 import Dashboard, { DashboardDefinition } from '../domain/dashboard';
 import Widget from '../domain/widget';
 import User from '../domain/user';
-import { cleanTitleString, slugify } from '../utils';
+import { cleanTitleString, slugify } from '../utils/string';
 import { AuthContext } from '../context/auth-context';
 
 type Element = DashboardDefinition['elements'][0];

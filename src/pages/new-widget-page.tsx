@@ -9,7 +9,7 @@ import User from '../domain/user';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import Store from '../data/store';
 import { useDebouncedCallback } from 'use-debounce';
-import { cleanTitleString } from '../utils';
+import { cleanTitleString } from '../utils/string';
 import Modal from '../components/modal';
 import WidgetWizard from '../components/widget-wizard';
 import { IoColorWand } from 'react-icons/io5';
