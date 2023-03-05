@@ -20,7 +20,7 @@ const DEFAULT_DEFINITION: Widget['definition'] = {
     source: {
       provider: 'graph',
       subgraphId: 'messari/uniswap-v3-ethereum',
-      entity: 'financialsDailySnapshots',
+      query: 'financialsDailySnapshots',
     },
   },
   table: {

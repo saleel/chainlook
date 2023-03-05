@@ -13,7 +13,7 @@ const DEFAULT_DEFINITION: Partial<WidgetDefinition> = {
     source: {
       provider: 'graph',
       subgraphId: '',
-      entity: '',
+      query: '',
     },
   },
 };
@@ -39,7 +39,7 @@ function WidgetWizard(props: WidgetWizardProps) {
   );
 
   const widgetType = widgetDefinition?.type ?? '';
-  const selectedEntityName = widgetDefinition?.data?.source?.entity ?? '';
+  const selectedEntityName = widgetDefinition?.data?.source?.query ?? '';
   const queryNames = Object.keys(subgraphQueries);
   const fieldsInSelectedQuery = subgraphQueries[selectedEntityName] || [];
 
@@ -186,10 +186,10 @@ function WidgetWizard(props: WidgetWizardProps) {
             <div className='columns'>
               <div className='column is-one-third'>
                 <div className='field'>
-                  <label className='label'>Entity / Query</label>
+                  <label className='label'>Query</label>
                   <div className='select w-100'>
                     <select
-                      onChange={(e) => updateWidgetDefinition('data.source.entity', e.target.value)}
+                      onChange={(e) => updateWidgetDefinition('data.source.query', e.target.value)}
                       value={selectedEntityName}
                     >
                       <option>Select</option>

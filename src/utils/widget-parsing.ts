@@ -136,16 +136,16 @@ export async function enrichWidgetSchema(schema: { $defs: any }, definition: Wid
   try {
     // Only one data source
     if (source && source.subgraphId) {
-      const { subgraphId, entity } = source;
+      const { subgraphId, query } = source;
 
       const subgraphSchema = await API.getSubgraphSchema(subgraphId);
       const subgraphQueries = getQueriesAndFieldsFromGraphQlSchema(subgraphSchema);
 
       // Set options for query
-      schema.$defs.dataSource.properties.entity.enum = Object.keys(subgraphQueries);
+      schema.$defs.dataSource.properties.query.enum = Object.keys(subgraphQueries);
 
-      const fieldNames = (subgraphQueries[entity as string] || []).map((s) => s.name);
-      const orderByFields = (subgraphQueries[entity as string] || []).map((s) => s.nameForFilter);
+      const fieldNames = (subgraphQueries[query as string] || []).map((s) => s.name);
+      const orderByFields = (subgraphQueries[query as string] || []).map((s) => s.nameForFilter);
 
       // Set fields names
       schema.$defs.field.enum = fieldNames;
@@ -159,13 +159,13 @@ export async function enrichWidgetSchema(schema: { $defs: any }, definition: Wid
       for (const [sourceName, source] of Object.entries(sources)) {
         if (!source.subgraphId) continue;
 
-        const { subgraphId, entity } = source;
+        const { subgraphId, query } = source;
 
         const subgraphSchema = await API.getSubgraphSchema(subgraphId);
         const subgraphQueries = getQueriesAndFieldsFromGraphQlSchema(subgraphSchema);
 
         // Field name should be prefixed with data source name
-        const fieldsInSelectedQuery = (subgraphQueries[entity as string] || []).map(
+        const fieldsInSelectedQuery = (subgraphQueries[query as string] || []).map(
           (s) => `${sourceName}.${s.name}`,
         );
         fieldNames = fieldNames.concat(fieldsInSelectedQuery);

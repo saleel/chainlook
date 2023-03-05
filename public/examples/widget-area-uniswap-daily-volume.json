@@ -4,7 +4,7 @@
     "source": {
       "provider": "graph",
       "subgraphId": "messari/uniswap-v3-ethereum",
-      "entity": "financialsDailySnapshots",
+      "query": "financialsDailySnapshots",
       "orderDirection": "desc",
       "orderBy": "timestamp",
       "skip": 1,

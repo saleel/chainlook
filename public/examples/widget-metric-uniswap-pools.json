@@ -8,7 +8,7 @@
     "source": {
       "provider": "graph",
       "subgraphId": "messari/uniswap-v3-ethereum",
-      "entity": "usageMetricsDailySnapshots",
+      "query": "usageMetricsDailySnapshots",
       "orderDirection": "desc",
       "orderBy": "timestamp",
       "first": 1

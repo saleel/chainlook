@@ -102,9 +102,9 @@ function WidgetEditor(props: { definition: WidgetDefinition; onChange: (d: objec
   // Enrich widget schema and set to the editor
   const schemaChangeKey = [
     currentDefinition.data?.source?.subgraphId,
-    currentDefinition.data?.source?.entity,
+    currentDefinition.data?.source?.query,
     ...Object.keys(currentDefinition.data?.dynamicFields || {}),
-    ...Object.values(currentDefinition.data?.sources || []).map(s => [s.subgraphId, s.entity]),
+    ...Object.values(currentDefinition.data?.sources || []).map(s => [s.subgraphId, s.query]),
   ].join(',');
 
   React.useEffect(() => {

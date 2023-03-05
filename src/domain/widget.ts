@@ -3,7 +3,7 @@ import User from './user';
 export type DataSource = {
   provider: 'graph' | 'thegraph' | 'ipfs' | 'tableland';
   subgraphId?: string;
-  entity?: string;
+  query?: string;
   orderDirection?: 'asc' | 'desc';
   orderBy?: string;
   skip?: number;

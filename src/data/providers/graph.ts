@@ -9,11 +9,11 @@ export default async function fetchWidgetDataFromTheGraph(
   config: Partial<DataSource>,
   fieldsRequired: string[],
 ) {
-  if (!config || !config.subgraphId || !config.entity) {
+  if (!config || !config.subgraphId || !config.query) {
     throw new Error('No config provided for TheGraph provider');
   }
 
-  const { subgraphId, entity, orderBy, orderDirection, skip = 0, first, filters } = config;
+  const { subgraphId, query, orderBy, orderDirection, skip = 0, first, filters } = config;
 
   const fieldsObject = {};
   fieldsRequired.forEach((field) => set(fieldsObject, field, true));
@@ -38,17 +38,17 @@ export default async function fetchWidgetDataFromTheGraph(
 
   const queryObj = {
     query: {
-      [entity]: {
+      [query]: {
         __args: queryFilters,
         ...fieldsObject,
       },
     },
   };
-  const query = jsonToGraphQLQuery(queryObj, { pretty: true });
+  const gqlQuery = jsonToGraphQLQuery(queryObj, { pretty: true });
 
-  const result = await queryGraphQl(subgraphId, query);
+  const result = await queryGraphQl(subgraphId, gqlQuery);
 
-  return result.data?.[entity] ?? null;
+  return result.data?.[query] ?? null;
 }
 
 export async function queryGraphQl(subgraphId: string, query: string) {

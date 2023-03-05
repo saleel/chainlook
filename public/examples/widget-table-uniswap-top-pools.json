@@ -4,7 +4,7 @@
     "source": {
       "provider": "graph",
       "subgraphId": "messari/uniswap-v3-ethereum",
-      "entity": "liquidityPoolDailySnapshots",
+      "query": "liquidityPoolDailySnapshots",
       "orderDirection": "desc",
       "orderBy": "dailyVolumeUSD",
       "skip": 1,
