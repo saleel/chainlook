@@ -3,11 +3,13 @@ import { SiweMessage } from 'siwe';
 import Dashboard from '../domain/dashboard';
 import Widget from '../domain/widget';
 import { getToken } from '../utils/auth';
-import { groupItems, flattenAndTransformItem, computeDynamicFields } from './modifiers/helpers';
 import { queryGraphQl } from './providers/graph';
-import { getWidgetDataFromProvider } from './providers/helpers';
+import { getWidgetDataFromProvider } from './providers';
 import { fetchDataFromIPFS, fetchDataFromIPNS } from '../utils/network';
 import { applyVariables, getFieldNamesRequiredForWidget } from '../utils/widget-parsing';
+import { computeDynamicFields } from './modifiers/dynamic-fields';
+import { groupItems } from './modifiers/group';
+import { flattenAndTransformItem } from './modifiers/transformers';
 
 let apiInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -52,97 +54,6 @@ export default class API {
   static async getWidget(widgetId: string) {
     const response = await apiInstance.get(`/widgets/${widgetId}`);
     return new Widget(response.data);
-  }
-
-  static async fetchDataForWidget(
-    definition: Widget['definition'],
-    variables: Record<string, any>,
-  ) {
-    if (!definition.data) {
-      return [];
-    }
-
-    const { source, sources, group, join, transforms, dynamicFields } = definition.data;
-
-    const isSingleSource = typeof source === 'object';
-
-    // Get fields required to be queries from all providers
-    const fieldsRequiredForWidget = getFieldNamesRequiredForWidget(definition);
-
-    // Group joins by provider (check both key and value of the join object)
-    const allJoins: Record<string, Record<string, string>> = {};
-
-    for (const [left, right] of Object.entries(join || {})) {
-      const [leftSource] = left.split('.');
-      const [rightSource] = right.split('.');
-
-      if (!allJoins[leftSource]) allJoins[leftSource] = {};
-      if (!allJoins[rightSource]) allJoins[rightSource] = {};
-
-      allJoins[leftSource][left] = right;
-      allJoins[rightSource][right] = left;
-    }
-
-    let result: object[] = [];
-
-    if (isSingleSource) {
-      const cleanConfig = applyVariables(source, variables); // Apply real values to config values starting with $
-      result = await getWidgetDataFromProvider(cleanConfig, fieldsRequiredForWidget);
-      result = result.map((i: object) => flattenAndTransformItem(i, transforms));
-    }
-
-    if (!isSingleSource) {
-      // Fetch data from each data source and produce { sourceKey, items }[]
-      const resultFromSources = await Promise.all(
-        Object.entries(sources || {}).map(async ([sourceKey, sourceConfig]) => {
-          const cleanConfig = applyVariables(sourceConfig, variables);
-          const items = await getWidgetDataFromProvider(
-            cleanConfig,
-            fieldsRequiredForWidget,
-            sourceKey,
-          );
-          return { sourceKey, items };
-        }),
-      );
-
-      // Apply transformations and join
-      for (const { sourceKey, items = [] } of resultFromSources) {
-        for (const item of items) {
-          const cleanItem = flattenAndTransformItem(item, transforms, sourceKey);
-
-          // Get joins for the current source
-          const joinsForSource = allJoins[sourceKey] || {};
-
-          // Look for matching items in the final results based on the join conditions
-          const matchingItem = Object.keys(joinsForSource).length > 0 && result.find((f) =>
-            Object.keys(joinsForSource).every(
-              (jk) => jk && cleanItem[jk] && cleanItem[jk] === f[joinsForSource[jk]],
-            ),
-          );
-
-          // Copy all fields from the current item to the matching item
-          if (matchingItem) {
-            Object.keys(cleanItem).forEach((key) => {
-              matchingItem[key] = cleanItem[key];
-            });
-          } else {
-            result.push(cleanItem);
-          }
-        }
-      }
-    }
-
-    // Apply grouping and aggregation
-    if (group && group.key) {
-      result = groupItems(group.key, result, group.aggregations);
-    }
-
-    // Compute dynamic fields
-    if (dynamicFields) {
-      result = computeDynamicFields(result, dynamicFields);
-    }
-
-    return result;
   }
 
   static async createWidget(widget: Partial<Widget>) {
@@ -270,6 +181,114 @@ export default class API {
       params: { starredBy: userId },
     });
     return response.data?.map((w: any) => new Dashboard(w));
+  }
+
+  static async fetchDataForWidget(
+    definition: Widget['definition'],
+    variables: Record<string, any>,
+  ) {
+    if (!definition.data) {
+      return [];
+    }
+
+    const { source, sources, group, join, transforms, dynamicFields } = definition.data;
+
+    const isSingleSource = typeof source === 'object';
+
+    // Get fields required to be queries from all providers
+    const fieldsRequiredForWidget = getFieldNamesRequiredForWidget(definition);
+
+    let result: object[] = [];
+
+    if (isSingleSource) {
+      // Apply real values to config values starting with $
+      const cleanConfig = applyVariables(source, variables);
+
+      // Fetch data from provider
+      result = await getWidgetDataFromProvider(cleanConfig, fieldsRequiredForWidget);
+
+      // Apply transformations
+      result = result.map((i: object) => flattenAndTransformItem(i, transforms));
+    }
+
+    if (!isSingleSource) {
+      const resultForSourcePromises = [];
+
+      for (const [sourceKey, sourceConfig] of Object.entries(sources || {})) {
+        // Apply real values to config values starting with $
+        const cleanConfig = applyVariables(sourceConfig, variables);
+
+        const widgetFieldsFromSource = fieldsRequiredForWidget
+          .filter((f) => f.startsWith(`${sourceKey}.`))
+          .map((f) => f.split(`${sourceKey}.`)[1]);
+
+        // Fetch data from provider and return as { sourceKey, items }
+        const promise = getWidgetDataFromProvider(cleanConfig, widgetFieldsFromSource).then(
+          (items) => ({ sourceKey, items }),
+        );
+
+        // Add to promise queue
+        resultForSourcePromises.push(promise);
+      }
+
+      // Fetch data from each data source and produce { sourceKey, items }[]
+      const resultFromSources = await Promise.all(resultForSourcePromises);
+
+      // Group joins operations by source (check both key and value of the join object)
+      const allJoins: Record<string, Record<string, string>> = {};
+      for (const [left, right] of Object.entries(join || {})) {
+        const [leftSource] = left.split('.');
+        const [rightSource] = right.split('.');
+
+        if (!allJoins[leftSource]) allJoins[leftSource] = {};
+        if (!allJoins[rightSource]) allJoins[rightSource] = {};
+
+        allJoins[leftSource][left] = right;
+        allJoins[rightSource][right] = left;
+      }
+
+      // Apply transformations and join
+      for (const { sourceKey, items = [] } of resultFromSources) {
+        for (const item of items) {
+          const cleanItem = flattenAndTransformItem(item, transforms, sourceKey);
+
+          // Get joins for the current source
+          const joinsForSource = allJoins[sourceKey] || {};
+
+          // Look for matching items in the final results based on the join conditions
+          let matchingItem: any;
+          if (Object.keys(joinsForSource).length > 0) {
+            matchingItem = result.find((it: any) =>
+              Object.keys(joinsForSource).every(
+                (jk) => jk && cleanItem[jk] && cleanItem[jk] === it[joinsForSource[jk]],
+              ),
+            );
+          }
+
+          if (matchingItem) {
+            // Copy all fields from the current item to the matching item
+            Object.keys(cleanItem).forEach((key) => {
+              matchingItem[key] = cleanItem[key];
+            });
+          } else {
+            // Add as a new item
+            result.push(cleanItem);
+          }
+        }
+      }
+    }
+
+    // Apply grouping and aggregation
+    if (group && group.key) {
+      result = groupItems(group.key, result, group.aggregations);
+    }
+
+    // Compute dynamic fields
+    if (dynamicFields) {
+      result = computeDynamicFields(result, dynamicFields);
+    }
+
+    return result;
   }
 
   static async getSubgraphSchema(subgraphId: string) {

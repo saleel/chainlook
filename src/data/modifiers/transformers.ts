@@ -19,4 +19,56 @@ const Transformers = {
   endOfYear: (time: number) => endOfYear(numberToJsDate(time)).getTime(),
 };
 
+// Convert object to flat object with dot notation
+// Add a prefix to the key if passed
+function flattenItem(item: any, keyPrefix?: string) {
+  const flattened: any = {};
+
+  function flattenObj(obj: any, parent?: any) {
+    for (const key in obj) {
+      let fullKey = parent ? `${parent}.${key}` : key;
+
+      if (typeof obj[key] === 'object') {
+        flattenObj(obj[key], fullKey);
+      } else {
+        // Add prefix if passed
+        if (keyPrefix) {
+          fullKey = `${keyPrefix}.${fullKey}`;
+        }
+        flattened[fullKey] = obj[key];
+      }
+    }
+  }
+
+  flattenObj(item, '');
+
+  return flattened;
+}
+
+// Flatten the object and apply transformation
+// Flattening is a separate job, but combining with transformation to avoid another iteration
+// Note: transformation is the first operation done on the data
+export function flattenAndTransformItem(
+  item: any,
+  transforms?: Record<string, string>,
+  keyPrefix?: string,
+) {
+  const transformedItem = flattenItem(item, keyPrefix);
+
+  Object.keys(transformedItem).forEach((key) => {
+    if (transforms && transforms[key]) {
+      const transformName = transforms[key] as keyof typeof Transformers;
+      const transformFunction = Transformers[transformName];
+
+      if (transforms[key] in Transformers === false) {
+        throw new Error(`Invalid transform named ${transforms[key]}`);
+      }
+
+      transformedItem[key] = transformFunction(transformedItem[key]);
+    }
+  });
+
+  return transformedItem;
+}
+
 export default Transformers;

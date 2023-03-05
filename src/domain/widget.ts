@@ -1,6 +1,6 @@
 import User from './user';
 
-type DataSource = {
+export type WidgetDataSource = {
   provider?: 'graph' | 'thegraph' | 'ipfs' | 'tableland';
   subgraphId?: string;
   entity?: string;
@@ -16,16 +16,18 @@ type DataSource = {
   tableName?: string;
 };
 
+export type WidgetDataDefinition = {
+  source?: WidgetDataSource;
+  sources?: WidgetDataSource[];
+  group?: { key: string; aggregations: Record<string, string> };
+  join?: Record<string, string>;
+  transforms?: Record<string, string>;
+  dynamicFields?: Record<string, { operation: string; fields: string[] }>;
+};
+
 export type WidgetDefinition = {
   type: 'chart' | 'table' | 'metric' | 'pieChart';
-  data?: {
-    source?: DataSource;
-    sources?: DataSource[];
-    group?: { key: string; aggregations: Record<string, string> };
-    join?: Record<string, string>;
-    transforms?: Record<string, string>;
-    dynamicFields?: Record<string, { operation: string; fields: string[] }>;
-  };
+  data?: WidgetDataDefinition;
   chart?: any;
   table?: any;
   metric?: any;

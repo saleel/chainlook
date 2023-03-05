@@ -1,11 +1,18 @@
-import { connect } from '@tableland/sdk';
-import { applyVariables } from '../../utils/widget-parsing';
+import { connect, NetworkName } from '@tableland/sdk';
+import { WidgetDataSource } from '../../domain/widget';
 
-export default async function fetchWidgetDataFromTableland(config, fieldsRequired, variables) {
-  const { network, tableName, ...restConfig } = config;
-  const { orderBy, orderDirection, skip, first, filters } = applyVariables(restConfig, variables);
+export default async function fetchWidgetDataFromTableland(
+  config: Partial<WidgetDataSource>,
+  fieldsRequired: string[],
+) {
+  if (!config || !config.network || !config.tableName) {
+    throw new Error('No config provided for Tableland provider');
+  }
 
-  const tableland = await connect({ network });
+  const { network , tableName, ...restConfig } = config;
+  const { orderBy, orderDirection, skip, first, filters } = restConfig;
+
+  const tableland = await connect({ network: network as NetworkName });
 
   let whereQuery = Object.entries(filters || {})
     .map(([key, value]) => `${key} = ${value}`)

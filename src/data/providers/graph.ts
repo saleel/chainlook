@@ -1,15 +1,19 @@
 import set from 'lodash/set';
 import { jsonToGraphQLQuery } from 'json-to-graphql-query';
 import { fetchDataFromHTTP } from '../../utils/network';
-import { applyVariables } from '../../utils/widget-parsing';
 import { GRAPH_API_KEY, GRAPH_API_URL, GRAPH_HOSTED_SERVICE_URL } from '../../constants';
 import Store from '../store';
+import { WidgetDataSource } from '../../domain/widget';
+
 
 export default async function fetchWidgetDataFromTheGraph(
-  config: any,
+  config: Partial<WidgetDataSource>,
   fieldsRequired: string[],
-  variables: object,
 ) {
+  if (!config || !config.subgraphId || !config.entity) {
+    throw new Error('No config provided for TheGraph provider');
+  }
+
   const { subgraphId, entity, orderBy, orderDirection, skip = 0, first, filters } = config;
 
   const fieldsObject = {};
@@ -22,11 +26,12 @@ export default async function fetchWidgetDataFromTheGraph(
     first,
     where: {
       ...filters,
-    }
+    },
   };
-  queryFilters = applyVariables(queryFilters, variables);
 
-  Object.keys(queryFilters).forEach((k) => {
+  const queryFilterKeys = Object.keys(queryFilters) as Array<keyof typeof queryFilters>
+  
+  queryFilterKeys.forEach((k) => {
     if (queryFilters[k] === undefined) {
       delete queryFilters[k];
     }

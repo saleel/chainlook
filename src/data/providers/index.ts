@@ -1,26 +1,19 @@
+import { WidgetDataSource } from '../../domain/widget';
 import fetchWidgetDataFromTheGraph from './graph';
 import fetchWidgetDataFromIPFS from './ipfs';
 import fetchWidgetDataFromTableland from './tableland';
 
-export function getWidgetDataFromProvider(sourceConfig, fieldsRequiredFromProvider, fieldPrefix = ''): Promise<object[]> {
+export function getWidgetDataFromProvider(sourceConfig: WidgetDataSource, fieldsRequiredFromProvider: string[]): Promise<object[]> {
   if (!fieldsRequiredFromProvider.length) {
     throw new Error('No fields to fetch for dataSource');
   }
 
   const { provider = 'graph', ...restConfig } = sourceConfig;
 
-  let fieldNames = fieldsRequiredFromProvider;
-
-  if (fieldPrefix) {
-    fieldNames = fieldsRequiredFromProvider
-      .filter((f) => f.startsWith(`${fieldPrefix}.`))
-      .map((f) => f.split(`${fieldPrefix}.`)[1]);
-  }
-
   switch (provider) {
     case 'thegraph':
     case 'graph': {
-      return fetchWidgetDataFromTheGraph(restConfig, fieldNames);
+      return fetchWidgetDataFromTheGraph(restConfig, fieldsRequiredFromProvider);
     }
 
     case 'ipfs': {
@@ -28,7 +21,7 @@ export function getWidgetDataFromProvider(sourceConfig, fieldsRequiredFromProvid
     }
 
     case 'tableland': {
-      return fetchWidgetDataFromTableland(restConfig, fieldNames);
+      return fetchWidgetDataFromTableland(restConfig, fieldsRequiredFromProvider);
     }
 
     default: {

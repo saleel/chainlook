@@ -1,9 +1,10 @@
 import GlobalVariables from '../data/modifiers/variables';
 import API from '../data/api';
-import Aggregations from '../data/modifiers/aggregations';
+import GroupAggregations from '../data/modifiers/group';
 import Formatters from '../data/modifiers/formatters';
 import Transformers from '../data/modifiers/transformers';
 import { getQueriesAndFieldsFromGraphQlSchema } from './graphql';
+import DynamicFieldOperations from '../data/modifiers/dynamic-fields';
 
 /**
  * Parse widget configuration and return the fields required in `source.dataKey` format
@@ -116,8 +117,8 @@ export async function enrichWidgetSchema(currSchema: { $defs: any }, { dataSourc
 
   currSchema.$defs.formatter.enum = Object.keys(Formatters);
   currSchema.$defs.transformer.enum = Object.keys(Transformers);
-  currSchema.$defs.aggregation.enum = Object.keys(Aggregations);
-  currSchema.$defs.dynamicFieldOperation.enum = ['sum', 'subtract', 'multiply'];
+  currSchema.$defs.aggregation.enum = Object.keys(GroupAggregations);
+  currSchema.$defs.dynamicFieldOperation.enum = Object.keys(DynamicFieldOperations);
 
   // Only one data source
   if (dataSource && dataSource.subgraphId) {
