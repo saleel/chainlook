@@ -103,7 +103,7 @@ function WidgetEditor(props: { definition: WidgetDefinition; onChange: (d: objec
   const schemaChangeKey = [
     currentDefinition.data?.source?.subgraphId,
     currentDefinition.data?.source?.entity,
-    ...Object.keys(currentDefinition.data?.dynamicFields || []),
+    ...Object.keys(currentDefinition.data?.dynamicFields || {}),
     ...Object.values(currentDefinition.data?.sources || []).map(s => [s.subgraphId, s.entity]),
   ].join(',');
 
