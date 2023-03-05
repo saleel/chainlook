@@ -4,6 +4,7 @@ export function saveTokenAndUser(token: string, user: User) {
   // Update token in storage
   window.localStorage.setItem('token', token);
   window.localStorage.setItem('address', user.address);
+  window.localStorage.setItem('userId', user.id);
 
   if (user.username) {
     window.localStorage.setItem('username', user.username);
@@ -11,11 +12,12 @@ export function saveTokenAndUser(token: string, user: User) {
 }
 
 export function getUser() {
+  const userId = window.localStorage.getItem('userId') as string;
   const address = window.localStorage.getItem('address');
   const username = window.localStorage.getItem('username') || '';
 
   if (address) {
-    return new User({ id: address, address, username });
+    return new User({ id: userId, address, username });
   }
 
   return null;

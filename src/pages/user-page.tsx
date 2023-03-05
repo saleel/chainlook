@@ -1,14 +1,14 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ElementList from '../components/element-list';
-import { AuthContext } from '../context/auth-context';
 import API from '../data/api';
-import Store from '../data/store';
 import Widget from '../domain/widget';
 import usePromise from '../hooks/use-promise';
+import { deleteTokenAndUser } from '../utils/auth';
 
 function UserPage() {
   const { username } = useParams();
+
+  const navigate = useNavigate();
 
   const [usersWidgets, { isFetching: isFetchingWidgets }] = usePromise<Widget[]>(
     () => API.getWidgetsByUser(username as string),
@@ -28,6 +28,12 @@ function UserPage() {
     },
   );
 
+  function onLogoutClick() {
+    deleteTokenAndUser();
+    navigate('/');
+    window.location.reload();
+  }
+
   if (isFetchingDashboards || isFetchingWidgets) {
     return <div>Loading...</div>;
   }
@@ -37,6 +43,12 @@ function UserPage() {
       <div className='dashboard-header'>
         <div className='dashboard-title'>
           <h2>{username}</h2>
+        </div>
+
+        <div className='dashboard-actions'>
+          <button onClick={onLogoutClick} className='button is-small'>
+            Logout
+          </button>
         </div>
       </div>
 
