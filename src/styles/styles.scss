@@ -33,6 +33,10 @@ body {
   height: 100%;
 }
 
+html[data-theme='dark'] {
+  filter: invert(1) hue-rotate(180deg);
+}
+
 body {
   font-family: 'Fira Code', monospace;
   color: var(--text-color);

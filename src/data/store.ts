@@ -43,4 +43,12 @@ export default class Store {
   static getTheGraphAPIKey() {
     return window.localStorage.getItem('theGraphAPIKey');
   }
+
+  static setTheme(theme: string) {
+    window.localStorage.setItem('theme', theme);
+  }
+
+  static getTheme() {
+    return window.localStorage.getItem('theme');
+  }
 }
