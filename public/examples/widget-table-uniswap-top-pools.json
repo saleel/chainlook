@@ -6,17 +6,17 @@
       "subgraphId": "messari/uniswap-v3-ethereum",
       "query": "liquidityPoolDailySnapshots",
       "orderDirection": "desc",
-      "orderBy": "dailyVolumeUSD",
+      "orderBy": "dailyTotalVolumeUSD",
       "skip": 1,
       "first": 20,
       "filters": {
-        "timestamp_gte": "$startOfDay"
+        "timestamp_gte": "$startOfLastDay"
       }
     },
     "group": {
       "key": "pool.symbol",
       "aggregations": {
-        "dailyVolumeUSD": "sum"
+        "dailyTotalVolumeUSD": "sum"
       }
     }
   },
@@ -27,7 +27,7 @@
         "label": "Pool"
       },
       {
-        "dataKey": "dailyVolumeUSD",
+        "dataKey": "dailyTotalVolumeUSD",
         "label": "Daily Volume (USD)",
         "format": "number"
       }
