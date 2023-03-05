@@ -8,7 +8,7 @@ import { AuthContext } from '../context/auth-context';
 import API from '../data/api';
 import Dashboard from '../domain/dashboard';
 import usePromise from '../hooks/use-promise';
-import { formatDate } from '../utils/string';
+import { formatDate } from '../utils/time';
 
 function DashboardPage() {
   // const navigate = useNavigate();

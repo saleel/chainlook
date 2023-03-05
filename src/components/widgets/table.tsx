@@ -1,10 +1,14 @@
-import Formatters from '../../data/modifiers/formatters';
+import Formatters, { applyFormatting } from '../../data/modifiers/formatters';
+import { WidgetDefinition } from '../../domain/widget';
 
-function Table(props) {
-  const {
-    data = [],
-    config: { columns = [] },
-  } = props;
+type Props = {
+  data: any[];
+  config: WidgetDefinition['table'];
+};
+
+function Table(props: Props) {
+  const { data = [], config } = props;
+  const columns = config!.columns || [];
 
   try {
     return (
@@ -13,10 +17,7 @@ function Table(props) {
           <thead>
             <tr>
               {columns.map((column) => (
-                <th
-                  // style={{ width: `${100 / columns.length}%` }}
-                  key={column.dataKey}
-                >
+                <th key={column.dataKey}>
                   {column.label || Formatters.camelCaseToTitle(column.dataKey)}
                 </th>
               ))}
@@ -31,7 +32,7 @@ function Table(props) {
                   let value = datum[column.dataKey];
 
                   if (column.format) {
-                    value = Formatters[column.format](value);
+                    value = applyFormatting(value, column.format);
                   }
 
                   return <td key={column.dataKey}>{String(value)}</td>;

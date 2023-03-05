@@ -10,15 +10,22 @@ import {
   Area,
 } from 'recharts';
 import Formatters from '../../data/modifiers/formatters';
+import { WidgetDefinition } from '../../domain/widget';
 
 const COLORS = ['var(--blue-500)', 'var(--green-300)', 'var(--yellow-500)'];
 
-function Chart(props) {
+type Props = {
+  data: any[];
+  config: WidgetDefinition['chart'];
+};
+
+function Chart(props: Props) {
   try {
-    const {
-      data = [],
-      config: { xAxis, yAxis, lines = [], areas = [], bars = [] },
-    } = props;
+    const { data = [], config } = props;
+
+    const { xAxis, yAxis, lines = [], areas = [], bars = [] } = config!;
+    const xAxisFormatter = xAxis.format && Formatters[xAxis.format as keyof typeof Formatters];
+    const yAxisFormatter = yAxis?.format && Formatters[yAxis.format as keyof typeof Formatters];
 
     const dataKeys = [...lines, ...areas, ...bars].map((c) => c.dataKey);
     let maxData = 0;
@@ -37,21 +44,19 @@ function Chart(props) {
         <ComposedChart data={data}>
           <XAxis
             dataKey={xAxis.dataKey}
-            {...(Formatters[xAxis.format] && { tickFormatter: Formatters[xAxis.format] })}
+            {...(xAxisFormatter && { tickFormatter: xAxisFormatter })}
             reversed={xAxis.reversed}
           />
 
           <YAxis
-            {...(Formatters[yAxis?.format] && { tickFormatter: Formatters[yAxis.format] })}
+            {...(yAxisFormatter && { tickFormatter: yAxisFormatter })}
             type='number'
             domain={[0, maxData * 1.1]}
           />
 
           <Tooltip
-            {...(Formatters[xAxis.format] && {
-              labelFormatter: Formatters[xAxis.format || 'camelCaseToTitle'],
-            })}
-            {...(Formatters[yAxis?.format] && { formatter: Formatters[yAxis.format] })}
+            labelFormatter={xAxisFormatter || Formatters['camelCaseToTitle']}
+            {...(yAxisFormatter && { formatter: yAxisFormatter })}
           />
 
           {areas.map((area, i) => (

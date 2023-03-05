@@ -1,18 +1,23 @@
 import { ResponsiveContainer, PieChart as RechartPieChart, Pie } from 'recharts';
-import Formatters from '../../data/modifiers/formatters';
+import { applyFormatting } from '../../data/modifiers/formatters';
+import { WidgetDefinition } from '../../domain/widget';
 
 const COLORS = ['var(--blue-500)', 'var(--green-300)', 'var(--yellow-500)'];
 
-function PieChart(props) {
+type Props = {
+  data: any[];
+  config: WidgetDefinition['pieChart'];
+};
+
+function PieChart(props: Props) {
   try {
-    const {
-      data = [],
-      config: { dataKey, nameKey, format },
-    } = props;
+    const { data = [], config } = props;
+
+    const { dataKey, nameKey, format } = config!;
 
     const formattedData = data.map((d) => ({
       ...d,
-      [dataKey]: format ? Math.round(Formatters[format](d[dataKey])) : Math.round(d[dataKey]),
+      [dataKey]: format ? applyFormatting(d[dataKey], format) : d[dataKey],
     }));
 
     return (
@@ -32,7 +37,7 @@ function PieChart(props) {
       </ResponsiveContainer>
     );
   } catch (error) {
-    return <div>{error.message}</div>;
+    return <div>{(error as Error).message}</div>;
   }
 }
 

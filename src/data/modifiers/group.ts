@@ -1,7 +1,7 @@
-import { WidgetDataDefinition } from "../../domain/widget";
+import { DataDefinition } from "../../domain/widget";
 
 type AggregationFunction = (item: any[], key: string) => number;
-type GroupAggregationSchema = NonNullable<WidgetDataDefinition["group"]>["aggregations"];
+type GroupAggregationSchema = NonNullable<DataDefinition["group"]>["aggregations"];
 
 
 const GroupAggregations: Record<string, AggregationFunction> = {

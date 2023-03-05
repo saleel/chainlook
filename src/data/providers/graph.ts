@@ -3,11 +3,11 @@ import { jsonToGraphQLQuery } from 'json-to-graphql-query';
 import { fetchDataFromHTTP } from '../../utils/network';
 import { GRAPH_API_KEY, GRAPH_API_URL, GRAPH_HOSTED_SERVICE_URL } from '../../constants';
 import Store from '../store';
-import { WidgetDataSource } from '../../domain/widget';
+import { DataSource } from '../../domain/widget';
 
 
 export default async function fetchWidgetDataFromTheGraph(
-  config: Partial<WidgetDataSource>,
+  config: Partial<DataSource>,
   fieldsRequired: string[],
 ) {
   if (!config || !config.subgraphId || !config.entity) {

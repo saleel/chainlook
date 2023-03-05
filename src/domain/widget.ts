@@ -1,38 +1,131 @@
 import User from './user';
 
-export type WidgetDataSource = {
-  provider?: 'graph' | 'thegraph' | 'ipfs' | 'tableland';
+export type DataSource =  {
+  provider: "graph" | "thegraph" | "ipfs" | "tableland";
   subgraphId?: string;
   entity?: string;
-  orderDirection?: 'asc' | 'desc';
+  orderDirection?: "asc" | "desc";
   orderBy?: string;
   skip?: number;
   first?: number;
   filters?: {
-    [k: string]: string;
   };
   cid?: string;
   network?: string;
   tableName?: string;
 };
 
-export type WidgetDataDefinition = {
-  source?: WidgetDataSource;
-  sources?: WidgetDataSource[];
-  group?: { key: string; aggregations: Record<string, string> };
-  join?: Record<string, string>;
-  transforms?: Record<string, string>;
-  dynamicFields?: Record<string, { operation: string; fields: string[] }>;
+export type Field = string;
+export type Transformer = string;
+export type Aggregation = string;
+export type DynamicFieldOperation = string;
+export type Formatter = string;
+
+export type Chart = {
+  xAxis: {
+    dataKey: Field;
+    format?: Formatter;
+    reversed?: boolean;
+  };
+  yAxis?: {
+    format?: Formatter;
+  };
+  lines?: [
+    {
+      dataKey: Field;
+      label?: string;
+    },
+    ...{
+      dataKey: Field;
+      label?: string;
+    }[]
+  ];
+  bars?: [
+    {
+      dataKey: Field;
+      label?: string;
+    },
+    ...{
+      dataKey: Field;
+      label?: string;
+    }[]
+  ];
+  areas?: [
+    {
+      dataKey: Field;
+      label?: string;
+    },
+    ...{
+      dataKey: Field;
+      label?: string;
+    }[]
+  ];
+};
+
+export type Table = {
+  columns: [
+    {
+      dataKey: Field;
+      label?: string;
+      format?: Formatter;
+    },
+    ...{
+      dataKey: Field;
+      label?: string;
+      format?: Formatter;
+    }[]
+  ];
+}
+
+export type PieChart = {
+  dataKey: Field;
+  nameKey: Field;
+  format?: Formatter;
+}
+
+export type Metric = {
+  dataKey: Field;
+  format?: Formatter;
+  unit: string;
+}
+
+export type Text = {
+  message: Field;
+}
+
+export type DataDefinition = {
+  source?: DataSource;
+  sources?: {
+    [k: string]: DataSource;
+  };
+  join?: {
+    [k: string]: Field;
+  };
+  transforms?: {
+    [k: string]: Transformer;
+  };
+  group?: {
+    key: Field;
+    aggregations?: {
+      [k: string]: Aggregation;
+    };
+  };
+  dynamicFields?: {
+    [k: string]: {
+      operation?: DynamicFieldOperation;
+      fields?: Field[];
+    };
+  };
 };
 
 export type WidgetDefinition = {
-  type: 'chart' | 'table' | 'metric' | 'pieChart';
-  data?: WidgetDataDefinition;
-  chart?: any;
-  table?: any;
-  metric?: any;
-  text?: any;
-  pieChart?: any;
+  type: "table" | "chart" | "pieChart" | "metric" | "text";
+  data?: DataDefinition;
+  table?: Table;
+  chart?: Chart;
+  pieChart?: PieChart;
+  metric?: Metric;
+  text?: Text;
 };
 
 type IWidget = {

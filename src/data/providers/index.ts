@@ -1,9 +1,9 @@
-import { WidgetDataSource } from '../../domain/widget';
+import { DataSource } from '../../domain/widget';
 import fetchWidgetDataFromTheGraph from './graph';
 import fetchWidgetDataFromIPFS from './ipfs';
 import fetchWidgetDataFromTableland from './tableland';
 
-export function getWidgetDataFromProvider(sourceConfig: WidgetDataSource, fieldsRequiredFromProvider: string[]): Promise<object[]> {
+export function getWidgetDataFromProvider(sourceConfig: DataSource, fieldsRequiredFromProvider: string[]): Promise<object[]> {
   if (!fieldsRequiredFromProvider.length) {
     throw new Error('No fields to fetch for dataSource');
   }

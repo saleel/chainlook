@@ -1,46 +1,48 @@
-import GlobalVariables from '../data/modifiers/variables';
+import Variables from '../data/modifiers/variables';
 import API from '../data/api';
 import GroupAggregations from '../data/modifiers/group';
 import Formatters from '../data/modifiers/formatters';
 import Transformers from '../data/modifiers/transformers';
 import { getQueriesAndFieldsFromGraphQlSchema } from './graphql';
 import DynamicFieldOperations from '../data/modifiers/dynamic-fields';
+import { DataSource, WidgetDefinition } from '../domain/widget';
 
-/**
- * Parse widget configuration and return the fields required in `source.dataKey` format
- *
- * @param {*} widget
- * @returns {string[]}
- */
-export function getFieldNamesRequiredForWidget(widget) {
-  let displayFields = [];
+// Get fields required from data source for the widget tp render
+export function getFieldNamesRequiredForWidget(widgetDefinition: WidgetDefinition) {
+  if (!widgetDefinition.data) {
+    return [];
+  }
 
-  if (widget.type === 'chart') {
+  let displayFields: string[] = [];
+
+  if (widgetDefinition.type === 'chart') {
     displayFields = [
-      widget.chart.xAxis?.dataKey,
-      ...(widget.chart.lines || []).map((d) => d.dataKey),
-      ...(widget.chart.bars || []).map((d) => d.dataKey),
-      ...(widget.chart.areas || []).map((d) => d.dataKey),
+      widgetDefinition.chart!.xAxis?.dataKey,
+      ...(widgetDefinition.chart!.lines || []).map((d) => d.dataKey),
+      ...(widgetDefinition.chart!.bars || []).map((d) => d.dataKey),
+      ...(widgetDefinition.chart!.areas || []).map((d) => d.dataKey),
     ].filter(Boolean);
   }
 
-  if (widget.type === 'pieChart') {
-    displayFields = [widget.pieChart.dataKey, widget.pieChart.nameKey];
+  if (widgetDefinition.type === 'pieChart') {
+    displayFields = [widgetDefinition.pieChart!.dataKey, widgetDefinition.pieChart!.nameKey];
   }
 
-  if (widget.type === 'table') {
-    displayFields = widget.table.columns.map((d) => d.dataKey);
+  if (widgetDefinition.type === 'table') {
+    displayFields = widgetDefinition.table!.columns.map((d) => d.dataKey);
   }
 
-  if (widget.type === 'metric') {
-    displayFields = [widget.metric.dataKey];
+  if (widgetDefinition.type === 'metric') {
+    displayFields = [widgetDefinition.metric!.dataKey];
   }
 
   // Include all fields mentioned in join and group
-  const fieldsRequiredForJoin = [...new Set(Object.entries(widget.data?.join ?? {}).flat())];
-  const fieldsRequiredForGroup = widget.data.group?.dataKey ?? [];
+  const fieldsRequiredForJoin = [
+    ...new Set(Object.entries(widgetDefinition.data?.join ?? {}).flat()),
+  ];
+  const fieldsRequiredForGroup = widgetDefinition.data?.group?.key ?? [];
   const fieldsRequiredForDynamicFields =
-    Object.values(widget.data.dynamicFields || {})
+    Object.values(widgetDefinition.data.dynamicFields || {})
       .map((d: any) => d?.fields)
       ?.flat() || [];
 
@@ -52,36 +54,39 @@ export function getFieldNamesRequiredForWidget(widget) {
   ];
 }
 
-/**
- * Apply variable values for object values starting with $
- *
- * @param {*} object Object to be modified
- * @param {*} variables Variables object containing current values.  Keys don't need to start with $
- */
-export function applyVariables(object, variables) {
-  const updatedObject = { ...object };
+// Apply dynamic variable values to the given object recursively
+export function applyVariables(
+  dataSource: any,
+  runtimeVariables: Record<string, any>,
+) {
+  const updatedObject: any = { ...dataSource };
+  const dataSourceKeys = Object.keys(dataSource) as (keyof DataSource)[];
 
-  Object.keys(object).forEach((key) => {
-    let value = object[key];
-
-    if (typeof value === 'string' && value.startsWith('$')) {
-      const variableKey = value.slice(1);
-
-      // Keys in `globalVariables` start with $, and values are function start return the current value
-      if (GlobalVariables[value]) {
-        value = GlobalVariables[value]();
-      } else if (variableKey in variables) {
-        value = variables[variableKey];
-      } else {
-        throw Error(`Cannot resolve variable named ${value}`);
-      }
-
-      updatedObject[key] = value;
-    }
+  dataSourceKeys.forEach((key) => {
+    let value = dataSource[key];
 
     // Apply variables recursively to nested objects
     if (typeof value === 'object' && !Array.isArray(value)) {
-      updatedObject[key] = applyVariables(value, variables);
+      updatedObject[key] = applyVariables(value, runtimeVariables);
+    }
+
+    if (typeof value === 'string' && value.startsWith('$')) {
+      // Apply variable if present
+      const variablesFunction = Variables[value as keyof typeof Variables];
+      if (variablesFunction) {
+        updatedObject[key] = variablesFunction();
+        return;
+      }
+
+      // Look for a runtime variable (runTimeVariables they don't start with $)
+      // Values of runTimeVariables are not functions, but the actual value
+      const variableKey = value.slice(1);
+      if (variableKey in runtimeVariables) {
+        updatedObject[key] = runtimeVariables[variableKey];
+        return;
+      }
+
+      throw Error(`Cannot resolve variable named ${value}`);
     }
   });
 
@@ -110,7 +115,13 @@ export function getFormatterForField(name: string, type: string) {
 }
 
 // Add enums to widget schema based on data source
-export async function enrichWidgetSchema(currSchema: { $defs: any }, { dataSource, dataSources }) {
+export async function enrichWidgetSchema(
+  currSchema: { $defs: any },
+  {
+    dataSource,
+    dataSources,
+  }: { dataSource?: DataSource; dataSources?: Record<string, DataSource> },
+) {
   if (!currSchema || !currSchema.$defs) {
     return currSchema;
   }
@@ -130,8 +141,8 @@ export async function enrichWidgetSchema(currSchema: { $defs: any }, { dataSourc
     // Set options for query
     currSchema.$defs.dataSource.properties.entity.enum = Object.keys(subgraphQueries);
 
-    const fieldNames = (subgraphQueries[entity] || []).map((s) => s.name);
-    const orderByFields = (subgraphQueries[entity] || []).map((s) => s.nameForFilter);
+    const fieldNames = (subgraphQueries[entity as string] || []).map((s) => s.name);
+    const orderByFields = (subgraphQueries[entity as string] || []).map((s) => s.nameForFilter);
 
     // Set fields names
     currSchema.$defs.field.enum = fieldNames;
@@ -151,7 +162,7 @@ export async function enrichWidgetSchema(currSchema: { $defs: any }, { dataSourc
       const subgraphQueries = getQueriesAndFieldsFromGraphQlSchema(subgraphSchema);
 
       // Field name should be prefixed with data source name
-      const fieldsInSelectedQuery = (subgraphQueries[entity] || []).map(
+      const fieldsInSelectedQuery = (subgraphQueries[entity as string] || []).map(
         (s) => `${sourceName}.${s.name}`,
       );
       fieldNames = fieldNames.concat(fieldsInSelectedQuery);

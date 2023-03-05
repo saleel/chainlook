@@ -6,7 +6,7 @@ import { AuthContext } from '../context/auth-context';
 import API from '../data/api';
 import Store from '../data/store';
 import usePromise from '../hooks/use-promise';
-import { formatDate } from '../utils/string';
+import { formatDate } from '../utils/time';
 
 function WidgetPage() {
   const { widgetId } = useParams();

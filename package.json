@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint . --fix && prettier --write .",
+    "lint": "tsc && eslint . --fix && prettier --write .",
     "analyze": "source-map-explorer 'build/static/js/*.js'"
   },
   "dependencies": {
@@ -34,6 +34,9 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.191",
+    "@types/react-dom": "^18.0.11",
+    "@types/react-grid-layout": "^1.3.2",
+    "@types/react-modal": "^3.13.1",
     "@vitejs/plugin-react": "^3.0.1",
     "eslint": "^8.31.0",
     "eslint-config-airbnb": "^19.0.4",

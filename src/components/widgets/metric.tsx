@@ -1,14 +1,20 @@
-import Formatters from '../../data/modifiers/formatters';
+import { applyFormatting } from '../../data/modifiers/formatters';
+import { WidgetDefinition } from '../../domain/widget';
 
-function Metric(props) {
+type Props = {
+  data: any[];
+  config: WidgetDefinition['metric'];
+};
+
+function Metric(props: Props) {
   try {
     const { data, config } = props;
 
-    const { dataKey, unit, format } = config;
+    const { dataKey, unit, format } = config!;
 
     let value = Array.isArray(data) ? data[0]?.[dataKey] : data[dataKey];
-    if (format && typeof Formatters[format] === 'function') {
-      value = Formatters[format](value);
+    if (format) {
+      value = applyFormatting(value, format);
     }
 
     return (
@@ -18,7 +24,7 @@ function Metric(props) {
       </div>
     );
   } catch (error) {
-    return <div>{error.message}</div>;
+    return <div>{(error as Error).message}</div>;
   }
 }
 

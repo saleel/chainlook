@@ -4,7 +4,8 @@ import './styles/styles.scss';
 import Modal from 'react-modal';
 import App from './app';
 
-const container = document.getElementById('root');
+const container = document.getElementById('root') as HTMLElement;
+
 Modal.setAppElement(container);
 
 const root = createRoot(container);

@@ -1,14 +1,14 @@
-// Handle value in both ms and seconds format
-export function numberToJsDate(number) {
-  if (number instanceof Date) return number;
+export function numberToJsDate(input: number | string | Date) {
+  if (input instanceof Date) return input;
 
-  if (Number.isNaN(Number(number))) return number; // Not a number, return original value
+  if (Number.isNaN(Number(input))) return input; // Not a number, return original value
 
-  if (number.toString().length === 10) return new Date(Number(number) * 1000);
+  // Handle value in both ms and seconds format
+  if (input.toString().length === 10) return new Date(Number(input) * 1000);
 
-  if (number.toString().length === 13) return new Date(Number(number));
+  if (input.toString().length === 13) return new Date(Number(input));
 
-  return number;
+  return input;
 }
 
 // Format date to locale string

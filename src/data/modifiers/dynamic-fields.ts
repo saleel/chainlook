@@ -1,7 +1,7 @@
-import { WidgetDataDefinition } from "../../domain/widget";
+import { DataDefinition } from "../../domain/widget";
 
 type OperationFunction = (item: any, fields: string[]) => number;
-type DynamicFieldSchema = WidgetDataDefinition["dynamicFields"];
+type DynamicFieldSchema = DataDefinition["dynamicFields"];
 
 const DynamicFieldOperations: Record<string, OperationFunction> = {
   sum: (item, fields) => fields.reduce((acc, field) => acc + Number(item[field]), 0),

@@ -1,8 +1,8 @@
 import { connect, NetworkName } from '@tableland/sdk';
-import { WidgetDataSource } from '../../domain/widget';
+import { DataSource } from '../../domain/widget';
 
 export default async function fetchWidgetDataFromTableland(
-  config: Partial<WidgetDataSource>,
+  config: Partial<DataSource>,
   fieldsRequired: string[],
 ) {
   if (!config || !config.network || !config.tableName) {

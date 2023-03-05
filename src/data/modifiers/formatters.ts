@@ -4,7 +4,7 @@ import { numberToJsDate } from '../../utils/time';
 function formatDate(input: string, formatName: string) {
   try {
     if (!input) return null;
-    const date = numberToJsDate(input);
+    const date = numberToJsDate(input) as Date;
     return format(date, formatName);
   } catch (error) {
     return input;
@@ -29,5 +29,15 @@ const Formatters = {
       .replace(/([A-Z][a-z])/g, " $1")
   },
 };
+
+export function applyFormatting(item: any, formatter: string) {
+  const formatterName = formatter as keyof typeof Formatters;
+
+  if (!Formatters[formatterName]) {
+    throw new Error(`Formatter ${formatterName} not found`);
+  }
+
+  return Formatters[formatterName](item);
+}
 
 export default Formatters;
