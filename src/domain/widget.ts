@@ -1,8 +1,31 @@
 import User from './user';
 
+type DataSource = {
+  provider?: 'graph' | 'thegraph' | 'ipfs' | 'tableland';
+  subgraphId?: string;
+  entity?: string;
+  orderDirection?: 'asc' | 'desc';
+  orderBy?: string;
+  skip?: number;
+  first?: number;
+  filters?: {
+    [k: string]: string;
+  };
+  cid?: string;
+  network?: string;
+  tableName?: string;
+};
+
 export type WidgetDefinition = {
   type: 'chart' | 'table' | 'metric' | 'pieChart';
-  data?: { source: any };
+  data?: {
+    source?: DataSource;
+    sources?: DataSource[];
+    group?: { key: string; aggregations: Record<string, string> };
+    join?: Record<string, string>;
+    transforms?: Record<string, string>;
+    dynamicFields?: Record<string, { operation: string; fields: string[] }>;
+  };
   chart?: any;
   table?: any;
   metric?: any;
