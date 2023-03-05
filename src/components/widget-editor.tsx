@@ -8,7 +8,7 @@ import { fetchDataFromHTTP } from '../utils/network';
 import usePromise from '../hooks/use-promise';
 import API from '../data/api';
 import { enrichWidgetSchema } from '../utils/widget-parsing';
-import { DataSource } from '../domain/widget';
+import { WidgetDefinition } from '../domain/widget';
 
 // @ts-ignore
 self.MonacoEnvironment = {
@@ -73,15 +73,14 @@ function setWidgetSchemaInEditor(schema: object) {
   });
 }
 
-function WidgetEditor(props: { definition: object; onChange: (d: object) => void }) {
+function WidgetEditor(props: { definition: WidgetDefinition; onChange: (d: object) => void }) {
   const { definition, onChange } = props;
 
   const [examplesModalOpen, setExamplesModalOpen] = React.useState<boolean>(false);
-  const [dataSource, setDataSource] = React.useState<DataSource>();
-  const [dataSources, setDataSources] = React.useState<Record<string, DataSource>>({});
+  const [currentDefinition, setCurrentDefinition] = React.useState<WidgetDefinition>(definition);
 
   const editorRef = React.useRef<monaco.editor.IStandaloneCodeEditor>();
-  const localDefinitionRef = React.useRef(definition);
+  const lastSavedDefinitionRef = React.useRef(definition);
 
   const [widgetSchema] = usePromise(() => API.getWidgetSchema());
 
@@ -94,21 +93,31 @@ function WidgetEditor(props: { definition: object; onChange: (d: object) => void
 
   // Update editor when definition from parent changes
   React.useEffect(() => {
-    if (localDefinitionRef.current !== definition) {
+    if (lastSavedDefinitionRef.current !== definition) {
       editorRef.current!.setValue(formatJson(definition));
-      localDefinitionRef.current = definition;
+      lastSavedDefinitionRef.current = definition;
     }
   }, [definition]);
 
-  // Set JSON schema to the editor
+  // Enrich widget schema and set to the editor
+  const schemaChangeKey = [
+    currentDefinition.data?.source?.subgraphId,
+    currentDefinition.data?.source?.entity,
+    ...Object.keys(currentDefinition.data?.dynamicFields || []),
+    ...Object.values(currentDefinition.data?.sources || []).map(s => [s.subgraphId, s.entity]),
+  ].join(',');
+
   React.useEffect(() => {
     if (!widgetSchema) return;
 
     (async () => {
-      const enrichedSchema = await enrichWidgetSchema(widgetSchema, { dataSource, dataSources });
+      const enrichedSchema = await enrichWidgetSchema(widgetSchema, currentDefinition);
       setWidgetSchemaInEditor(enrichedSchema);
     })();
-  }, [widgetSchema, dataSource?.subgraphId, dataSource?.entity, dataSources]);
+  }, [
+    widgetSchema,
+    schemaChangeKey,
+  ]);
 
   async function onChangeExample(url: string) {
     const definition = await fetchDataFromHTTP({ url });
@@ -125,7 +134,10 @@ function WidgetEditor(props: { definition: object; onChange: (d: object) => void
 
     const model = editorRef.current!.getModel();
     const markers = monaco.editor.getModelMarkers({ resource: model!.uri });
-    const isValid = markers.length === 0;
+
+    // Check for errors in schema (severity 8)
+    // Ignore json schema validation warnings for now (severity 4)
+    const isValid = markers.filter(m => m.severity === 8).length === 0;
 
     if (!isValid) {
       window.alert(
@@ -137,7 +149,7 @@ function WidgetEditor(props: { definition: object; onChange: (d: object) => void
     const def = editorRef.current!.getValue();
     const parsed = JSON.parse(def);
 
-    localDefinitionRef.current = parsed;
+    lastSavedDefinitionRef.current = parsed;
     onChange(parsed);
   }
 
@@ -165,8 +177,7 @@ function WidgetEditor(props: { definition: object; onChange: (d: object) => void
         onChange={(v) => {
           try {
             const parsed = JSON.parse(v);
-            setDataSource(parsed.data.source || {});
-            setDataSources(parsed.data.sources || {});
+            setCurrentDefinition(parsed);
           } catch (e) {
             // Do nothing
           }

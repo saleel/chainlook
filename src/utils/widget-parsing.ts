@@ -112,61 +112,70 @@ export function getFormatterForField(name: string, type: string) {
 }
 
 // Add enums to widget schema based on data source
-export async function enrichWidgetSchema(
-  currSchema: { $defs: any },
-  {
-    dataSource,
-    dataSources,
-  }: { dataSource?: DataSource; dataSources?: Record<string, DataSource> },
-) {
-  if (!currSchema || !currSchema.$defs) {
-    return currSchema;
+export async function enrichWidgetSchema(schema: { $defs: any }, definition: WidgetDefinition) {
+  if (!schema || !schema.$defs) {
+    return schema;
   }
 
-  currSchema.$defs.formatter.enum = Object.keys(Formatters);
-  currSchema.$defs.transformer.enum = Object.keys(Transformers);
-  currSchema.$defs.aggregation.enum = Object.keys(GroupAggregations);
-  currSchema.$defs.dynamicFieldOperation.enum = Object.keys(DynamicFieldOperations);
+  schema.$defs.formatter.enum = Object.keys(Formatters);
+  schema.$defs.transformer.enum = Object.keys(Transformers);
+  schema.$defs.aggregation.enum = Object.keys(GroupAggregations);
+  schema.$defs.dynamicFieldOperation.enum = Object.keys(DynamicFieldOperations);
 
-  // Only one data source
-  if (dataSource && dataSource.subgraphId) {
-    const { subgraphId, entity } = dataSource;
+  const { data } = definition;
+  const { source, sources, dynamicFields } = data || {};
 
-    const subgraphSchema = await API.getSubgraphSchema(subgraphId);
-    const subgraphQueries = getQueriesAndFieldsFromGraphQlSchema(subgraphSchema);
+  schema.$defs.field.enum = [];
 
-    // Set options for query
-    currSchema.$defs.dataSource.properties.entity.enum = Object.keys(subgraphQueries);
-
-    const fieldNames = (subgraphQueries[entity as string] || []).map((s) => s.name);
-    const orderByFields = (subgraphQueries[entity as string] || []).map((s) => s.nameForFilter);
-
-    // Set fields names
-    currSchema.$defs.field.enum = fieldNames;
-    currSchema.$defs.dataSource.properties.orderBy.enum = orderByFields;
+  // Add dynamic fields to fields
+  if (dynamicFields) {
+    const dynamicFieldNames = Object.keys(dynamicFields);
+    schema.$defs.field.enum.push(...dynamicFieldNames);
   }
 
-  // Has multiple data sources
-  if (dataSources) {
-    let fieldNames: string[] = []; // to store fields from all data sources
-
-    for (const [sourceName, source] of Object.entries(dataSources)) {
-      if (!source.subgraphId) continue;
-
+  try {
+    // Only one data source
+    if (source && source.subgraphId) {
       const { subgraphId, entity } = source;
 
       const subgraphSchema = await API.getSubgraphSchema(subgraphId);
       const subgraphQueries = getQueriesAndFieldsFromGraphQlSchema(subgraphSchema);
 
-      // Field name should be prefixed with data source name
-      const fieldsInSelectedQuery = (subgraphQueries[entity as string] || []).map(
-        (s) => `${sourceName}.${s.name}`,
-      );
-      fieldNames = fieldNames.concat(fieldsInSelectedQuery);
+      // Set options for query
+      schema.$defs.dataSource.properties.entity.enum = Object.keys(subgraphQueries);
+
+      const fieldNames = (subgraphQueries[entity as string] || []).map((s) => s.name);
+      const orderByFields = (subgraphQueries[entity as string] || []).map((s) => s.nameForFilter);
+
+      // Set fields names
+      schema.$defs.field.enum = fieldNames;
+      schema.$defs.dataSource.properties.orderBy.enum = orderByFields;
     }
 
-    currSchema.$defs.field.enum = fieldNames;
+    // Has multiple data sources
+    if (sources) {
+      let fieldNames: string[] = []; // to store fields from all data sources
+
+      for (const [sourceName, source] of Object.entries(sources)) {
+        if (!source.subgraphId) continue;
+
+        const { subgraphId, entity } = source;
+
+        const subgraphSchema = await API.getSubgraphSchema(subgraphId);
+        const subgraphQueries = getQueriesAndFieldsFromGraphQlSchema(subgraphSchema);
+
+        // Field name should be prefixed with data source name
+        const fieldsInSelectedQuery = (subgraphQueries[entity as string] || []).map(
+          (s) => `${sourceName}.${s.name}`,
+        );
+        fieldNames = fieldNames.concat(fieldsInSelectedQuery);
+      }
+
+      schema.$defs.field.enum = fieldNames;
+    }
+  } catch (error) {
+    console.error("Error while enriching schema", error);
   }
 
-  return currSchema;
+  return schema;
 }
