@@ -69,7 +69,11 @@ function WidgetView(props: WidgetViewProps) {
 
   function renderAllWidgets() {
     if (!searchTerm) {
-      return <div>Input a search term and press <code>Enter</code> to search for widgets.</div>;
+      return (
+        <div>
+          Input a search term and press <code>Enter</code> to search for widgets.
+        </div>
+      );
     }
 
     if (isFetchingAll) {

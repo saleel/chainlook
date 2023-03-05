@@ -5,7 +5,6 @@ import { GRAPH_API_KEY, GRAPH_API_URL, GRAPH_HOSTED_SERVICE_URL } from '../../co
 import Store from '../store';
 import { DataSource } from '../../domain/widget';
 
-
 export default async function fetchWidgetDataFromTheGraph(
   config: Partial<DataSource>,
   fieldsRequired: string[],
@@ -29,8 +28,8 @@ export default async function fetchWidgetDataFromTheGraph(
     },
   };
 
-  const queryFilterKeys = Object.keys(queryFilters) as Array<keyof typeof queryFilters>
-  
+  const queryFilterKeys = Object.keys(queryFilters) as Array<keyof typeof queryFilters>;
+
   queryFilterKeys.forEach((k) => {
     if (queryFilters[k] === undefined) {
       delete queryFilters[k];

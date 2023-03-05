@@ -1,15 +1,14 @@
 import User from './user';
 
-export type DataSource =  {
-  provider: "graph" | "thegraph" | "ipfs" | "tableland";
+export type DataSource = {
+  provider: 'graph' | 'thegraph' | 'ipfs' | 'tableland';
   subgraphId?: string;
   entity?: string;
-  orderDirection?: "asc" | "desc";
+  orderDirection?: 'asc' | 'desc';
   orderBy?: string;
   skip?: number;
   first?: number;
-  filters?: {
-  };
+  filters?: {};
   cid?: string;
   network?: string;
   tableName?: string;
@@ -38,7 +37,7 @@ export type Chart = {
     ...{
       dataKey: Field;
       label?: string;
-    }[]
+    }[],
   ];
   bars?: [
     {
@@ -48,7 +47,7 @@ export type Chart = {
     ...{
       dataKey: Field;
       label?: string;
-    }[]
+    }[],
   ];
   areas?: [
     {
@@ -58,7 +57,7 @@ export type Chart = {
     ...{
       dataKey: Field;
       label?: string;
-    }[]
+    }[],
   ];
 };
 
@@ -73,25 +72,25 @@ export type Table = {
       dataKey: Field;
       label?: string;
       format?: Formatter;
-    }[]
+    }[],
   ];
-}
+};
 
 export type PieChart = {
   dataKey: Field;
   nameKey: Field;
   format?: Formatter;
-}
+};
 
 export type Metric = {
   dataKey: Field;
   format?: Formatter;
   unit: string;
-}
+};
 
 export type Text = {
   message: Field;
-}
+};
 
 export type DataDefinition = {
   source?: DataSource;
@@ -119,7 +118,7 @@ export type DataDefinition = {
 };
 
 export type WidgetDefinition = {
-  type: "table" | "chart" | "pieChart" | "metric" | "text";
+  type: 'table' | 'chart' | 'pieChart' | 'metric' | 'text';
   data?: DataDefinition;
   table?: Table;
   chart?: Chart;

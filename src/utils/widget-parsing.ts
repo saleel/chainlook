@@ -55,10 +55,7 @@ export function getFieldNamesRequiredForWidget(widgetDefinition: WidgetDefinitio
 }
 
 // Apply dynamic variable values to the given object recursively
-export function applyVariables(
-  dataSource: any,
-  runtimeVariables: Record<string, any>,
-) {
+export function applyVariables(dataSource: any, runtimeVariables: Record<string, any>) {
   const updatedObject: any = { ...dataSource };
   const dataSourceKeys = Object.keys(dataSource) as (keyof DataSource)[];
 

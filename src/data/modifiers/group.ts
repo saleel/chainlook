@@ -1,13 +1,13 @@
-import { DataDefinition } from "../../domain/widget";
+import { DataDefinition } from '../../domain/widget';
 
 type AggregationFunction = (item: any[], key: string) => number;
-type GroupAggregationSchema = NonNullable<DataDefinition["group"]>["aggregations"];
-
+type GroupAggregationSchema = NonNullable<DataDefinition['group']>['aggregations'];
 
 const GroupAggregations: Record<string, AggregationFunction> = {
   sum: (items: any[], key: string) => items.reduce((acc, item) => acc + Number(item[key]), 0),
   multiply: (items: any[], key: string) => items.reduce((acc, item) => acc * Number(item[key]), 1),
-  average: (items: any[], key: string) => items.reduce((acc, item) => acc + Number(item[key]), 0) / items.length,
+  average: (items: any[], key: string) =>
+    items.reduce((acc, item) => acc + Number(item[key]), 0) / items.length,
   count: (items: any[]) => items.length,
   min: (items: any[], key: string) => Math.min(...items.map((item) => Number(item[key]))),
   max: (items: any[], key: string) => Math.max(...items.map((item) => Number(item[key]))),
@@ -40,7 +40,7 @@ export function groupItems(groupKey: string, items: any[], aggregations: GroupAg
 
     // No need to aggregate if len = 1
     if (itemsInGroup.length > 1) {
-      const aggregationKeys = Object.keys(aggregations || {}) as Array<keyof typeof aggregations>
+      const aggregationKeys = Object.keys(aggregations || {}) as Array<keyof typeof aggregations>;
       aggregationKeys.forEach((fieldToAggregate) => {
         const aggregationFunction = GroupAggregations[aggregations![fieldToAggregate]];
         const aggregatedValue = aggregationFunction(itemsInGroup, fieldToAggregate);
@@ -54,6 +54,5 @@ export function groupItems(groupKey: string, items: any[], aggregations: GroupAg
 
   return result;
 }
-
 
 export default GroupAggregations;

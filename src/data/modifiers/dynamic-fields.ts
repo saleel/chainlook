@@ -1,12 +1,13 @@
-import { DataDefinition } from "../../domain/widget";
+import { DataDefinition } from '../../domain/widget';
 
 type OperationFunction = (item: any, fields: string[]) => number;
-type DynamicFieldSchema = DataDefinition["dynamicFields"];
+type DynamicFieldSchema = DataDefinition['dynamicFields'];
 
 const DynamicFieldOperations: Record<string, OperationFunction> = {
   sum: (item, fields) => fields.reduce((acc, field) => acc + Number(item[field]), 0),
   multiply: (item, fields) => fields.reduce((acc, field) => acc * Number(item[field]), 1),
-  average: (item, fields) => fields.reduce((acc, field) => acc + Number(item[field]), 0) / fields.length,
+  average: (item, fields) =>
+    fields.reduce((acc, field) => acc + Number(item[field]), 0) / fields.length,
   min: (item, fields) => Math.min(...fields.map((field) => Number(item[field]))),
   max: (item, fields) => Math.max(...fields.map((field) => Number(item[field]))),
 };

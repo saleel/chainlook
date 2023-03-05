@@ -28,8 +28,8 @@ const Formatters: Record<string, FormatterFunction> = {
     return input
       .toString()
       .replace(/([.])/g, ' ') // replace dot with space
-      .replace(/([A-Z]+)/g, " $1") // camel case to title
-      .replace(/([A-Z][a-z])/g, " $1")
+      .replace(/([A-Z]+)/g, ' $1') // camel case to title
+      .replace(/([A-Z][a-z])/g, ' $1');
   },
 };
 

@@ -8,12 +8,12 @@ const featuredDashboards = [
   {
     slug: 'uniswap-v3-ethereum',
     title: 'Uniswap v3',
-    user: { id:'', username: 'saleel', address: '' }
+    user: { id: '', username: 'saleel', address: '' },
   },
   {
     slug: 'saddle-finance',
     title: 'Saddle Finance',
-    user: { id: '', username: 'saleel', address: '' }
+    user: { id: '', username: 'saleel', address: '' },
   },
 ];
 

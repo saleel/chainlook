@@ -9,7 +9,7 @@ export default async function fetchWidgetDataFromTableland(
     throw new Error('No config provided for Tableland provider');
   }
 
-  const { network , tableName, ...restConfig } = config;
+  const { network, tableName, ...restConfig } = config;
   const { orderBy, orderDirection, skip, first, filters } = restConfig;
 
   const tableland = await connect({ network: network as NetworkName });
