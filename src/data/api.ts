@@ -6,8 +6,8 @@ import { getToken } from './auth';
 import { groupItems, flattenAndTransformItem, computeDynamicFields } from './modifiers/helpers';
 import { queryGraphQl } from './providers/graph';
 import { getWidgetDataFromProvider } from './providers/helpers';
-import { fetchDataFromIPFS, fetchDataFromIPNS } from './utils/network';
-import { applyVariables, getFieldNamesRequiredForWidget } from './utils/widget-parsing';
+import { fetchDataFromIPFS, fetchDataFromIPNS } from '../utils/network';
+import { applyVariables, getFieldNamesRequiredForWidget } from '../utils/widget-parsing';
 
 let apiInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,

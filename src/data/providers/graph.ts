@@ -1,7 +1,7 @@
 import set from 'lodash/set';
 import { jsonToGraphQLQuery } from 'json-to-graphql-query';
-import { fetchDataFromHTTP } from '../utils/network';
-import { applyVariables } from '../utils/widget-parsing';
+import { fetchDataFromHTTP } from '../../utils/network';
+import { applyVariables } from '../../utils/widget-parsing';
 import { GRAPH_API_KEY, GRAPH_API_URL, GRAPH_HOSTED_SERVICE_URL } from '../../constants';
 import Store from '../store';
 

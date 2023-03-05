@@ -83,9 +83,6 @@ export function computeDynamicFields(items, dynamicFields) {
       if (operation === 'sum') {
         item[key] = fields.reduce((acc, field) => acc + Number(item[field]), 0);
       }
-      if (operation === 'subtract') {
-        item[key] = fields.reduce((acc, field) => acc - Number(item[field]), 0);
-      }
       if (operation === 'multiply') {
         item[key] = fields.reduce((acc, field) => acc * Number(item[field]), 1);
       }

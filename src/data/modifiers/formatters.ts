@@ -1,5 +1,5 @@
 import format from 'date-fns/format';
-import { numberToJsDate } from '../utils/time';
+import { numberToJsDate } from '../../utils/time';
 
 function formatDate(input: string, formatName: string) {
   try {

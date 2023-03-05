@@ -1,8 +1,8 @@
-import Widget from "../../domain/widget";
-import API from "../api";
-import Aggregations from "../modifiers/aggregations";
-import Formatters from "../modifiers/formatters";
-import Transformers from "../modifiers/transformers";
+import Widget from "../domain/widget";
+import API from "../data/api";
+import Aggregations from "../data/modifiers/aggregations";
+import Formatters from "../data/modifiers/formatters";
+import Transformers from "../data/modifiers/transformers";
 import { getQueriesAndFieldsFromGraphQlSchema } from "./graphql";
 
 function addModifiersAsEnums(widgetSchema: { $defs: any }) {

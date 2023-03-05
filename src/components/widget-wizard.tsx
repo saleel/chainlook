@@ -3,10 +3,10 @@ import set from 'lodash/set';
 import get from 'lodash/get';
 import { MultiSelect } from 'react-multi-select-component';
 import API from '../data/api';
-import { getQueriesAndFieldsFromGraphQlSchema } from '../data/utils/graphql';
+import { getQueriesAndFieldsFromGraphQlSchema } from '../utils/graphql';
 import usePromise from '../hooks/use-promise';
 import { WidgetDefinition } from '../domain/widget';
-import { getFormatterForField } from '../data/utils/widget-parsing';
+import { getFormatterForField } from '../utils/widget-parsing';
 
 const DEFAULT_DEFINITION: Partial<WidgetDefinition> = {
   data: {

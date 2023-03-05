@@ -1,5 +1,5 @@
 import { connect } from '@tableland/sdk';
-import { applyVariables } from '../utils/widget-parsing';
+import { applyVariables } from '../../utils/widget-parsing';
 
 export default async function fetchWidgetDataFromTableland(config, fieldsRequired, variables) {
   const { network, tableName, ...restConfig } = config;

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IPFS_GATEWAY } from '../../constants';
+import { IPFS_GATEWAY } from '../constants';
 
 export async function fetchDataFromHTTP(config) {
   const response = await axios(config);

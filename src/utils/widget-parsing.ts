@@ -1,4 +1,9 @@
-import GlobalVariables from '../modifiers/variables';
+import GlobalVariables from '../data/modifiers/variables';
+import API from '../data/api';
+import Aggregations from '../data/modifiers/aggregations';
+import Formatters from '../data/modifiers/formatters';
+import Transformers from '../data/modifiers/transformers';
+import { getQueriesAndFieldsFromGraphQlSchema } from './graphql';
 
 /**
  * Parse widget configuration and return the fields required in `source.dataKey` format
@@ -82,7 +87,6 @@ export function applyVariables(object, variables) {
   return updatedObject;
 }
 
-
 // Return a suitable formatter for the field based on name and type
 export function getFormatterForField(name: string, type: string) {
   const fieldName = name.toLowerCase();
@@ -102,4 +106,58 @@ export function getFormatterForField(name: string, type: string) {
   if (type === 'BigDecimal') {
     return 'bigDecimal';
   }
+}
+
+// Add enums to widget schema based on data source
+export async function enrichWidgetSchema(currSchema: { $defs: any }, { dataSource, dataSources }) {
+  if (!currSchema || !currSchema.$defs) {
+    return currSchema;
+  }
+
+  currSchema.$defs.formatter.enum = Object.keys(Formatters);
+  currSchema.$defs.transformer.enum = Object.keys(Transformers);
+  currSchema.$defs.aggregation.enum = Object.keys(Aggregations);
+  currSchema.$defs.dynamicFieldOperation.enum = ['sum', 'subtract', 'multiply'];
+
+  // Only one data source
+  if (dataSource && dataSource.subgraphId) {
+    const { subgraphId, entity } = dataSource;
+
+    const subgraphSchema = await API.getSubgraphSchema(subgraphId);
+    const subgraphQueries = getQueriesAndFieldsFromGraphQlSchema(subgraphSchema);
+
+    // Set options for query
+    currSchema.$defs.dataSource.properties.entity.enum = Object.keys(subgraphQueries);
+
+    const fieldNames = (subgraphQueries[entity] || []).map((s) => s.name);
+    const orderByFields = (subgraphQueries[entity] || []).map((s) => s.nameForFilter);
+
+    // Set fields names
+    currSchema.$defs.field.enum = fieldNames;
+    currSchema.$defs.dataSource.properties.orderBy.enum = orderByFields;
+  }
+
+  // Has multiple data sources
+  if (dataSources) {
+    let fieldNames: string[] = []; // to store fields from all data sources
+
+    for (const [sourceName, source] of Object.entries(dataSources)) {
+      if (!source.subgraphId) continue;
+
+      const { subgraphId, entity } = source;
+
+      const subgraphSchema = await API.getSubgraphSchema(subgraphId);
+      const subgraphQueries = getQueriesAndFieldsFromGraphQlSchema(subgraphSchema);
+
+      // Field name should be prefixed with data source name
+      const fieldsInSelectedQuery = (subgraphQueries[entity] || []).map(
+        (s) => `${sourceName}.${s.name}`,
+      );
+      fieldNames = fieldNames.concat(fieldsInSelectedQuery);
+    }
+
+    currSchema.$defs.field.enum = fieldNames;
+  }
+
+  return currSchema;
 }

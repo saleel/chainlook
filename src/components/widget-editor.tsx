@@ -4,10 +4,10 @@ import * as monaco from 'monaco-editor';
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
 import Modal from './modal';
-import { fetchDataFromHTTP } from '../data/utils/network';
+import { fetchDataFromHTTP } from '../utils/network';
 import usePromise from '../hooks/use-promise';
 import API from '../data/api';
-import { enrichWidgetSchema } from '../data/utils/schema';
+import { enrichWidgetSchema } from '../utils/widget-parsing';
 
 // @ts-ignore
 self.MonacoEnvironment = {
@@ -105,7 +105,6 @@ function WidgetEditor(props: { definition: object; onChange: (d: object) => void
 
     (async () => {
       const enrichedSchema = await enrichWidgetSchema(widgetSchema, { dataSource, dataSources });
-      console.log(enrichedSchema);
       setWidgetSchemaInEditor(enrichedSchema);
     })();
   }, [widgetSchema, dataSource.subgraphId, dataSource.entity, dataSources]);

@@ -1,5 +1,6 @@
 const Aggregations = {
   sum: (items: any[], key: string) => items.reduce((acc, item) => acc + Number(item[key]), 0),
+  multiply: (items: any[], key: string) => items.reduce((acc, item) => acc * Number(item[key]), 1),
   average: (items: any[], key: string) => items.reduce((acc, item) => acc + Number(item[key]), 0) / items.length,
   count: (items: any[]) => items.length,
   min: (items: any[], key: string) => Math.min(...items.map((item) => Number(item[key]))),

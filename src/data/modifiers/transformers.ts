@@ -6,7 +6,7 @@ import startOfDay from 'date-fns/startOfDay';
 import startOfMonth from 'date-fns/startOfMonth';
 import startOfWeek from 'date-fns/startOfWeek';
 import startOfYear from 'date-fns/startOfYear';
-import { numberToJsDate } from '../utils/time';
+import { numberToJsDate } from '../../utils/time';
 
 const Transformers = {
   startOfDay: (time: number) => startOfDay(numberToJsDate(time)).getTime(),
