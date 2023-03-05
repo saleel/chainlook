@@ -7,7 +7,6 @@ import Modal from './modal';
 import { fetchDataFromHTTP } from '../data/utils/network';
 import usePromise from '../hooks/use-promise';
 import API from '../data/api';
-import { getQueriesAndFieldsFromGraphQlSchema } from '../data/utils/graphql';
 import { enrichWidgetSchema } from '../data/utils/schema';
 
 // @ts-ignore
@@ -82,7 +81,6 @@ function WidgetEditor(props: { definition: object; onChange: (d: object) => void
 
   const editorRef = React.useRef<monaco.editor.IStandaloneCodeEditor>();
   const localDefinitionRef = React.useRef(definition);
-  const enrichedWidgetSchemaRef = React.useRef<any>({});
 
   const [widgetSchema] = usePromise(() => API.getWidgetSchema());
 
@@ -105,53 +103,10 @@ function WidgetEditor(props: { definition: object; onChange: (d: object) => void
   React.useEffect(() => {
     if (!widgetSchema) return;
 
-    // Add formatter, transforms, etc.
-    enrichedWidgetSchemaRef.current = enrichWidgetSchema(widgetSchema);
-
     (async () => {
-      const currSchema = enrichedWidgetSchemaRef.current;
-
-      // Only one data source
-      if (dataSource && dataSource.subgraphId) {
-        const { subgraphId, entity } = dataSource;
-
-        const subgraphSchema = await API.getSubgraphSchema(subgraphId);
-        const subgraphQueries = getQueriesAndFieldsFromGraphQlSchema(subgraphSchema);
-
-        // Set options for query
-        currSchema.$defs.dataSource.properties.entity.enum = Object.keys(subgraphQueries);
-
-        const fieldNames = (subgraphQueries[entity] || []).map((s) => s.name);
-        const orderByFields = (subgraphQueries[entity] || []).map((s) => s.nameForFilter);
-
-        // Set fields names
-        currSchema.$defs.field.enum = fieldNames;
-        currSchema.$defs.dataSource.properties.orderBy.enum = orderByFields;
-      }
-
-      // Has multiple data sources
-      if (dataSources) {
-        let fieldNames: string[] = []; // to store fields from all data sources
-
-        for (const [sourceName, source] of Object.entries(dataSources)) {
-          if (!source.subgraphId) continue;
-
-          const { subgraphId, entity } = source;
-
-          const subgraphSchema = await API.getSubgraphSchema(subgraphId);
-          const subgraphQueries = getQueriesAndFieldsFromGraphQlSchema(subgraphSchema);
-
-          // Field name should be prefixed with data source name
-          const fieldsInSelectedQuery = (subgraphQueries[entity] || []).map(
-            (s) => `${sourceName}.${s.name}`,
-          );
-          fieldNames = fieldNames.concat(fieldsInSelectedQuery);
-        }
-
-        currSchema.$defs.field.enum = fieldNames;
-      }
-
-      setWidgetSchemaInEditor(currSchema);
+      const enrichedSchema = await enrichWidgetSchema(widgetSchema, { dataSource, dataSources });
+      console.log(enrichedSchema);
+      setWidgetSchemaInEditor(enrichedSchema);
     })();
   }, [widgetSchema, dataSource.subgraphId, dataSource.entity, dataSources]);
 

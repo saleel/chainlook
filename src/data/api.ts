@@ -20,7 +20,7 @@ apiInstance.interceptors.request.use((config) => {
   return config;
 });
 
-const CACHE : Record<string, any> = {};
+const CACHE: Record<string, any> = {};
 
 export default class API {
   static async getWidgetSchema() {
@@ -54,16 +54,24 @@ export default class API {
     return new Widget(response.data);
   }
 
-  static async fetchDataForWidget(widget, variables) {
-    const { source, sources, group, join, transforms, dynamicFields } = widget.data;
+  static async fetchDataForWidget(
+    definition: Widget['definition'],
+    variables: Record<string, any>,
+  ) {
+    if (!definition.data) {
+      return [];
+    }
+
+    const { source, sources, group, join, transforms, dynamicFields } = definition.data;
 
     const isSingleSource = typeof source === 'object';
 
     // Get fields required to be queries from all providers
-    const fieldsRequiredForWidget = getFieldNamesRequiredForWidget(widget);
+    const fieldsRequiredForWidget = getFieldNamesRequiredForWidget(definition);
 
     // Group joins by provider (check both key and value of the join object)
-    const allJoins = {};
+    const allJoins: Record<string, Record<string, string>> = {};
+
     for (const [left, right] of Object.entries(join || {})) {
       const [leftSource] = left.split('.');
       const [rightSource] = right.split('.');
@@ -75,22 +83,18 @@ export default class API {
       allJoins[rightSource][right] = left;
     }
 
-    let result = [];
+    let result: object[] = [];
 
     if (isSingleSource) {
       const cleanConfig = applyVariables(source, variables); // Apply real values to config values starting with $
       result = await getWidgetDataFromProvider(cleanConfig, fieldsRequiredForWidget);
-      result = result.map((i) => flattenAndTransformItem(i, transforms));
+      result = result.map((i: object) => flattenAndTransformItem(i, transforms));
     }
 
     if (!isSingleSource) {
-      if (!sources) {
-        throw new Error('data.sources not defined in schema');
-      }
-
       // Fetch data from each data source and produce { sourceKey, items }[]
       const resultFromSources = await Promise.all(
-        Object.entries(sources).map(async ([sourceKey, sourceConfig]) => {
+        Object.entries(sources || {}).map(async ([sourceKey, sourceConfig]) => {
           const cleanConfig = applyVariables(sourceConfig, variables);
           const items = await getWidgetDataFromProvider(
             cleanConfig,
@@ -106,12 +110,17 @@ export default class API {
         for (const item of items) {
           const cleanItem = flattenAndTransformItem(item, transforms, sourceKey);
 
-          // Look for matching items in the final results based on the join conditions
+          // Get joins for the current source
           const joinsForSource = allJoins[sourceKey] || {};
-          const matchingItem = result.find((f) =>
-            Object.keys(joinsForSource).every((jk) => cleanItem[jk] === f[joinsForSource[jk]]),
+
+          // Look for matching items in the final results based on the join conditions
+          const matchingItem = Object.keys(joinsForSource).length > 0 && result.find((f) =>
+            Object.keys(joinsForSource).every(
+              (jk) => jk && cleanItem[jk] && cleanItem[jk] === f[joinsForSource[jk]],
+            ),
           );
 
+          // Copy all fields from the current item to the matching item
           if (matchingItem) {
             Object.keys(cleanItem).forEach((key) => {
               matchingItem[key] = cleanItem[key];
