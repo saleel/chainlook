@@ -112,7 +112,7 @@ function DashboardPage() {
         </div>
 
         <div className='dashboard-actions'>
-          <button className='button is-normal'>Share</button>
+          {/* <button className='button is-normal'>Share</button> */}
 
           {!isFetchingStarred && (
             <button
