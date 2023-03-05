@@ -18,7 +18,7 @@ import { mainnet } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import { SiweMessage } from 'siwe';
 import API from '../data/api';
-import { deleteTokenAndUser, getUser, isTokenValid, saveTokenAndUser } from '../data/auth';
+import { deleteTokenAndUser, getUser, isTokenValid, saveTokenAndUser } from '../utils/auth';
 import User from '../domain/user';
 
 const { chains, provider, webSocketProvider } = configureChains([mainnet], [publicProvider()]);

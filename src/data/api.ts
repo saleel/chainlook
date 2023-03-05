@@ -2,7 +2,7 @@ import axios, { AxiosHeaders } from 'axios';
 import { SiweMessage } from 'siwe';
 import Dashboard from '../domain/dashboard';
 import Widget from '../domain/widget';
-import { getToken } from './auth';
+import { getToken } from '../utils/auth';
 import { groupItems, flattenAndTransformItem, computeDynamicFields } from './modifiers/helpers';
 import { queryGraphQl } from './providers/graph';
 import { getWidgetDataFromProvider } from './providers/helpers';
