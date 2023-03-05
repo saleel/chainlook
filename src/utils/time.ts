@@ -19,9 +19,5 @@ export function formatDate(textOrDate: string | Date): string {
     return textOrDate as string;
   }
 
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+  return date.toLocaleDateString();
 }

@@ -27,7 +27,7 @@ const DEFAULT_DEFINITION: Widget['definition'] = {
     columns: [
       {
         dataKey: 'timestamp',
-        format: 'dateMMMdd',
+        format: 'localeDate',
       },
       {
         dataKey: 'dailyVolumeUSD',

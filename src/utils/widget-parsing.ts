@@ -95,7 +95,7 @@ export function getFormatterForField(name: string, type: string) {
   const fieldName = name.toLowerCase();
 
   if (fieldName.includes('timestamp') || fieldName.includes('date')) {
-    return 'dateMMMdd';
+    return 'localeDate';
   }
 
   if ((fieldName.includes('amount'), fieldName.includes('usd'))) {

@@ -6,11 +6,13 @@ import usePromise from '../hooks/use-promise';
 
 const featuredDashboards = [
   {
+    id: 'uniswap-v3-ethereum',
     slug: 'uniswap-v3-ethereum',
     title: 'Uniswap v3',
     user: { id: '', username: 'saleel', address: '' },
   },
   {
+    id: 'saddle-finance',
     slug: 'saddle-finance',
     title: 'Saddle Finance',
     user: { id: '', username: 'saleel', address: '' },
