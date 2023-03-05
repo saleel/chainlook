@@ -14,8 +14,8 @@ function formatDate(input: string | number, formatName: string) {
 type FormatterFunction = (input: string | number) => string;
 
 const Formatters: Record<string, FormatterFunction> = {
-  localeDate : (input) => new Date(numberToJsDate(input)).toLocaleDateString(),
-  localeDateTime : (input) => new Date(numberToJsDate(input)).toLocaleString(),
+  localeDate: (input) => new Date(numberToJsDate(input)).toLocaleDateString(),
+  localeDateTime: (input) => new Date(numberToJsDate(input)).toLocaleString(),
   dateMMMdd: (input) => formatDate(input, 'MMM dd') as string,
   dateYYYYmmdd: (input) => formatDate(input, 'YYYY-MM-DD') as string,
   roundedNumber: (input) => new Intl.NumberFormat().format(+Number(input).toFixed(2)),

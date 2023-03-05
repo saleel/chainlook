@@ -109,21 +109,18 @@ function WidgetEditor(props: { definition: WidgetDefinition; onChange: (d: objec
     currentDefinition.data?.source?.subgraphId,
     currentDefinition.data?.source?.query,
     ...Object.keys(currentDefinition.data?.dynamicFields || {}),
-    ...Object.values(currentDefinition.data?.sources || []).map(s => [s.subgraphId, s.query]),
+    ...Object.values(currentDefinition.data?.sources || []).map((s) => [s.subgraphId, s.query]),
   ].join(',');
 
   const debouncedEnrich = useDebouncedCallback(() => {
     enrichWidgetSchema(widgetSchema, currentDefinition).then(setWidgetSchemaInEditor);
-  }, 1000)
+  }, 1000);
 
   React.useEffect(() => {
     if (!widgetSchema) return;
 
     debouncedEnrich();
-  }, [
-    widgetSchema,
-    schemaChangeKey,
-  ]);
+  }, [widgetSchema, schemaChangeKey]);
 
   async function onChangeExample(url: string) {
     const definition = await fetchDataFromHTTP({ url });
@@ -143,7 +140,7 @@ function WidgetEditor(props: { definition: WidgetDefinition; onChange: (d: objec
 
     // Check for errors in schema (severity 8)
     // Ignore json schema validation warnings for now (severity 4)
-    const isValid = markers.filter(m => m.severity === 8).length === 0;
+    const isValid = markers.filter((m) => m.severity === 8).length === 0;
 
     if (!isValid) {
       window.alert(

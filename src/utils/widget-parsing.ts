@@ -40,18 +40,27 @@ export function getFieldNamesRequiredForWidget(widgetDefinition: WidgetDefinitio
   const fieldsRequiredForJoin = [
     ...new Set(Object.entries(widgetDefinition.data?.join ?? {}).flat()),
   ];
-  const fieldsRequiredForGroup = widgetDefinition.data?.group?.key ?? [];
+
+  const fieldsRequiredForGroup = [
+    widgetDefinition.data?.group?.key,
+    ...Object.keys(widgetDefinition.data?.group?.aggregations ?? {}),
+  ];
+
   const fieldsRequiredForDynamicFields =
     Object.values(widgetDefinition.data.dynamicFields || {})
       .map((d: any) => d?.fields)
       ?.flat() || [];
 
-  return [
+  const allFields = [
     ...displayFields,
     ...fieldsRequiredForJoin,
     ...fieldsRequiredForGroup,
     ...fieldsRequiredForDynamicFields,
-  ];
+  ].filter(Boolean);
+
+  const uniqueFields = [...new Set(allFields)];
+
+  return uniqueFields;
 }
 
 // Apply dynamic variable values to the given object recursively
@@ -148,7 +157,7 @@ export async function enrichWidgetSchema(schema: { $defs: any }, definition: Wid
       const orderByFields = (subgraphQueries[query as string] || []).map((s) => s.nameForFilter);
 
       // Set fields names
-      schema.$defs.field.enum = fieldNames;
+      schema.$defs.field.enum.push(...fieldNames);
       schema.$defs.dataSource.properties.orderBy.enum = orderByFields;
     }
 
@@ -171,10 +180,10 @@ export async function enrichWidgetSchema(schema: { $defs: any }, definition: Wid
         fieldNames = fieldNames.concat(fieldsInSelectedQuery);
       }
 
-      schema.$defs.field.enum = fieldNames;
+      schema.$defs.field.enum.push(...fieldNames);
     }
   } catch (error) {
-    console.error("Error while enriching schema", error);
+    console.error('Error while enriching schema', error);
   }
 
   return schema;
