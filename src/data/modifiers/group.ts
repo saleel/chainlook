@@ -40,8 +40,9 @@ export function groupItems(groupKey: string, items: any[], aggregations: GroupAg
 
     // No need to aggregate if len = 1
     if (itemsInGroup.length > 1) {
-      Object.keys(aggregations || {}).forEach((fieldToAggregate) => {
-        const aggregationFunction = GroupAggregations[aggregations[fieldToAggregate]];
+      const aggregationKeys = Object.keys(aggregations || {}) as Array<keyof typeof aggregations>
+      aggregationKeys.forEach((fieldToAggregate) => {
+        const aggregationFunction = GroupAggregations[aggregations![fieldToAggregate]];
         const aggregatedValue = aggregationFunction(itemsInGroup, fieldToAggregate);
         aggregated[fieldToAggregate] = aggregatedValue;
       });

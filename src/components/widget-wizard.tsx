@@ -27,7 +27,7 @@ function WidgetWizard(props: WidgetWizardProps) {
 
   const [widgetDefinition, setWidgetDefinition] = React.useState(DEFAULT_DEFINITION);
 
-  const subgraphId = widgetDefinition?.data?.source.subgraphId ?? '';
+  const subgraphId = widgetDefinition?.data?.source?.subgraphId ?? '';
 
   const [subgraphQueries, { isFetching, error }] = usePromise(
     () => API.getSubgraphSchema(subgraphId).then(getQueriesAndFieldsFromGraphQlSchema),
@@ -39,12 +39,12 @@ function WidgetWizard(props: WidgetWizardProps) {
   );
 
   const widgetType = widgetDefinition?.type ?? '';
-  const selectedEntityName = widgetDefinition?.data?.source.entity ?? '';
+  const selectedEntityName = widgetDefinition?.data?.source?.entity ?? '';
   const queryNames = Object.keys(subgraphQueries);
   const fieldsInSelectedQuery = subgraphQueries[selectedEntityName] || [];
 
   const isValid =
-    widgetDefinition?.table?.columns?.length > 0 ||
+    (widgetDefinition?.table?.columns?.length ?? 0) > 0 ||
     widgetDefinition?.chart?.xAxis?.dataKey ||
     widgetDefinition?.pieChart?.dataKey ||
     widgetDefinition?.metric?.dataKey;
@@ -70,7 +70,7 @@ function WidgetWizard(props: WidgetWizardProps) {
 
   function renderFieldSelector(label: string, path: string, formatterPath?: string) {
     const value = get(widgetDefinition, path, '');
-    const onChange = (e) => {
+    const onChange = (e: any) => {
       const fieldName = e.target.value;
       updateWidgetDefinition(path, fieldName);
 
@@ -235,7 +235,7 @@ function WidgetWizard(props: WidgetWizardProps) {
                           onChange={(e) =>
                             updateWidgetDefinition('data.source.orderDirection', e.target.value)
                           }
-                          value={widgetDefinition?.data?.source.orderDirection ?? ''}
+                          value={widgetDefinition?.data?.source?.orderDirection ?? ''}
                         >
                           <option>Select</option>
                           <option key={'asc'} value={'asc'}>
@@ -256,7 +256,7 @@ function WidgetWizard(props: WidgetWizardProps) {
                         <input
                           type='number'
                           className='input'
-                          value={widgetDefinition?.data?.source.limit ?? ''}
+                          value={widgetDefinition?.data?.source?.first ?? ''}
                           placeholder='Number of items'
                           onChange={(e) =>
                             updateWidgetDefinition('data.source.limit', Number(e.target.value))

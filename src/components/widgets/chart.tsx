@@ -24,8 +24,13 @@ function Chart(props: Props) {
     const { data = [], config } = props;
 
     const { xAxis, yAxis, lines = [], areas = [], bars = [] } = config!;
-    const xAxisFormatter = xAxis.format && Formatters[xAxis.format as keyof typeof Formatters];
-    const yAxisFormatter = yAxis?.format && Formatters[yAxis.format as keyof typeof Formatters];
+
+    const xAxisFormatter = xAxis.format
+      ? (input: any) => Formatters[xAxis.format as keyof typeof Formatters](input)
+      : null;
+    const yAxisFormatter = yAxis?.format
+      ? (input: any) => Formatters[yAxis?.format as keyof typeof Formatters](input)
+      : null;
 
     const dataKeys = [...lines, ...areas, ...bars].map((c) => c.dataKey);
     let maxData = 0;
@@ -98,7 +103,7 @@ function Chart(props: Props) {
       </ResponsiveContainer>
     );
   } catch (error) {
-    return <div>{error.message}</div>;
+    return <div>{(error as Error).message}</div>;
   }
 }
 

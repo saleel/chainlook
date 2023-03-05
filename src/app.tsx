@@ -17,6 +17,7 @@ function App() {
   return (
     <AuthContextProvider>
       <Routes>
+        {/* @ts-ignore */}
         <Route exact path='/' element={<Layout />}>
           <Route index element={<HomePage />} />
 

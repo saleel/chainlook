@@ -112,7 +112,7 @@ function DashboardEditor(props: DashboardEditorProps) {
         let minDimensionForWidget;
 
         if (el.widget) {
-          minDimensionForWidget = minDimensions[el.widget!.definition!.type];
+          minDimensionForWidget = minDimensions[el.widget!.definition!.type as keyof typeof minDimensions];
 
           if (w < minDimensionForWidget.width) {
             w = minDimensionForWidget.width;

@@ -44,10 +44,7 @@ function Table(props: Props) {
       </div>
     );
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error(error);
-
-    return <div className='error'>Error: {error.message}</div>;
+    return <div className='error'>Error: {(error as Error).message}</div>;
   }
 }
 

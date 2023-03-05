@@ -46,7 +46,7 @@ export default function DashboardView(props: Props) {
         compactType={null}
         draggableHandle='.widget-header'
         {...(onLayoutChange && { onLayoutChange })}
-        onDragStart={(e) => e.dataTransfer?.setData('text/plain', '')}
+        onDragStart={(e: any) => e.dataTransfer?.setData('text/plain', '')}
       >
         {elements.map((element, index) => (
           <div key={index} data-grid={{ ...element.layout }}>

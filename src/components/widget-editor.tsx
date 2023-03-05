@@ -8,6 +8,7 @@ import { fetchDataFromHTTP } from '../utils/network';
 import usePromise from '../hooks/use-promise';
 import API from '../data/api';
 import { enrichWidgetSchema } from '../utils/widget-parsing';
+import { DataSource } from '../domain/widget';
 
 // @ts-ignore
 self.MonacoEnvironment = {
@@ -76,8 +77,8 @@ function WidgetEditor(props: { definition: object; onChange: (d: object) => void
   const { definition, onChange } = props;
 
   const [examplesModalOpen, setExamplesModalOpen] = React.useState<boolean>(false);
-  const [dataSource, setDataSource] = React.useState<any>({});
-  const [dataSources, setDataSources] = React.useState<any[]>([]);
+  const [dataSource, setDataSource] = React.useState<DataSource>();
+  const [dataSources, setDataSources] = React.useState<Record<string, DataSource>>({});
 
   const editorRef = React.useRef<monaco.editor.IStandaloneCodeEditor>();
   const localDefinitionRef = React.useRef(definition);
@@ -107,7 +108,7 @@ function WidgetEditor(props: { definition: object; onChange: (d: object) => void
       const enrichedSchema = await enrichWidgetSchema(widgetSchema, { dataSource, dataSources });
       setWidgetSchemaInEditor(enrichedSchema);
     })();
-  }, [widgetSchema, dataSource.subgraphId, dataSource.entity, dataSources]);
+  }, [widgetSchema, dataSource?.subgraphId, dataSource?.entity, dataSources]);
 
   async function onChangeExample(url: string) {
     const definition = await fetchDataFromHTTP({ url });
