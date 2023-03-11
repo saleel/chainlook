@@ -10,6 +10,7 @@ import API from '../data/api';
 import { enrichWidgetSchema } from '../utils/widget-parsing';
 import { WidgetDefinition } from '../domain/widget';
 import { useDebouncedCallback } from 'use-debounce';
+import { Link } from 'react-router-dom';
 
 // @ts-ignore
 self.MonacoEnvironment = {
@@ -191,9 +192,9 @@ function WidgetEditor(props: { definition: WidgetDefinition; onChange: (d: objec
         <button className='link mr-3' onClick={() => setExamplesModalOpen(true)}>
           Load Example
         </button>
-        {/* <a className='link' href={widgetSchema} target='_blank'>
-          View Schema
-        </a> */}
+        <Link to='/docs' target="_blank" className='link'>
+          View Docs
+        </Link>
       </div>
 
       <div className='widget-editor-run'>

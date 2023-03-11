@@ -520,10 +520,19 @@ function DocsPage() {
 }
 `}
           </code>
-
           <p>
-            You can see any other examples in the New Widget page, by clicking on the "Load Example"
-            button in the definition editor.
+            The JSON Schema for the widget definition can be viewed{' '}
+            <a
+              className='link'
+              href='https://api.chainlook.xyz/schemas/widget.json'
+              target='_blank'
+            >
+              here
+            </a>
+          </p>
+          <p>
+            You can see many other examples in the New Widget page, by clicking on the "Load
+            Example" button in the definition editor.
           </p>
         </div>
         <hr />
