@@ -2,6 +2,7 @@
 @import '../../node_modules/@creativebulma/bulma-tooltip/dist/bulma-tooltip.css';
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap');
 @import './element-list.scss';
+@import './docs-page.scss';
 
 // Colors from Chakra UI https://chakra-ui.com/docs/theming/theme
 :root {
@@ -630,4 +631,10 @@ button {
 
 .select select {
   width: 100%;
+}
+
+blockquote {
+  border-left: 3px solid var(--gray-500);
+  padding: 0.5rem 1rem;
+  margin: 1rem 0;
 }

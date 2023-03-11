@@ -12,6 +12,7 @@ import { AuthContextProvider } from './context/auth-context';
 import EditDashboardPage from './pages/edit-dashboard-page';
 import UserPage from './pages/user-page';
 import SettingsPage from './pages/settings-page';
+import DocsPage from './pages/docs-page';
 
 function App() {
   return (
@@ -38,6 +39,8 @@ function App() {
           </Route>
 
           <Route path='settings' element={<SettingsPage />} />
+          <Route path='docs' element={<DocsPage />} />
+          
         </Route>
       </Routes>
     </AuthContextProvider>

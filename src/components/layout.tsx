@@ -1,6 +1,6 @@
 import React from 'react';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
-import { IoMoonOutline, IoPersonCircleOutline, IoSettingsOutline, IoSunny } from 'react-icons/io5';
+import { IoBookOutline, IoMoonOutline, IoPersonCircleOutline, IoSettingsOutline, IoSunny } from 'react-icons/io5';
 import { Link, Outlet } from 'react-router-dom';
 import { AuthContext } from '../context/auth-context';
 import Store from '../data/store';
@@ -57,6 +57,12 @@ export default function Layout() {
               </div>
             </Link>
           )}
+
+          <Link to='/docs'>
+            <div className='menu-item'>
+              <IoBookOutline size={20} />
+            </div>
+          </Link>
 
           <Link to='/settings'>
             <div className='menu-item'>
