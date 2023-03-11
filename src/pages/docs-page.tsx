@@ -25,23 +25,22 @@ function DocsPage() {
           button.
         </p>
         <img src='/assets/wizard.png' width={800} alt='Widget Wizard' />
-        <p>
-          In the popup, you can start by setting the ID of the subgraph.
-          <blockquote>
-            <p>
-              ChainLook support subgraphs deployed to both the hosted service and decentralized
-              network (using Subgraph Studio). The ID of the subgraph to use would depend on where
-              your subgraph is deployed.
-            </p>
-            <p>
-              Use <code>@username/subgraph-name</code> format for hosted service. Eg:{' '}
-              <code>airswap/airswap</code>, <code>ensdomains/ens</code>
-              <br />
-              Use the subgraph ID as seen in the Graph Explorer for the decentralized network. Eg:{' '}
-              <code>9MDH6TTFm2KZWbo1dBhyktQ7WkWWAbVRSF6Eg65mu9z9</code>
-            </p>
-          </blockquote>
-        </p>
+        <p>In the popup, you can start by setting the ID of the subgraph.</p>
+
+        <blockquote>
+          <p>
+            ChainLook support subgraphs deployed to both the hosted service and decentralized
+            network (using Subgraph Studio). The ID of the subgraph to use would depend on where
+            your subgraph is deployed.
+          </p>
+          <p>
+            Use <code>@username/subgraph-name</code> format for hosted service. Eg:{' '}
+            <code>airswap/airswap</code>, <code>ensdomains/ens</code>
+            <br />
+            Use the subgraph ID as seen in the Graph Explorer for the decentralized network. Eg:{' '}
+            <code>9MDH6TTFm2KZWbo1dBhyktQ7WkWWAbVRSF6Eg65mu9z9</code>
+          </p>
+        </blockquote>
 
         <p>
           You need to have a fair understanding of the subgraph you are going to visualize - mainly
@@ -59,22 +58,23 @@ function DocsPage() {
           In the bottom part, you can select the type of widget you want to build from the query
           result. Depending on the widget selected, additional configuration fields will be
           displayed.
-          <ul>
-            <li>
-              If you choose Table, you would be able to set which fields from the result need to be
-              shown as <b>columns</b>.
-            </li>
-            <li>
-              For Charts, you can set field to be used for X-axis, and the fields to be used for
-              lines, bars and areas. You can also build a combination of{' '}
-              <b>line-chart, bar-chart and area-chart</b> in the same widget.
-            </li>
-            <li>
-              Similarly, you can set the fields to be displayed for other widgets like Pie Chart,
-              Metric, etc.
-            </li>
-          </ul>
         </p>
+
+        <ul>
+          <li>
+            If you choose Table, you would be able to set which fields from the result need to be
+            shown as <b>columns</b>.
+          </li>
+          <li>
+            For Charts, you can set field to be used for X-axis, and the fields to be used for
+            lines, bars and areas. You can also build a combination of{' '}
+            <b>line-chart, bar-chart and area-chart</b> in the same widget.
+          </li>
+          <li>
+            Similarly, you can set the fields to be displayed for other widgets like Pie Chart,
+            Metric, etc.
+          </li>
+        </ul>
 
         <p>
           Once you are done, click on the <b>Submit</b> button to generate the widget definition.
@@ -301,8 +301,9 @@ function DocsPage() {
           You can group the query result by a field before it is used to render in the widget. It
           works similar to SQL group by statement where you specify a group key and aggregation for
           each to be applied to multiple items in the group.
-          <code className='code-block'>
-            {`{
+        </p>
+        <code className='code-block'>
+          {`{
   ...
   "data": {
     ...
@@ -315,34 +316,35 @@ function DocsPage() {
   }
 }
 `}
-          </code>
-          Below is the list of available aggregation functions:
-          <ul>
-            <li>
-              <code>sum</code> : Sum of all the values in the group.
-            </li>
-            <li>
-              <code>multiply</code> : Multiply all the values in the group.
-            </li>
-            <li>
-              <code>avg</code> : Average of all the values in the group.
-            </li>
-            <li>
-              <code>min</code> : Minimum of all the values in the group.
-            </li>
-            <li>
-              <code>max</code> : Maximum of all the values in the group.
-            </li>
-            <li>
-              <code>first</code> : First item in the group.
-            </li>
-            <li>
-              <code>last</code> : Last item in the group.
-            </li>
-            <li>
-              <code>count</code> : Count of all the items in the group.
-            </li>
-          </ul>
+        </code>
+        Below is the list of available aggregation functions:
+        <ul>
+          <li>
+            <code>sum</code> : Sum of all the values in the group.
+          </li>
+          <li>
+            <code>multiply</code> : Multiply all the values in the group.
+          </li>
+          <li>
+            <code>avg</code> : Average of all the values in the group.
+          </li>
+          <li>
+            <code>min</code> : Minimum of all the values in the group.
+          </li>
+          <li>
+            <code>max</code> : Maximum of all the values in the group.
+          </li>
+          <li>
+            <code>first</code> : First item in the group.
+          </li>
+          <li>
+            <code>last</code> : Last item in the group.
+          </li>
+          <li>
+            <code>count</code> : Count of all the items in the group.
+          </li>
+        </ul>
+        <p>
           By default, the aggregation is <code>first</code> (assuming the value is same for all
           items in the group).
         </p>
