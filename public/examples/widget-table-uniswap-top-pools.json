@@ -9,7 +9,7 @@
       "orderBy": "dailyTotalVolumeUSD",
       "skip": 1,
       "first": 20,
-      "filters": {
+      "where": {
         "timestamp_gte": "$startOfLastDay"
       }
     },

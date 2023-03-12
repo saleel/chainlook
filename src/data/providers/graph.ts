@@ -13,7 +13,7 @@ export default async function fetchWidgetDataFromTheGraph(
     throw new Error('No config provided for TheGraph provider');
   }
 
-  const { subgraphId, query, orderBy, orderDirection, skip = 0, first, filters } = config;
+  const { subgraphId, query, orderBy, orderDirection, skip = 0, first, where } = config;
 
   const fieldsObject = {};
   fieldsRequired.forEach((field) => set(fieldsObject, field, true));
@@ -24,7 +24,7 @@ export default async function fetchWidgetDataFromTheGraph(
     skip,
     first,
     where: {
-      ...filters,
+      ...where,
     },
   };
 

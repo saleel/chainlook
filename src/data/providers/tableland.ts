@@ -10,11 +10,11 @@ export default async function fetchWidgetDataFromTableland(
   }
 
   const { network, tableName, ...restConfig } = config;
-  const { orderBy, orderDirection, skip, first, filters } = restConfig;
+  const { orderBy, orderDirection, skip, first, where } = restConfig;
 
   const tableland = await connect({ network: network as NetworkName });
 
-  let whereQuery = Object.entries(filters || {})
+  let whereQuery = Object.entries(where || {})
     .map(([key, value]) => `${key} = ${value}`)
     .join(' AND ');
 

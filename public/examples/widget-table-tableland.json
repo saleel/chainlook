@@ -9,7 +9,7 @@
       "orderDirection": "asc",
       "first": 10,
       "skip": 100,
-      "filters": {}
+      "where": {}
     }
   },
   "table": {

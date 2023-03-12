@@ -8,7 +8,7 @@ export type DataSource = {
   orderBy?: string;
   skip?: number;
   first?: number;
-  filters?: {};
+  where?: {};
   cid?: string;
   network?: string;
   tableName?: string;
