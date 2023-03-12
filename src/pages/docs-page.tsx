@@ -251,6 +251,51 @@ function DocsPage() {
 `}
         </code>
         <hr />
+        <div className='docs-section-subtitle'>Variables</div>
+        <p>
+          Variables are dynamic keys that can be used in widget definition whose real value would be
+          applied during runtime. This can be used in 'where' clause of the data source to add
+          filters dynamically.
+          <br />
+          Here is an example:
+        </p>
+        <code className='code-block'>
+          {`{
+  ...
+  "data": {
+    "source": {
+      "provider": "graph",
+      "subgraphId": "messari/uniswap-v3-ethereum",
+      "query": "liquidityPoolDailySnapshots",
+      "where": {
+        "timestamp_gte": "$startOfLastDay"
+      }
+    }
+  }
+}
+`}
+        </code>
+        <p>
+          In the above example, the value of <code>timestamp_gte</code> will be set to the start
+          (12:00 AM) of the last day.
+        </p>
+        <p>Here is a list of available variables:</p>
+        <ul>
+          <li>
+            <code>$startOfDay</code> : Start of the the current day (12:00 AM) in user's local
+            timezone.
+          </li>
+          <li>
+            <code>$startOfLastDay</code> : Start of the last day in user's local timezone.
+          </li>
+          <li>
+            <code>$startOfLast7D</code> : Start of the last 7th days in user's local timezone.
+          </li>
+          <li>
+            <code>$startOfLast30D</code> : Start of the last 30th days in user's local timezone.
+          </li>
+        </ul>
+        <hr />
         <div className='docs-section-subtitle'>Transforms</div>
         <p>
           You can transform data received from the subgraph before it is used to render in the
