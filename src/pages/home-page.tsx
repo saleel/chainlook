@@ -1,6 +1,9 @@
 import React from 'react';
+import { IoHammer, IoPlay } from 'react-icons/io5';
+import ReactModal from 'react-modal';
 import { Link } from 'react-router-dom';
 import ElementList from '../components/element-list';
+import Modal from '../components/modal';
 import API from '../data/api';
 import usePromise from '../hooks/use-promise';
 
@@ -20,6 +23,8 @@ const featuredDashboards = [
 ];
 
 function HomePage() {
+  const [isIntroModalOpen, setIsIntroModalOpen] = React.useState(false);
+
   React.useEffect(() => {
     document.title = 'ChainLook - Blockchain analytics platform for subgraphs';
   }, []);
@@ -49,9 +54,16 @@ function HomePage() {
         data using simple configuration. Use the drag-and-drop editor to build beautiful{' '}
         <strong>dashboards</strong> from your widgets, and share with others.
         <br />
-        <Link to='/widgets/new' className='button mt-5'>
+        <Link to='/widgets/new' className='button mt-5 mr-4'>
+          <IoHammer size={15} className="mr-2" />
           Create your first widget
         </Link>
+        
+        <button type='button' className='button mt-5' onClick={() => setIsIntroModalOpen(true)}>
+          <IoPlay size={15} className="mr-2" />
+          Watch demo (3 mins)
+        </button>
+
       </div>
 
       <hr />
@@ -83,6 +95,29 @@ function HomePage() {
           />
         </div>
       </div>
+
+      <ReactModal
+        style={{
+          content: {
+            padding: 0,
+            border: '3px solid var(--text-color)',
+            borderRadius: 0,
+            height: 'calc(100vw*0.6)',
+          },
+        }}
+        isOpen={isIntroModalOpen}
+        onRequestClose={() => setIsIntroModalOpen(false)}
+      >
+        <div style={{ padding: '63.38% 0 0 0', position: 'relative' }}>
+          <iframe
+            src='https://player.vimeo.com/video/807224317?h=9f3346f637&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&autoplay=1'
+            allow='autoplay; fullscreen; picture-in-picture'
+            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+            title='ChainLook Demo'
+          ></iframe>
+        </div>
+        <script src='https://player.vimeo.com/api/player.js'></script>
+      </ReactModal>
     </div>
   );
 }
