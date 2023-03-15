@@ -100,15 +100,16 @@ function HomePage() {
         style={{
           content: {
             padding: 0,
-            border: '3px solid var(--text-color)',
+            border: 0,
             borderRadius: 0,
-            height: 'calc(100vw*0.6)',
+            background: 'transparent',
+            inset: 40
           },
         }}
         isOpen={isIntroModalOpen}
         onRequestClose={() => setIsIntroModalOpen(false)}
       >
-        <div style={{ padding: '63.38% 0 0 0', position: 'relative' }}>
+        <div style={{ padding: '0 0 0 0', position: 'relative', width: '100%', height: '100%' }}>
           <iframe
             src='https://player.vimeo.com/video/807224317?h=9f3346f637&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&autoplay=1'
             allow='autoplay; fullscreen; picture-in-picture'
