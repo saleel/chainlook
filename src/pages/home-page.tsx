@@ -46,24 +46,29 @@ function HomePage() {
   return (
     <div className='page home-page'>
       <div className='intro mb-5'>
-        ChainLook is a blockchain analytics platform based on{' '}
-        <a href='https://thegraph.com/docs/en/'>subgraphs</a> (TheGraph).
-        <br />
-        <br />
-        Create awesome <strong>widgets</strong> like line-chart, pie-chart, table, from subgraphs
-        data using simple configuration. Use the drag-and-drop editor to build beautiful{' '}
-        <strong>dashboards</strong> from your widgets, and share with others.
-        <br />
-        <Link to='/widgets/new' className='button mt-5 mr-4'>
-          <IoHammer size={15} className="mr-2" />
-          Create your first widget
-        </Link>
-        
-        <button type='button' className='button mt-5' onClick={() => setIsIntroModalOpen(true)}>
-          <IoPlay size={15} className="mr-2" />
-          Watch demo (3 mins)
-        </button>
+        <div className='title'>Build visualization dashboards from subgraphs data</div>
 
+        <div className='intro-description'>
+          <p>
+            1. Create <strong>widgets</strong> (charts, tables) from subgraphs using simple config.
+          </p>
+          <p>
+            2. Build <strong>dashboards</strong> from widgets using drag-and-drop editor.
+          </p>
+          <p>3. Share. Embed. Fork. Enjoy.</p>
+        </div>
+
+        <div>
+          <Link to='/widgets/new' className='button mt-5 mr-4'>
+            <IoHammer size={15} className='mr-2' />
+            Create your first widget
+          </Link>
+
+          <button type='button' className='button mt-5' onClick={() => setIsIntroModalOpen(true)}>
+            <IoPlay size={15} className='mr-2' />
+            Watch demo (3 mins)
+          </button>
+        </div>
       </div>
 
       <hr />
@@ -103,7 +108,7 @@ function HomePage() {
             border: 0,
             borderRadius: 0,
             background: 'transparent',
-            inset: 40
+            inset: 40,
           },
         }}
         isOpen={isIntroModalOpen}

@@ -159,11 +159,24 @@ button {
 }
 
 .intro {
-  font-size: 1.15rem;
-  // background-color: var(--gray-200);
-  border-radius: 5px;
+  font-size: 1.25rem;
   padding: 2rem 0rem;
-  max-width: 1000px;
+  text-align: center;
+}
+
+.intro-description {
+  font-size: 1.15rem;
+  margin: 1rem auto;
+  text-align: left;
+  display: inline-block;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 400;
+  color: var(--text-color);
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
 .popular-dashboard {
