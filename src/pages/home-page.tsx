@@ -46,11 +46,11 @@ function HomePage() {
   return (
     <div className='page home-page'>
       <div className='intro mb-5'>
-        <div className='title'>Build visualization dashboards from subgraphs data</div>
+        <div className='title'>Build visualization dashboards from subgraphs</div>
 
         <div className='intro-description'>
           <p>
-            1. Create <strong>widgets</strong> (charts, tables) from subgraphs using simple config.
+            1. Create <strong>widgets</strong> (charts, tables) from subgraphs data using simple config.
           </p>
           <p>
             2. Build <strong>dashboards</strong> from widgets using drag-and-drop editor.
