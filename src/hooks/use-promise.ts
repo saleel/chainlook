@@ -61,6 +61,13 @@ function usePromise<T>(promise: () => Promise<T>, options: UsePromiseOptions = {
     return fetch();
   }
 
+  function reset() {
+    setResult(defaultValue);
+    setFetchedAt(undefined);
+    setIsFetching(false);
+    setError(undefined);
+  }
+
   return [
     result,
     {
@@ -68,8 +75,12 @@ function usePromise<T>(promise: () => Promise<T>, options: UsePromiseOptions = {
       fetchedAt,
       reFetch,
       error,
+      reset,
     },
-  ] as [T, { isFetching: boolean; fetchedAt: Date; reFetch: () => void; error: Error }];
+  ] as [
+    T,
+    { isFetching: boolean; fetchedAt: Date; reFetch: () => void; error: Error; reset: () => void },
+  ];
 }
 
 export default usePromise;

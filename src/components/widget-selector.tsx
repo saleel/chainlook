@@ -16,7 +16,7 @@ function WidgetView(props: WidgetViewProps) {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [mode, setMode] = React.useState<'users' | 'all'>(user ? 'users' : 'all');
 
-  const [widgetOfUser, { isFetching: isFetchingUsers, fetchedAt }] = usePromise<Widget[]>(
+  const [widgetOfUser, { isFetching: isFetchingUsers }] = usePromise<Widget[]>(
     () => API.getWidgetsByUser(user?.username as string),
     {
       conditions: [user?.id],
@@ -24,7 +24,7 @@ function WidgetView(props: WidgetViewProps) {
     },
   );
 
-  const [allWidgets, { isFetching: isFetchingAll, reFetch }] = usePromise<Widget[]>(
+  let [allWidgets, { isFetching: isFetchingAll, reFetch, fetchedAt, reset }] = usePromise<Widget[]>(
     () => API.findWidgets(searchTerm),
     {
       conditions: [!!searchTerm],
@@ -68,7 +68,13 @@ function WidgetView(props: WidgetViewProps) {
   }
 
   function renderAllWidgets() {
-    if (!searchTerm && !fetchedAt) {
+    if (isFetchingAll) {
+      return <div>Loading...</div>;
+    }
+
+    console.log(fetchedAt);
+
+    if (!fetchedAt) {
       return (
         <div>
           Input a search term and press <code>Enter</code> to search for widgets.
@@ -76,11 +82,7 @@ function WidgetView(props: WidgetViewProps) {
       );
     }
 
-    if (isFetchingAll) {
-      return <div>Loading...</div>;
-    }
-
-    if (fetchedAt && allWidgets.length === 0) {
+    if (allWidgets.length === 0) {
       return <div>No widgets found.</div>;
     }
 
@@ -126,7 +128,10 @@ function WidgetView(props: WidgetViewProps) {
                 minLength={3}
                 required
                 placeholder='Search'
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  reset();
+                }}
                 value={searchTerm}
               />
             </div>
