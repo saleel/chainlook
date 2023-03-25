@@ -13,6 +13,7 @@ import EditDashboardPage from './pages/edit-dashboard-page';
 import UserPage from './pages/user-page';
 import SettingsPage from './pages/settings-page';
 import DocsPage from './pages/docs-page';
+import WidgetEmbedPage from './pages/widget-embed-page';
 
 function App() {
   return (
@@ -42,6 +43,9 @@ function App() {
           <Route path='docs' element={<DocsPage />} />
           
         </Route>
+
+        <Route path='widgets/:widgetId/embed' element={<WidgetEmbedPage />} />
+
       </Routes>
     </AuthContextProvider>
   );
