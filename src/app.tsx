@@ -1,11 +1,11 @@
 import '@rainbow-me/rainbowkit/styles.css';
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import HomePage from './pages/home-page';
 import DashboardPage from './pages/dashboard-page';
 import Layout from './components/layout';
 import { AuthContextProvider } from './context/auth-context';
 import WidgetEmbedPage from './pages/widget-embed-page';
+import HomePage from './pages/home-page';
 
 const WidgetEditPage = React.lazy(() => import('./pages/edit-widget-page'));
 const NewWidgetPage = React.lazy(() => import('./pages/new-widget-page'));
