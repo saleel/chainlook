@@ -1,9 +1,11 @@
 /* eslint-disable react/no-array-index-key */
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import React from 'react';
-import { IoCalendarClearOutline, IoPerson, IoStar } from 'react-icons/io5';
+import { IoCalendarClearOutline, IoPerson, IoShare, IoShareOutline, IoStar } from 'react-icons/io5';
 import { Link, useParams } from 'react-router-dom';
 import DashboardView from '../components/dashboard-view';
+import Modal from '../components/modal';
+import ShareModal from '../components/share-modal';
 import { AuthContext } from '../context/auth-context';
 import API from '../data/api';
 import Dashboard from '../domain/dashboard';
@@ -17,6 +19,8 @@ function DashboardPage() {
 
   const [isStarred, setIsStarred] = React.useState(false);
   const [starCount, setStarCount] = React.useState(0);
+  const [isShareModalOpen, setIsShareModalOpen] = React.useState(false);
+
   const { user, isAuthenticated } = React.useContext(AuthContext);
 
   const [dashboard, { isFetching, error }] = usePromise<Dashboard>(
@@ -112,7 +116,10 @@ function DashboardPage() {
         </div>
 
         <div className='dashboard-actions'>
-          {/* <button className='button is-normal'>Share</button> */}
+          <button className={'button is-normal'} onClick={() => setIsShareModalOpen(true)}>
+            <IoShareOutline size={18} className='mr-3' />
+            Share
+          </button>
 
           {!isFetchingStarred && (
             <button
@@ -138,6 +145,14 @@ function DashboardPage() {
       </div>
 
       <DashboardView dashboard={dashboard} />
+
+      <ShareModal
+        type='dashboard'
+        title={dashboard.title}
+        url={`https://chainlook.xyz/#/dashboards/${dashboard.user.username}:${dashboard.slug}`}
+        isOpen={isShareModalOpen}
+        onRequestClose={() => setIsShareModalOpen(false)}
+      />
     </div>
   );
 }
