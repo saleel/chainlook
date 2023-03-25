@@ -1,6 +1,7 @@
 import React from 'react';
 import { IoCalendarClearOutline, IoPerson } from 'react-icons/io5';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import ShareModal from '../components/share-modal';
 import WidgetView from '../components/widget-view';
 import { AuthContext } from '../context/auth-context';
 import API from '../data/api';
@@ -11,6 +12,8 @@ import { formatDate } from '../utils/time';
 function WidgetPage() {
   const { widgetId } = useParams();
   const navigate = useNavigate();
+
+  const [isShareModalOpen, setIsShareModalOpen] = React.useState(false);
 
   const { user } = React.useContext(AuthContext);
 
@@ -105,6 +108,15 @@ function WidgetPage() {
               Fork
             </button>
 
+            <button
+              role='button'
+              tabIndex={0}
+              className='button is-normal'
+              onClick={() => setIsShareModalOpen(true)}
+            >
+              Share
+            </button>
+
             {isWidgetOwner && (
               <Link
                 className='button is-normal'
@@ -118,7 +130,15 @@ function WidgetPage() {
         </div>
       </div>
 
-      <WidgetView widget={widget} showActions={false} />
+      <WidgetView widget={widget} showActions={true} />
+
+      <ShareModal
+        isOpen={isShareModalOpen}
+        onRequestClose={() => setIsShareModalOpen(false)}
+        type='widget'
+        title={widget?.title}
+        url={`https://chainlook.xyz/#/widgets/${widget?.id}`}
+      />
     </div>
   );
 }
