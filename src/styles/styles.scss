@@ -224,10 +224,13 @@ button {
   height: 100%;
   border: 1px solid var(--text-color);
   z-index: 1;
+
+  .recharts-surface {
+    overflow: visible;
+  }
 }
 
-.widget,
-.recharts-surface {
+.widget {
   &:hover {
     overflow: visible;
     z-index: 2 !important;
@@ -616,13 +619,14 @@ button {
 }
 
 @media screen and (max-width: 641px) {
+
   // Disable create dashboard and widgets on small screens
   .menu {
     display: none;
   }
 }
 
-.react-grid-item > .react-resizable-handle::after {
+.react-grid-item>.react-resizable-handle::after {
   border-color: var(--text-color) !important;
   border-width: 2px !important;
   width: 8px !important;
