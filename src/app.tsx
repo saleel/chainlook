@@ -4,16 +4,25 @@ import { Route, Routes } from 'react-router-dom';
 import HomePage from './pages/home-page';
 import DashboardPage from './pages/dashboard-page';
 import Layout from './components/layout';
-import WidgetEditPage from './pages/edit-widget-page';
-import NewWidgetPage from './pages/new-widget-page';
-import WidgetPage from './pages/widget-page';
-import NewDashboardPage from './pages/new-dashboard-page';
 import { AuthContextProvider } from './context/auth-context';
-import EditDashboardPage from './pages/edit-dashboard-page';
-import UserPage from './pages/user-page';
-import SettingsPage from './pages/settings-page';
-import DocsPage from './pages/docs-page';
 import WidgetEmbedPage from './pages/widget-embed-page';
+
+const WidgetEditPage = React.lazy(() => import('./pages/edit-widget-page'));
+const NewWidgetPage = React.lazy(() => import('./pages/new-widget-page'));
+const WidgetPage = React.lazy(() => import('./pages/widget-page'));
+const NewDashboardPage = React.lazy(() => import('./pages/new-dashboard-page'));
+const EditDashboardPage = React.lazy(() => import('./pages/edit-dashboard-page'));
+const UserPage = React.lazy(() => import('./pages/user-page'));
+const SettingsPage = React.lazy(() => import('./pages/settings-page'));
+const DocsPage = React.lazy(() => import('./pages/docs-page'));
+
+function withSuspense(Component: React.FC) {
+  return (
+    <React.Suspense fallback={<div>Loading...</div>}>
+      <Component />
+    </React.Suspense>
+  );
+}
 
 function App() {
   return (
@@ -24,28 +33,26 @@ function App() {
           <Route index element={<HomePage />} />
 
           <Route path='widgets'>
-            <Route path='new' element={<NewWidgetPage />} />
-            <Route path=':widgetId/edit' element={<WidgetEditPage />} />
-            <Route path=':widgetId' element={<WidgetPage />} />
+            <Route path='new' element={withSuspense(NewWidgetPage)} />
+            <Route path=':widgetId/edit' element={withSuspense(WidgetEditPage)} />
+            <Route path=':widgetId' element={withSuspense(WidgetPage)} />
           </Route>
 
           <Route path='dashboards'>
-            <Route path=':id' element={<DashboardPage />} />
-            <Route path=':id/edit' element={<EditDashboardPage />} />
-            <Route path='new' element={<NewDashboardPage />} />
+            <Route path=':id' element={withSuspense(DashboardPage)} />
+            <Route path=':id/edit' element={withSuspense(EditDashboardPage)} />
+            <Route path='new' element={withSuspense(NewDashboardPage)} />
           </Route>
 
           <Route path='users'>
-            <Route path=':username' element={<UserPage />} />
+            <Route path=':username' element={withSuspense(UserPage)} />
           </Route>
 
-          <Route path='settings' element={<SettingsPage />} />
-          <Route path='docs' element={<DocsPage />} />
-          
+          <Route path='settings' element={withSuspense(SettingsPage)} />
+          <Route path='docs' element={withSuspense(DocsPage)} />
         </Route>
 
         <Route path='widgets/:widgetId/embed' element={<WidgetEmbedPage />} />
-
       </Routes>
     </AuthContextProvider>
   );
