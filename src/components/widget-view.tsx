@@ -7,8 +7,9 @@ import Metric from './widgets/metric';
 import PieChart from './widgets/pie-chart';
 import Widget from '../domain/widget';
 import { Link, useNavigate } from 'react-router-dom';
-import { IoPersonOutline, IoOpenOutline, IoGitNetworkOutline, IoRefresh } from 'react-icons/io5';
+import { IoOpenOutline, IoRefresh, IoDownloadOutline } from 'react-icons/io5';
 import React from 'react';
+import html2canvas from 'html2canvas';
 
 function WidgetView(props: { widget: Widget; showActions?: boolean }) {
   const { widget, showActions = true } = props;
@@ -51,26 +52,14 @@ function WidgetView(props: { widget: Widget; showActions?: boolean }) {
     return <div className='widget p-4'>No data</div>;
   }
 
-  function onForkClick() {
-    if (Store.getWidgetDraft()) {
-      if (
-        !confirm(
-          'You already have an unsaved widget that is being edited. Forking this will discard your changes. Would you like to continue?',
-        )
-      ) {
-        return;
-      }
-    }
-
-    Store.saveWidgetDraft({
-      ...widget,
-      forkId: widget.id,
-      forkVersion: widget.version,
-      id: '',
-      user: { id: '', address: '' },
+  function onDownloadClick(e: any) {
+    // Save dom element with class widget as an image
+    html2canvas(e.target.closest('.widget')!, {}).then((canvas) => {
+      const a = document.createElement('a');
+      a.href = canvas.toDataURL('image/png');
+      a.download = `${widget?.title}.png`;
+      a.click();
     });
-
-    navigate('/widgets/new');
   }
 
   const { definition } = widget || {};
@@ -121,51 +110,46 @@ function WidgetView(props: { widget: Widget; showActions?: boolean }) {
           <h4 className='widget-title'>
             <span>{widget?.title || 'Untitled'}</span>
           </h4>
-
-          {showActions && !isWidgetPage && widget?.id && (
-            <Link
-              to={`/widgets/${widget?.id}`}
-              target='_blank'
-              className='ml-3 widget-action-item'
-              data-tooltip='Open the widget in a new page'
-            >
-              <IoOpenOutline size={18} />
-            </Link>
-          )}
         </div>
 
-        {showActions && (
-          <div className='is-flex pl-1'>
-            <button
-              type='button'
-              onClick={onForkClick}
-              data-tooltip={`Fork - Make a copy of this widget and customize it`}
-              className='ml-4 icon-button widget-action-item'
-            >
-              <IoGitNetworkOutline size={17} />
-            </button>
-
-            {author && (
-              <div data-tooltip={`Created by ${author}`} className='ml-4 widget-action-item'>
-                <IoPersonOutline size={18} />
-              </div>
-            )}
-
-            <button
-              type='button'
-              onClick={() => setIsAutoRefreshEnabled((e) => !e)}
-              data-tooltip={`Auto refresh this widget every 10 seconds`}
-              className='ml-4 icon-button widget-action-item'
-              style={{ width: '15px' }}
-            >
-              {isAutoRefreshEnabled ? (
-                <div className='blink-dot mb-1'></div>
-              ) : (
-                <IoRefresh size={17} />
+        <div className='is-flex pl-1'>
+          {showActions && (
+            <>
+              {!isWidgetPage && widget?.id && (
+                <Link
+                  to={`/widgets/${widget?.id}`}
+                  target='_blank'
+                  className='icon-button widget-action-item mr-4'
+                  data-tooltip='Open the widget in a new page'
+                >
+                  <IoOpenOutline size={18} />
+                </Link>
               )}
-            </button>
-          </div>
-        )}
+
+              <button
+                type='button'
+                onClick={onDownloadClick}
+                data-tooltip={`Download this widget as an image`}
+                className='mr-4 icon-button widget-action-item'
+              >
+                <IoDownloadOutline size={18} />
+              </button>
+
+              <button
+                type='button'
+                onClick={() => setIsAutoRefreshEnabled((e) => !e)}
+                data-tooltip={`Auto refresh this widget every 10 seconds`}
+                className='mr-2 icon-button'
+              >
+                {isAutoRefreshEnabled ? (
+                  <div className='blink-dot mb-1'></div>
+                ) : (
+                  <IoRefresh className='widget-action-item' size={17} />
+                )}
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       <div className='widget-body'>{renderWidget()}</div>

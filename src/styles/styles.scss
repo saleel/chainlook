@@ -247,10 +247,15 @@ button {
 
 .icon-button {
   cursor: pointer;
+  color: var(--text-color);
   background: none;
   padding: 0;
   margin: 0;
   border: none;
+
+  &:hover {
+    color: var(--text-color);
+  }
 }
 
 .widget-header {
@@ -630,6 +635,7 @@ button {
   height: 7px;
   border-radius: 50%;
   animation: blink 1s infinite;
+  text-align: center;
 }
 
 @keyframes blink {
