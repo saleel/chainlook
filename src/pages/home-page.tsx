@@ -53,7 +53,7 @@ function HomePage() {
             1. Build <strong>widgets</strong> (charts, tables) from subgraphs data using simple editor.
           </p>
           <p>
-            2. Create <strong>dashboards</strong> from multiple widgets using drag-and-drop editor.
+            2. Create <strong>dashboards</strong> from widgets using the drag-and-drop editor.
           </p>
           <p>3. Share. Embed. Fork. Enjoy.</p>
         </div>
