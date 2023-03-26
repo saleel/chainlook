@@ -70,16 +70,18 @@ button {
 }
 
 .header {
-  height: 3rem;
+  // height: 4rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-top: 0.5rem;
 }
 
 .menu {
   height: 100%;
   display: flex;
   flex-direction: row;
+  align-items: center;
 }
 
 .link {
@@ -97,7 +99,7 @@ button {
 
 .menu-item {
   @extend .link;
-  margin: 1rem 1.5rem;
+  margin: 0 1rem;
   padding-top: 0.5rem;
   cursor: pointer;
 

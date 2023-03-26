@@ -130,7 +130,7 @@ function WidgetPage() {
         </div>
       </div>
 
-      <WidgetView widget={widget} showActions={true} />
+      <WidgetView widget={widget} />
 
       <ShareModal
         isOpen={isShareModalOpen}

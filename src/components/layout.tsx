@@ -1,6 +1,12 @@
 import React from 'react';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
-import { IoBookOutline, IoMoonOutline, IoPersonCircleOutline, IoSettingsOutline, IoSunny } from 'react-icons/io5';
+import {
+  IoBookOutline,
+  IoMoonOutline,
+  IoPersonCircleOutline,
+  IoSettingsOutline,
+  IoSunny,
+} from 'react-icons/io5';
 import { Link, Outlet } from 'react-router-dom';
 import { AuthContext } from '../context/auth-context';
 import Store from '../data/store';
@@ -38,12 +44,12 @@ export default function Layout() {
         </h1>
 
         <div className='menu'>
-          <Link to='/widgets/new'>
-            <div className='menu-item'>New Widget</div>
+          <Link className='menu-item' to='/widgets/new'>
+            New Widget
           </Link>
 
-          <Link to='/dashboards/new'>
-            <div className='menu-item'>New Dashboard</div>
+          <Link className='menu-item' to='/dashboards/new'>
+            New Dashboard
           </Link>
 
           {!isAuthenticated ? (
@@ -51,23 +57,17 @@ export default function Layout() {
               Sign In
             </button>
           ) : (
-            <Link to={`/users/${user!.username}`}>
-              <div className='menu-item'>
-                <IoPersonCircleOutline size={20} />
-              </div>
+            <Link className='menu-item' to={`/users/${user!.username}`}>
+              <IoPersonCircleOutline size={20} />
             </Link>
           )}
 
-          <Link to='/docs'>
-            <div className='menu-item'>
-              <IoBookOutline size={20} />
-            </div>
+          <Link className='menu-item' to='/docs'>
+            <IoBookOutline size={20} />
           </Link>
 
-          <Link to='/settings'>
-            <div className='menu-item'>
-              <IoSettingsOutline size={20} />
-            </div>
+          <Link className='menu-item' to='/settings'>
+            <IoSettingsOutline size={20} />
           </Link>
 
           <button className='menu-item' onClick={toggleTheme}>
@@ -77,7 +77,7 @@ export default function Layout() {
       </div>
 
       <div className='main wrapper'>
-        <hr />
+        <hr className='mt-2' />
         <Outlet />
       </div>
 
