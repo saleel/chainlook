@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import { HashRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import './styles/styles.scss';
 import Modal from 'react-modal';
 import App from './app';
@@ -11,7 +11,7 @@ Modal.setAppElement(container);
 const root = createRoot(container);
 
 root.render(
-  <HashRouter>
+  <BrowserRouter>
     <App />
-  </HashRouter>,
+  </BrowserRouter>,
 );

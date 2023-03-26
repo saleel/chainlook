@@ -149,7 +149,7 @@ function DashboardPage() {
       <ShareModal
         type='dashboard'
         title={dashboard.title}
-        url={`https://chainlook.xyz/#/dashboards/${dashboard.user.username}:${dashboard.slug}`}
+        url={`https://chainlook.xyz/dashboards/${dashboard.user.username}:${dashboard.slug}`}
         isOpen={isShareModalOpen}
         onRequestClose={() => setIsShareModalOpen(false)}
       />

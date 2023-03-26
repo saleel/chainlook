@@ -137,7 +137,7 @@ function WidgetPage() {
         onRequestClose={() => setIsShareModalOpen(false)}
         type='widget'
         title={widget?.title}
-        url={`https://chainlook.xyz/#/widgets/${widget?.id}`}
+        url={`https://chainlook.xyz/widgets/${widget?.id}`}
       />
     </div>
   );
