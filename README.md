@@ -1,6 +1,6 @@
 # ChainLook
 
-[https://chainlook.xyz](https://chainlook.xyz)
+Try : [https://chainlook.netlify.app/](https://chainlook.netlify.app/)
 
 ChainLook is a blockchain analytics platform based on subgraphs (TheGraph).
 
